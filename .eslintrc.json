@@ -1,0 +1,25 @@
+{
+    "env": {
+        "commonjs": true,
+        "es6": true,
+        "node": true,
+        "mocha": true
+    },
+    "extends": "react-app",
+    "globals": {
+        "Atomics": "readonly",
+        "SharedArrayBuffer": "readonly",
+        "artifacts": "readonly",
+        "contract": "readonly"
+    },
+    "parserOptions": {
+        "ecmaVersion": 2018
+    },
+    "rules": {
+        "quotes": ["error", "single", { "allowTemplateLiterals": true }],
+        "semi": ["error", "never"],
+        "eqeqeq": "error",
+        "no-multi-spaces": "error",
+        "quote-props": [ "error", "consistent" ]
+    }
+}
