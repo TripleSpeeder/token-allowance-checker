@@ -1,6 +1,7 @@
 import React, {useEffect, useState, createContext} from 'react'
 import Onboard from 'bnc-onboard'
 import Web3 from 'web3'
+import {Button, Segment} from 'semantic-ui-react'
 
 const onboardapikey='f4b71bf0-fe50-4eeb-bc2b-b323527ed9e6'
 
@@ -43,8 +44,10 @@ const OnboardGate = (props) => {
     }, [])
 
     async function login() {
-        await onboard.walletSelect()
-        await onboard.walletCheck()
+        const selected = await onboard.walletSelect()
+        if (selected) {
+            await onboard.walletCheck()
+        }
     }
 
     const contextValue = {
@@ -59,9 +62,9 @@ const OnboardGate = (props) => {
         </Web3Context.Provider>
     } else {
         return (
-            <div>
-                <button onClick={login}>Onboard first!</button>
-            </div>
+            <Segment basic padded='very' textAlign={'center'}>
+                <Button primary size={'huge'} onClick={login}>Connect web3 to start!</Button>
+            </Segment>
         )
     }
 }

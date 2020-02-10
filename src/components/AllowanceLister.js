@@ -3,6 +3,8 @@ import PropTypes from 'prop-types'
 import { createDfuseClient } from '@dfuse/client'
 import {Web3Context} from './OnboardGate'
 import TokenAllowanceListContainer from './TokenAllowanceListContainer'
+import 'semantic-ui-css/semantic.min.css'
+import {Button, Icon, Message, Segment} from 'semantic-ui-react'
 
 const topicHashApprove = '0x8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925'
 const eventABI = [
@@ -145,11 +147,31 @@ const AllowanceLister = () => {
     }, [web3Context.web3, web3Context.address])
 
     if (loading) {
-        return (<div><h1>Loading...</h1></div>)
+        return (
+            <Segment basic padded='very' textAlign={'center'}>
+                <Message icon>
+                    <Icon name='circle notched' loading />
+                    <Message.Content>
+                        <Message.Header>Please wait</Message.Header>
+                        Querying dfuse API for Approval calls...
+                    </Message.Content>
+                </Message>)
+            </Segment>
+        )
     }
 
     if (error) {
-        return (<div><h1>Error occured: {error}</h1></div>)
+        return (
+            <Segment basic padded='very' textAlign={'center'}>
+                <Message error icon>
+                    <Icon name='exclamation triangle' />
+                    <Message.Content>
+                        <Message.Header>Error</Message.Header>
+                        {error}
+                    </Message.Content>
+                </Message>
+            </Segment>
+        )
     }
 
     const tokens = []
