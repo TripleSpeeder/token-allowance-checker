@@ -61,6 +61,7 @@ const AllowanceLister = () => {
     const [error, setError] = useState('')
 
     useEffect(() => {
+        let cancelled = false
         const collectAllowances = async (address) => {
             setLoading(true)
             setError('')
@@ -74,6 +75,10 @@ const AllowanceLister = () => {
                         query: `signer:${address} method:'approve(address,uint256)'`,
                     }
                 })
+                if (cancelled) {
+                    console.log(`Received stale response.`)
+                    return
+                }
                 // any errors reported?
                 if (response.errors) {
                     throw response.errors
@@ -81,7 +86,7 @@ const AllowanceLister = () => {
                 // get actual results
                 const edges = response.data.searchTransactions.edges || []
                 if (edges.length <= 0) {
-                    console.log('No Approve() calls found for ${address}')
+                    console.log(`No Approve() calls found for ${address}`)
                 }
                 edges.forEach(({node}) => {
                     const tokenContract = node.to
@@ -95,7 +100,7 @@ const AllowanceLister = () => {
                             return false
                         }
                     })
-                    approveLogs.forEach((logEntry, index) => {
+                    approveLogs.forEach((logEntry) => {
                         const decoded = web3Context.web3.eth.abi.decodeLog(eventABI, logEntry.data, logEntry.topics.slice(1))
                         // console.log(decoded)
                         // double-check owner - Is this necessary?
@@ -121,13 +126,21 @@ const AllowanceLister = () => {
                     setTokenSpenders(tokenSpenders)
                 })
             } catch(errors) {
-                setError(JSON.stringify(errors))
+                if (!cancelled) {
+                    setError(JSON.stringify(errors))
+                }
             }
             setLoading(false)
         }
+
+        setTokenSpenders({})
         if (web3Context.web3 && web3Context.address) {
             console.log(`Starting query for "${web3Context.address}"`)
             collectAllowances(web3Context.address)
+        }
+
+        return () => {
+            cancelled = true
         }
     }, [web3Context.web3, web3Context.address])
 
@@ -156,12 +169,6 @@ const AllowanceLister = () => {
             {tokens}
         </div>
     )
-    /*
-    <TokenAllowanceListContainer
-                checkAddress={address}
-                spenders={spenders}
-                contractAddress={tokenAddress}/>
-     */
 }
 
 export default AllowanceLister

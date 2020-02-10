@@ -20,6 +20,7 @@ const TokenAllowanceListContainer = ({contractAddress, owner, spenders}) => {
     const [loading, setLoading] = useState(true)
 
     useEffect(() => {
+        let cancelled = false
         const getAllowances = async () => {
             setLoading(true)
 
@@ -27,13 +28,22 @@ const TokenAllowanceListContainer = ({contractAddress, owner, spenders}) => {
             const erc20Contract = contract(ERC20Data)
             erc20Contract.setProvider(web3Context.web3.currentProvider)
             const contractInstance = await erc20Contract.at(contractAddress)
+            if (cancelled)
+                return
             setDecimals(await contractInstance.decimals())
-            setTokenName(await contractInstance.name())
+            try {
+                setTokenName(await contractInstance.name())
+            } catch(error) {
+                // Most likely token contract does not implement the name() method. Ignore error.
+                console.log(`Failed to get name of contract at ${contractAddress}`)
+            }
 
-            // for each allowedAddress, get current allowance from checkAddress to allowedAddress
+            // for each allowedAddress, get current allowance of spender
             const allowances = {}
             for (const spender of spenders) {
                 const allowance = await contractInstance.allowance(owner, spender)
+                if (cancelled)
+                    return
                 allowances[spender] = allowance
             }
             setAddressAllowances(allowances)
@@ -41,16 +51,23 @@ const TokenAllowanceListContainer = ({contractAddress, owner, spenders}) => {
             setLoading(false)
         }
         getAllowances()
+        return () => {
+            cancelled = true
+        }
     }, [web3Context.web3, contractAddress, owner, spenders])
 
     const listItems = []
-    for (const [key, value] of Object.entries(addressAllowances)) {
-        listItems.push(<li key={key}>{key}: {value.toString()}</li>)
+    if (loading) {
+        listItems.push(<li key={1}>Loading...</li>)
+    } else {
+        for (const [key, value] of Object.entries(addressAllowances)) {
+            listItems.push(<li key={key}>{key}: {value.toString()}</li>)
+        }
     }
 
     return (
         <div>
-            <p>{`AllowanceList for contract ${contractAddress}`}</p>
+            <p>{`AllowanceList for ${tokenName ? tokenName : 'unnamed token'} contract at ${contractAddress}`}</p>
             <ul>
                 {listItems}
             </ul>
@@ -63,7 +80,5 @@ TokenAllowanceListContainer.propTypes = {
     owner: PropTypes.string.isRequired,
     spenders: PropTypes.array.isRequired,
 }
-
-
 
 export default TokenAllowanceListContainer
