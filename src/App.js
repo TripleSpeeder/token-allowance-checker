@@ -8,7 +8,10 @@ import {Container, Header, Segment} from 'semantic-ui-react'
 const App = () => {
 
     const HomepageHeading =
-        <Segment inverted textAlign={'center'} vertical>
+        <Segment
+            inverted={false}
+            textAlign={'center'}
+            vertical>
             <Container
                 text
                 style={{marginBottom: '2em'}}
@@ -16,7 +19,7 @@ const App = () => {
                 <Header
                     as='h1'
                     content='Token Allowance checker'
-                    inverted
+                    inverted={false}
                     subheader='Keep allowances in check!'
                     style={{
                         fontSize: '2em',
@@ -36,14 +39,6 @@ const App = () => {
             </Container>
         </React.Fragment>
     )
-    /*
-  return (
-    <div className="App">
-        <OnboardGate>
-            <AllowanceLister/>
-        </OnboardGate>
-    </div>
-  )*/
 }
 
 export default App

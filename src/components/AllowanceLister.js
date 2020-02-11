@@ -34,20 +34,20 @@ const client = createDfuseClient({
 })
 const searchTransactions = `query ($query: String! $limit: Int64!) {
       searchTransactions(
-        indexName: CALLS, 
+        indexName: LOGS, 
         query: $query, 
         limit: $limit, 
         sort: DESC
       ) {
         edges {
           node {
-            to
             block {
               number
             }
-            allLogs {
+            matchingLogs {
               data
               topics
+              address
             }
           }
         }
@@ -74,7 +74,7 @@ const AllowanceLister = () => {
                 const response = await client.graphql(searchTransactions, {
                     variables: {
                         limit: '10',
-                        query: `signer:${address} method:'approve(address,uint256)'`,
+                        query: `signer:${address} method:'approve(address,uint256)' topic.0:${topicHashApprove}`,
                     }
                 })
                 if (cancelled) {
@@ -91,32 +91,22 @@ const AllowanceLister = () => {
                     console.log(`No Approve() calls found for ${address}`)
                 }
                 edges.forEach(({node}) => {
-                    const tokenContract = node.to
-                    // console.log(`Approval - Token ${tokenContract}`)
-                    const approveLogs = node.allLogs.filter((logEntry) => {
-                        if (logEntry.topics[0] === topicHashApprove) {
-                            //console.log('Log match:')
-                            //console.log(logEntry)
-                            return true
-                        } else {
-                            return false
-                        }
-                    })
-                    approveLogs.forEach((logEntry) => {
+                    node.matchingLogs.forEach((logEntry) => {
                         const decoded = web3Context.web3.eth.abi.decodeLog(eventABI, logEntry.data, logEntry.topics.slice(1))
                         // console.log(decoded)
                         // double-check owner - Is this necessary?
                         if (decoded.owner.toLowerCase() === address) {
                             // Add tokenContract if its new
+                            const tokenContract = logEntry.address
                             if (Object.keys(tokenSpenders).includes(tokenContract)) {
-                                console.log(`tokenContract ${tokenContract} already known`)
+                                // console.log(`tokenContract ${tokenContract} already known`)
                             } else {
                                 console.log(`Adding tokenContract ${tokenContract}`)
                                 tokenSpenders[tokenContract] = []
                             }
                             // Add spender address if its new
                             if (tokenSpenders[tokenContract].includes(decoded.spender)) {
-                                console.log(`Spender ${decoded.spender} for ${tokenContract} already known`)
+                                // console.log(`Spender ${decoded.spender} for ${tokenContract} already known`)
                             } else {
                                 console.log(`Adding Spender ${decoded.spender} for ${tokenContract}`)
                                 tokenSpenders[tokenContract].push(decoded.spender)
@@ -149,13 +139,14 @@ const AllowanceLister = () => {
     if (loading) {
         return (
             <Segment basic padded='very' textAlign={'center'}>
-                <Message icon>
+                <Message icon warning size={'huge'}>
                     <Icon name='circle notched' loading />
                     <Message.Content>
                         <Message.Header>Please wait</Message.Header>
-                        Querying dfuse API for Approval calls...
+                        <p>Your address: {web3Context.address}</p>
+                        {`Querying dfuse API for ERC20 Approvals...`}
                     </Message.Content>
-                </Message>)
+                </Message>
             </Segment>
         )
     }
@@ -163,11 +154,25 @@ const AllowanceLister = () => {
     if (error) {
         return (
             <Segment basic padded='very' textAlign={'center'}>
-                <Message error icon>
+                <Message error icon size={'huge'}>
                     <Icon name='exclamation triangle' />
                     <Message.Content>
                         <Message.Header>Error</Message.Header>
                         {error}
+                    </Message.Content>
+                </Message>
+            </Segment>
+        )
+    }
+
+    if (Object.keys(tokenSpenders).length === 0) {
+        return (
+            <Segment basic padded='very' textAlign={'center'}>
+                <Message success icon size={'huge'}>
+                    <Icon name='info' />
+                    <Message.Content>
+                        <Message.Header>No Approvals</Message.Header>
+                        Address {web3Context.address} has no Approvals.
                     </Message.Content>
                 </Message>
             </Segment>
@@ -186,10 +191,12 @@ const AllowanceLister = () => {
     }
 
     return (
-        <div>
-            <h1>Allowances for {web3Context.address}</h1>
+        <React.Fragment>
+            <Segment basic>
+                <h2>{web3Context.address} has these allowances</h2>
+            </Segment>
             {tokens}
-        </div>
+        </React.Fragment>
     )
 }
 
