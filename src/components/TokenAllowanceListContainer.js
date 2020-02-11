@@ -3,6 +3,7 @@ import ERC20Data from '@openzeppelin/contracts/build/contracts/ERC20Detailed.jso
 import {Web3Context} from './OnboardGate'
 import PropTypes from 'prop-types'
 import TokenAllowanceItem from './TokenAllowanceItem'
+import EditAllowanceFormContainer from './EditAllowanceFormContainer'
 const contract = require('@truffle/contract')
 const namehash = require('eth-ens-namehash')
 
@@ -38,6 +39,7 @@ const TokenAllowanceListContainer = ({contractAddress, owner, spenders}) => {
             const balance = await contractInstance.balanceOf(owner)
             if (cancelled)
                 return
+            setContractInstance(contractInstance)
             setTokenDecimals(decimals)
             setTokenSupply(totalSupply)
             setOwnerBalance(balance)
@@ -94,17 +96,22 @@ const TokenAllowanceListContainer = ({contractAddress, owner, spenders}) => {
         }
     }, [web3Context.web3, spenders])
 
-    return <TokenAllowanceItem
-        tokenName={tokenName}
-        tokenAddress={contractAddress}
-        tokenDecimals={tokenDecimals}
-        tokenSupply={tokenSupply}
-        tokenSymbol={tokenSymbol}
-        ownerBalance={ownerBalance}
-        spenders={spenders}
-        spenderENSNames={reverseNames}
-        allowances={addressAllowances}
-    />
+    return (
+        <React.Fragment>
+            <TokenAllowanceItem
+                tokenName={tokenName}
+                tokenAddress={contractAddress}
+                tokenDecimals={tokenDecimals}
+                tokenSupply={tokenSupply}
+                tokenSymbol={tokenSymbol}
+                ownerBalance={ownerBalance}
+                spenders={spenders}
+                spenderENSNames={reverseNames}
+                allowances={addressAllowances}
+                tokenContractInstance={contractInstance}
+            />
+        </React.Fragment>
+    )
 }
 
 TokenAllowanceListContainer.propTypes = {
