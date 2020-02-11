@@ -1,6 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import {Button, Header, Loader, Segment, Table} from 'semantic-ui-react'
+import {Button, Header, Icon, Loader, Segment, Table} from 'semantic-ui-react'
 import AddressDisplay from './AddressDisplay'
 import BN from 'bn.js'
 import bn2DisplayString from '@triplespeeder/bn2string'
@@ -37,7 +37,7 @@ const TokenAllowanceItem = ({tokenName, tokenAddress, tokenDecimals, tokenSupply
                     {allowanceElement}
                 </Table.Cell>
                 <Table.Cell>
-                    <Button icon={'erase'} size={'mini'} title={'set zero allowance'} primary>Clear allowance</Button>
+                    <Button icon labelPosition={'left'} size={'small'} title={'set zero allowance'} primary><Icon name={'erase'}/>Clear allowance</Button>
                 </Table.Cell>
             </Table.Row>
         )

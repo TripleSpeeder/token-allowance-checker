@@ -2,7 +2,7 @@ import React from 'react'
 import './App.css'
 import AllowanceLister from './components/AllowanceLister'
 import OnboardGate from './components/OnboardGate'
-import {Container, Header, Segment} from 'semantic-ui-react'
+import {Container, Grid, Header, Icon, List, Popup, Segment} from 'semantic-ui-react'
 
 
 const App = () => {
@@ -29,6 +29,7 @@ const App = () => {
                 />
             </Container>
         </Segment>
+
     return (
         <React.Fragment>
             {HomepageHeading}
@@ -37,7 +38,21 @@ const App = () => {
                     <AllowanceLister/>
                 </OnboardGate>
             </Container>
+
+            <Segment basic>
+                <Container textAlign={'center'}>
+                    <List horizontal size={'huge'}>
+                        <List.Item as={'a'} href={'https://github.com/TripleSpeeder/allowance-limiter'} target={'_blank'}>
+                            <Popup content='github.com/TripleSpeeder/allowance-limiter' trigger={<Icon size={'big'} name={'github'}/>}/>
+                        </List.Item>
+                        <List.Item as={'a'} href={'mailto:michael@m-bauer.org'}>
+                            <Popup content='michael@m-bauer.org' trigger={<Icon size={'big'} name={'mail outline'}/>}/>
+                        </List.Item>
+                    </List>
+                </Container>
+            </Segment>
         </React.Fragment>
+
     )
 }
 
