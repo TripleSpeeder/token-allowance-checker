@@ -60,7 +60,7 @@ const AddressInputContainer = () => {
     const handleSubmit = () => {
         if (success) {
             console.log(`Submit! Address: ${address}`)
-            history.push(`/${address}`)
+            history.push(`/address/${address}`)
         } else {
             console.log(`Submit with invalid address`)
         }

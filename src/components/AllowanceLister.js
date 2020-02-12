@@ -57,11 +57,18 @@ const searchTransactions = `query ($query: String! $limit: Int64!) {
 const AllowanceLister = () => {
 
     const web3Context = useContext(Web3Context)
-    const address = useParams().address.toLowerCase()
+    const addressFromParams = useParams().address
 
-    const [loading, setLoading] = useState(true)
+    const [loading, setLoading] = useState(false)
     const [tokenSpenders, setTokenSpenders] = useState({})
     const [error, setError] = useState('')
+    const [address, setAddress] = useState(addressFromParams ? addressFromParams.toLowerCase() : '')
+
+    useEffect(() => {
+        console.log(`useEffect addressFromParams: ${addressFromParams}`)
+        setAddress(addressFromParams ? addressFromParams.toLowerCase() : '')
+    }, [addressFromParams])
+
 
     useEffect(() => {
         let cancelled = false
@@ -142,6 +149,19 @@ const AllowanceLister = () => {
             cancelled = true
         }
     }, [web3Context.web3, address])
+
+    if (address === '') {
+        return (
+            <Segment basic padded='very' textAlign={'center'}>
+                <Message info icon size={'huge'}>
+                    <Icon name='info' />
+                    <Message.Content>
+                        <Message.Header>Enter an address to start!</Message.Header>
+                    </Message.Content>
+                </Message>
+            </Segment>
+        )
+    }
 
     if (loading) {
         return (

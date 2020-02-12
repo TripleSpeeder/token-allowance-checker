@@ -36,7 +36,7 @@ const App = () => {
         <Router>
             {HomepageHeading}
             <Switch>
-                <Route path={'/:address'}>
+                <Route path={['/address/:address', '/address']}>
                     <Container>
                         <OnboardGate>
                             <AddressInputContainer/>
@@ -86,7 +86,7 @@ const App = () => {
                             </Grid.Row>
                         </Grid>
                     </Segment>
-                        <Button as={Link} to={`/0x1B7750e1dB62610b0B58E679F3c8895680Eb0C89`} positive size={'big'}>test me</Button>
+                        <Button as={Link} to={`/address/`} positive size={'big'}>test me</Button>
                     </Container>
                 </Route>
             </Switch>

@@ -1,7 +1,7 @@
 import React, {useEffect, useState, createContext} from 'react'
 import Onboard from 'bnc-onboard'
 import Web3 from 'web3'
-import {Button, Grid, Header, Segment} from 'semantic-ui-react'
+import {Button, Grid, Header, Icon, Message, Segment} from 'semantic-ui-react'
 
 const onboardapikey='f4b71bf0-fe50-4eeb-bc2b-b323527ed9e6'
 
@@ -74,8 +74,14 @@ const OnboardGate = (props) => {
     if (isOnboarding) {
         return (
             <React.Fragment>
-                <Segment basic textAlign={'center'}>
-                    Waiting to complete onboard...
+                <Segment basic padded='very' textAlign={'center'}>
+                    <Message info icon size={'huge'}>
+                        <Icon name='spinner' loading />
+                        <Message.Content>
+                            <Message.Header>Waiting for wallet</Message.Header>
+                            Please complete wallet selection.
+                        </Message.Content>
+                    </Message>
                 </Segment>
             </React.Fragment>
         )
@@ -84,8 +90,14 @@ const OnboardGate = (props) => {
     if (!walletSelected) {
         return (
             <React.Fragment>
-                <Segment basic textAlign={'center'}>
-                    You need to select a wallet. Reload to try again.
+                <Segment basic padded='very' textAlign={'center'}>
+                    <Message warning icon size={'huge'}>
+                        <Icon name='exclamation triangle' />
+                        <Message.Content>
+                            <Message.Header>No wallet selected</Message.Header>
+                            You need to select a wallet.
+                        </Message.Content>
+                    </Message>
                 </Segment>
             </React.Fragment>
         )
