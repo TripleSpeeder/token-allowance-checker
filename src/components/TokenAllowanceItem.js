@@ -6,6 +6,7 @@ import BN from 'bn.js'
 import bn2DisplayString from '@triplespeeder/bn2string'
 import EditAllowanceFormContainer from './EditAllowanceFormContainer'
 import {Web3Context} from './OnboardGate'
+import TransactionModal from './TransactionModal'
 
 
 const unlimitedAllowance = new BN(2).pow(new BN(256)).subn(1)
@@ -14,6 +15,10 @@ const TokenAllowanceItem = ({tokenName, tokenAddress, tokenDecimals, tokenSupply
     const web3Context = useContext(Web3Context)
     const [editSpender, setEditSpender] = useState('')
     const [showEditModal, setShowEditModal] = useState(false)
+    const [showTransactionModal, setShowTransactionModal] = useState(false)
+    const [transactionError, setTransactionError] = useState('')
+    const [transactionHash, setTransactionHash] = useState('')
+    const [confirming, setConfirming] = useState(false)
 
     const openEditModal = (spender) => {
         setEditSpender(spender)
@@ -22,19 +27,30 @@ const TokenAllowanceItem = ({tokenName, tokenAddress, tokenDecimals, tokenSupply
 
     const handleSubmitEditAllowance = async (newAllowance) => {
         console.log(`Setting new allowance ${newAllowance} for ${editSpender}`)
+        setTransactionError('')
+        setTransactionHash('')
+        setShowEditModal(false)
+        setShowTransactionModal(true)
+        setConfirming(true)
         let result
         try {
             result = await tokenContractInstance.approve(editSpender, newAllowance.toString(), {
                     from: web3Context.address
                 })
-            } catch (e) {
-            console.log(`Error while approving: ${e.toString()}`)
+            setTransactionHash(result.tx)
+        } catch (e) {
+            console.log(`Error while approving: ${e.message}`)
+            setTransactionError(e.message)
         }
-        setShowEditModal(false)
+        setConfirming(false)
     }
 
     const handleCloseEditAllowance = () => {
         setShowEditModal(false)
+    }
+
+    const handleCloseTransactionModal = () => {
+        setShowTransactionModal(false)
     }
 
     const rows = []
@@ -124,6 +140,13 @@ const TokenAllowanceItem = ({tokenName, tokenAddress, tokenDecimals, tokenSupply
                 tokenAddress={tokenAddress}
                 handleSubmit={handleSubmitEditAllowance}
                 handleClose={handleCloseEditAllowance}
+            />}
+            {showTransactionModal && <TransactionModal
+                showModal={showTransactionModal}
+                isConfirming={confirming}
+                handleClose={handleCloseTransactionModal}
+                error={transactionError}
+                transactionHash={transactionHash}
             />}
         </React.Fragment>
     )
