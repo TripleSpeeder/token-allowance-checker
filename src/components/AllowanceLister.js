@@ -1,5 +1,6 @@
 import React, {useContext, useEffect, useState} from 'react'
-import { createDfuseClient } from '@dfuse/client'
+import {useParams} from 'react-router-dom'
+import {createDfuseClient} from '@dfuse/client'
 import {Web3Context} from './OnboardGate'
 import TokenAllowanceListContainer from './TokenAllowanceListContainer'
 import 'semantic-ui-css/semantic.min.css'
@@ -56,6 +57,7 @@ const searchTransactions = `query ($query: String! $limit: Int64!) {
 const AllowanceLister = () => {
 
     const web3Context = useContext(Web3Context)
+    const address = useParams().address.toLowerCase()
 
     const [loading, setLoading] = useState(true)
     const [tokenSpenders, setTokenSpenders] = useState({})
@@ -63,7 +65,7 @@ const AllowanceLister = () => {
 
     useEffect(() => {
         let cancelled = false
-        const collectAllowances = async (address) => {
+        const collectAllowances = async () => {
             setLoading(true)
             setError('')
 
@@ -131,15 +133,15 @@ const AllowanceLister = () => {
         }
 
         setTokenSpenders({})
-        if (web3Context.web3 && web3Context.address) {
-            console.log(`Starting query for "${web3Context.address}"`)
-            collectAllowances(web3Context.address)
+        if (web3Context.web3 && address) {
+            console.log(`Starting query for "${address}"`)
+            collectAllowances(address)
         }
 
         return () => {
             cancelled = true
         }
-    }, [web3Context.web3, web3Context.address])
+    }, [web3Context.web3, address])
 
     if (loading) {
         return (
@@ -148,7 +150,7 @@ const AllowanceLister = () => {
                     <Icon name='circle notched' loading />
                     <Message.Content>
                         <Message.Header>Please wait</Message.Header>
-                        <p>Your address: {web3Context.address}</p>
+                        <p>Checking address: {address}</p>
                         {`Querying dfuse API for ERC20 Approvals...`}
                     </Message.Content>
                 </Message>
@@ -177,7 +179,7 @@ const AllowanceLister = () => {
                     <Icon name='info' />
                     <Message.Content>
                         <Message.Header>No Approvals</Message.Header>
-                        Address {web3Context.address} has no Approvals.
+                        Address {address} has no Approvals.
                     </Message.Content>
                 </Message>
             </Segment>
@@ -189,7 +191,7 @@ const AllowanceLister = () => {
         tokens.push(
             <TokenAllowanceListContainer
                 key={key}
-                owner={web3Context.address}
+                owner={address}
                 spenders={value}
                 contractAddress={key}/>
         )
@@ -198,7 +200,7 @@ const AllowanceLister = () => {
     return (
         <React.Fragment>
             <Segment basic>
-                <h2>{web3Context.address} has these allowances</h2>
+                <h2>{address} has these allowances</h2>
             </Segment>
             {tokens}
         </React.Fragment>
