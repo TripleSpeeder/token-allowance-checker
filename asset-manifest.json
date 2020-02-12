@@ -1,8 +1,8 @@
 {
   "files": {
     "main.css": "/token-allowance-checker/static/css/main.d1b05096.chunk.css",
-    "main.js": "/token-allowance-checker/static/js/main.46eb39cc.chunk.js",
-    "main.js.map": "/token-allowance-checker/static/js/main.46eb39cc.chunk.js.map",
+    "main.js": "/token-allowance-checker/static/js/main.daf80fc0.chunk.js",
+    "main.js.map": "/token-allowance-checker/static/js/main.daf80fc0.chunk.js.map",
     "runtime-main.js": "/token-allowance-checker/static/js/runtime-main.e06a46a2.js",
     "runtime-main.js.map": "/token-allowance-checker/static/js/runtime-main.e06a46a2.js.map",
     "static/css/2.7e9d59df.chunk.css": "/token-allowance-checker/static/css/2.7e9d59df.chunk.css",
@@ -55,7 +55,7 @@
     "static/js/25.22977300.chunk.js": "/token-allowance-checker/static/js/25.22977300.chunk.js",
     "static/js/25.22977300.chunk.js.map": "/token-allowance-checker/static/js/25.22977300.chunk.js.map",
     "index.html": "/token-allowance-checker/index.html",
-    "precache-manifest.1f21df22ad7c304395e7fbd3b4afea13.js": "/token-allowance-checker/precache-manifest.1f21df22ad7c304395e7fbd3b4afea13.js",
+    "precache-manifest.3178d7ed5c7fae60b1ff9c1195186382.js": "/token-allowance-checker/precache-manifest.3178d7ed5c7fae60b1ff9c1195186382.js",
     "service-worker.js": "/token-allowance-checker/service-worker.js",
     "static/css/2.7e9d59df.chunk.css.map": "/token-allowance-checker/static/css/2.7e9d59df.chunk.css.map",
     "static/css/main.d1b05096.chunk.css.map": "/token-allowance-checker/static/css/main.d1b05096.chunk.css.map",
@@ -72,6 +72,6 @@
     "static/css/2.7e9d59df.chunk.css",
     "static/js/2.db1a8f36.chunk.js",
     "static/css/main.d1b05096.chunk.css",
-    "static/js/main.46eb39cc.chunk.js"
+    "static/js/main.daf80fc0.chunk.js"
   ]
 }

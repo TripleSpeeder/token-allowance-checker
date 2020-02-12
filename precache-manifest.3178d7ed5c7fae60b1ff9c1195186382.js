@@ -1,6 +1,6 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "c703b7a82e42a6b8a7dfad64dab95153",
+    "revision": "71762926c9acee5fdaec9e3d601d4b39",
     "url": "/token-allowance-checker/index.html"
   },
   {
@@ -8,7 +8,7 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/token-allowance-checker/static/css/2.7e9d59df.chunk.css"
   },
   {
-    "revision": "74fdf55554d07104f2c2",
+    "revision": "4809d6ecfad8757402ad",
     "url": "/token-allowance-checker/static/css/main.d1b05096.chunk.css"
   },
   {
@@ -132,8 +132,8 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/token-allowance-checker/static/js/9.78751b6f.chunk.js"
   },
   {
-    "revision": "74fdf55554d07104f2c2",
-    "url": "/token-allowance-checker/static/js/main.46eb39cc.chunk.js"
+    "revision": "4809d6ecfad8757402ad",
+    "url": "/token-allowance-checker/static/js/main.daf80fc0.chunk.js"
   },
   {
     "revision": "12e24e262f684b485a0d",
