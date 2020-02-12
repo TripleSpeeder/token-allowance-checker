@@ -1,6 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import {Button, Header, Icon, Message, Modal} from 'semantic-ui-react'
+import {Button, Icon, Message, Modal} from 'semantic-ui-react'
 
 const TransactionModal = ({showModal, isConfirming, transactionHash, error, handleClose}) => {
 

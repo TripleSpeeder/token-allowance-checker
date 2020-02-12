@@ -74,12 +74,12 @@ const OnboardContext = (props) => {
     }
 
     if (onboard) {
-        console.log("Onboard initialized!")
+        console.log('Onboard initialized!')
         return <Web3Context.Provider value={contextValue}>
             {props.children}
         </Web3Context.Provider>
     } else {
-        console.log("Onboard not yet initialized!")
+        console.log('Onboard not yet initialized!')
         return (
             <React.Fragment>
                 <Segment basic padded='very' textAlign={'center'}>

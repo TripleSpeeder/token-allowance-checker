@@ -1,6 +1,6 @@
 import React, {useContext, useState} from 'react'
 import PropTypes from 'prop-types'
-import {Button, Header, Icon, Loader, Popup, Segment, Table} from 'semantic-ui-react'
+import {Button, Header, Loader, Popup, Segment, Table} from 'semantic-ui-react'
 import AddressDisplay from './AddressDisplay'
 import BN from 'bn.js'
 import bn2DisplayString from '@triplespeeder/bn2string'
@@ -71,7 +71,7 @@ const TokenAllowanceItem = ({tokenName, tokenAddress, tokenDecimals, tokenSupply
             } else {
                 const decimals = tokenDecimals
                 const roundToDecimals = new BN(2)
-                const {precise, rounded} = bn2DisplayString({value, decimals, roundToDecimals})
+                const {rounded} = bn2DisplayString({value, decimals, roundToDecimals})
                 allowanceElement = `${rounded}`
             }
         } else {
@@ -108,7 +108,7 @@ const TokenAllowanceItem = ({tokenName, tokenAddress, tokenDecimals, tokenSupply
     }
     const roundToDecimals = new BN(2)
     if (BN.isBN(ownerBalance) && BN.isBN(tokenDecimals)) {
-        const {precise, rounded} = bn2DisplayString({value: ownerBalance, decimals: tokenDecimals, roundToDecimals})
+        const {rounded} = bn2DisplayString({value: ownerBalance, decimals: tokenDecimals, roundToDecimals})
         headline += ` (current balance: ${rounded})`
     }
 

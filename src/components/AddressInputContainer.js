@@ -1,9 +1,8 @@
 import React, {useState, useEffect, useContext} from 'react'
-import PropTypes from 'prop-types'
 import AddressInput from './AddressInput'
 import {Web3Context} from './OnboardContext'
-import {Link, useHistory, useParams} from 'react-router-dom'
-import {Button, Container, Form, Grid, Segment} from 'semantic-ui-react'
+import {useHistory, useParams} from 'react-router-dom'
+import {Form, Grid} from 'semantic-ui-react'
 
 export const addressInputStates = {
     ADDRESS_INITIAL: 'address_initial', // no user interaction
@@ -73,8 +72,7 @@ const AddressInputContainer = () => {
                 history.push(`/address/${newWalletAddress}`)
             }
         }
-    }, [web3Context.address, prevWalletAddress])
-
+    }, [web3Context.address, prevWalletAddress, addressFromParams, history])
 
     const error = (addressInputState === addressInputStates.ADDRESS_INVALID)
     const loading = (addressInputState === addressInputStates.ADDRESS_RESOLVING)

@@ -26,7 +26,7 @@ const OnboardGate = (props) => {
             doLogin()
         }
 
-    }, [web3Context.onboard])
+    }, [web3Context.onboard, history])
 
     if (walletSelected && web3Context.web3) {
         return <React.Fragment>

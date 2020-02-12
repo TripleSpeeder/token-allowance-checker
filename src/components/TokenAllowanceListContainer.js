@@ -1,9 +1,8 @@
-import React, {ReactElement, useContext, useEffect, useState} from 'react'
+import React, {useContext, useEffect, useState} from 'react'
 import ERC20Data from '@openzeppelin/contracts/build/contracts/ERC20Detailed.json'
 import {Web3Context} from './OnboardContext'
 import PropTypes from 'prop-types'
 import TokenAllowanceItem from './TokenAllowanceItem'
-import EditAllowanceFormContainer from './EditAllowanceFormContainer'
 const contract = require('@truffle/contract')
 const namehash = require('eth-ens-namehash')
 
@@ -84,8 +83,9 @@ const TokenAllowanceListContainer = ({contractAddress, owner, spenders}) => {
                     console.log(`No reverse name found for ${spender}`)
                 }
             }
-            console.log(`Found reverse names: `)
-            console.log(foundNames)
+            if (cancelled) {
+                return
+            }
             setReverseNames(foundNames)
         }
         if (web3Context.web3) {
