@@ -1,6 +1,6 @@
 import React, {useContext, useState} from 'react'
 import PropTypes from 'prop-types'
-import {Button, Header, Icon, Loader, Segment, Table} from 'semantic-ui-react'
+import {Button, Header, Icon, Loader, Popup, Segment, Table} from 'semantic-ui-react'
 import AddressDisplay from './AddressDisplay'
 import BN from 'bn.js'
 import bn2DisplayString from '@triplespeeder/bn2string'
@@ -11,7 +11,7 @@ import TransactionModal from './TransactionModal'
 
 const unlimitedAllowance = new BN(2).pow(new BN(256)).subn(1)
 
-const TokenAllowanceItem = ({tokenName, tokenAddress, tokenDecimals, tokenSupply, tokenSymbol, tokenContractInstance, ownerBalance, spenders, spenderENSNames, allowances}) => {
+const TokenAllowanceItem = ({tokenName, tokenAddress, tokenDecimals, tokenSupply, tokenSymbol, tokenContractInstance, ownerBalance, owner, spenders, spenderENSNames, allowances}) => {
     const web3Context = useContext(Web3Context)
     const [editSpender, setEditSpender] = useState('')
     const [showEditModal, setShowEditModal] = useState(false)
@@ -57,9 +57,12 @@ const TokenAllowanceItem = ({tokenName, tokenAddress, tokenDecimals, tokenSupply
     for (const spender of spenders) {
         let allowanceElement
         let criticalAllowance = false
+        let editEnabled = false
         let loaded = BN.isBN(allowances[spender]) && BN.isBN(tokenDecimals) && BN.isBN(tokenSupply)
         if (loaded) {
             const value = allowances[spender]
+            // wallet account has to be owner in order to edit allowance
+            editEnabled = (owner.toLowerCase() === web3Context.address.toLowerCase())
             criticalAllowance = (value.eq(unlimitedAllowance)) || (value.gte(tokenSupply))
             if (criticalAllowance) {
                 // \u221E is 'infinity'
@@ -83,18 +86,17 @@ const TokenAllowanceItem = ({tokenName, tokenAddress, tokenDecimals, tokenSupply
                     {allowanceElement}
                 </Table.Cell>
                 <Table.Cell>
-                    <Button
-                        icon
-                        labelPosition={'left'}
-                        size={'small'}
-                        title={'edit allowance'}
-                        primary
-                        disabled={!loaded}
-                        onClick={()=>{openEditModal(spender)}}
-                    >
-                        <Icon name={'edit'}/>
-                        Edit
-                    </Button>
+                    <Popup
+                        content={editEnabled ? 'edit allowance' : 'Only address owner can edit allowance'}
+                        trigger={<span><Button
+                            icon={'edit'}
+                            size={'small'}
+                            compact
+                            primary
+                            disabled={!editEnabled}
+                            onClick={()=>{openEditModal(spender)}}
+                        /></span>}
+                    />
                 </Table.Cell>
             </Table.Row>
         )
@@ -159,6 +161,7 @@ TokenAllowanceItem.propTypes = {
     tokenSupply: PropTypes.object, // bignumber
     tokenSymbol: PropTypes.string,
     tokenContractInstance: PropTypes.object,
+    owner: PropTypes.string.isRequired,
     ownerBalance: PropTypes.object, // bignumber
     spenders: PropTypes.array.isRequired,
     spenderENSNames: PropTypes.object.isRequired,

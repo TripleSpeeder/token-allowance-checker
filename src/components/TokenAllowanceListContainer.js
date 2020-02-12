@@ -104,6 +104,7 @@ const TokenAllowanceListContainer = ({contractAddress, owner, spenders}) => {
                 tokenDecimals={tokenDecimals}
                 tokenSupply={tokenSupply}
                 tokenSymbol={tokenSymbol}
+                owner={owner}
                 ownerBalance={ownerBalance}
                 spenders={spenders}
                 spenderENSNames={reverseNames}

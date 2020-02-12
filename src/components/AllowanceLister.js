@@ -71,6 +71,10 @@ const AllowanceLister = () => {
         setAddress(addressFromParams ? addressFromParams.toLowerCase() : '')
     }, [addressFromParams])
 
+    useEffect(() => {
+        document.title = `TAC - ${address}`
+    }, [address])
+
 
     useEffect(() => {
         let cancelled = false

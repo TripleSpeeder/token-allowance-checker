@@ -1,9 +1,9 @@
-import React from 'react'
+import React, {createContext} from 'react'
 import './App.css'
 import {BrowserRouter as Router, Link, Route, Switch} from 'react-router-dom'
 import AllowanceLister from './components/AllowanceLister'
 import OnboardGate from './components/OnboardGate'
-import {Button, Container, Grid, Header, Icon, List, Popup, Segment} from 'semantic-ui-react'
+import {Button, Container, Divider, Grid, Header, Icon, List, Menu, Popup, Segment} from 'semantic-ui-react'
 import AddressInputContainer from './components/AddressInputContainer'
 
 
@@ -14,22 +14,50 @@ const App = () => {
             inverted={false}
             textAlign={'center'}
             vertical>
+            <Menu fixed='top' inverted size={'huge'}>
+                <Container>
+                    <Menu.Item
+                        header
+                        as={Link}
+                        to={`/`}
+                    >
+                        <Icon name={'home'} size={'big'}/> Home
+                    </Menu.Item>
+                    <Menu.Item
+                        as={Link}
+                        to={`/address/`}
+                    >
+                        <Icon name={'search'} size={'big'}/> Check Allowances
+                    </Menu.Item>
+                    <Menu.Menu position='right'>
+                        <Menu.Item>
+                            <a href={'https://github.com/TripleSpeeder/allowance-limiter'}
+                               title={'github.com/TripleSpeeder/allowance-limiter'}
+                            >
+                                <Icon name={'github'} size={'big'}/>
+                            </a>
+                        </Menu.Item>
+                    </Menu.Menu>
+                </Container>
+            </Menu>
             <Container
                 text
-                style={{marginBottom: '2em'}}
+                style={{
+                    marginTop: '4em',
+                    marginBottom: '2em'
+                }}
             >
                 <Header
                     as='h1'
                     inverted={false}
                     style={{
-                        fontSize: '2em',
-                        fontWeight: 'normal',
+                        fontSize: '3em',
                         marginTop: '0.5em',
                     }}
                 >
-                    <Link to={'/'}>Token Allowance Checker</Link>
+                    Token Allowance Checker
                     <Header.Subheader>
-                        Keep allowances in check!
+                        powered by <a href={'https://www.dfuse.io/'} rel="noopener noreferrer" target={'_blank'}>dfuse</a>
                     </Header.Subheader>
                 </Header>
             </Container>
@@ -58,15 +86,15 @@ const App = () => {
                                         Do you actually know who can spend your tokens?
                                     </Header>
                                     <p style={{ fontSize: '1.33em' }}>
-                                        This site helps you keep track of which contracts you have approved to spend
+                                        <em>Token Allowance Checker</em> helps you keep track of which contracts you have approved to spend
                                         your tokens.
                                     </p>
                                     <Header as='h3' style={{ fontSize: '2em' }}>
                                         Control your approvals
                                     </Header>
                                     <p style={{ fontSize: '1.33em' }}>
-                                        This site will show you all approvals for ERC20-compliant tokens, and the option to change
-                                        the approved amount, or completely remove it.</p>
+                                        <em>Token Allowance Checker</em> will show you all approvals for ERC20-compliant tokens, and the option to change
+                                        the approved amount - or completely zero it.</p>
                                 </Grid.Column>
                                 <Grid.Column floated='right' width={7}>
                                     <Header as='h3' style={{ fontSize: '2em' }}>
@@ -91,22 +119,34 @@ const App = () => {
                         </Grid>
                     </Segment>
                     <Segment basic textAlign={'center'}>
-                        <Button as={Link} to={`/address/`} positive size={'massive'}>Start</Button>
+                        <Button as={Link} to={`/address/`} primary size={'massive'}>Check Allowances<Icon name='right arrow' /></Button>
                     </Segment>
 
                 </Route>
             </Switch>
-
             <Segment basic>
+                <Divider></Divider>
                 <Container textAlign={'center'}>
-                    <List horizontal size={'huge'}>
-                        <List.Item as={'a'} href={'https://github.com/TripleSpeeder/allowance-limiter'} target={'_blank'}>
-                            <Popup content='github.com/TripleSpeeder/allowance-limiter' trigger={<Icon size={'big'} name={'github'}/>}/>
+                    <List horizontal >
+                        <List.Item as={'a'} href={'https://twitter.com/TripleSpeeder'} target={'_blank'}>
+                            <Popup content='@triplespeeder' trigger={<Icon size={'big'} name={'twitter'}/>}/>
+                        </List.Item>
+                        <List.Item as={'a'} href={'https://t.me/triplespeeder'} target={'_blank'}>
+                            <Popup content='@triplespeeder' trigger={<Icon size={'big'} name={'telegram'}/>}/>
                         </List.Item>
                         <List.Item as={'a'} href={'mailto:michael@m-bauer.org'}>
                             <Popup content='michael@m-bauer.org' trigger={<Icon size={'big'} name={'mail outline'}/>}/>
                         </List.Item>
+                        <List.Item as={'a'} href={'https://github.com/TripleSpeeder'} target={'_blank'}>
+                            <Popup content='github.com/TripleSpeeder' trigger={<Icon size={'big'} name={'github'}/>}/>
+                        </List.Item>
+                        <List.Item as={'a'} href={'https://www.reddit.com/u/TripleSpeeder'} target={'_blank'}>
+                            <Popup content='u/TripleSpeeder' trigger={<Icon size={'big'} name={'reddit'}/>}/>
+                        </List.Item>
                     </List>
+                </Container>
+                <Container textAlign={'center'}>
+                    <p style={{ fontSize: '1em', float: 'right' }}><Icon name={'copyright outline'}/> Michael Bauer</p>
                 </Container>
             </Segment>
         </Router>

@@ -2,6 +2,7 @@ import React, {useEffect, useState, createContext} from 'react'
 import Onboard from 'bnc-onboard'
 import Web3 from 'web3'
 import {Button, Grid, Header, Icon, Message, Segment} from 'semantic-ui-react'
+import {useHistory} from 'react-router-dom'
 
 const onboardapikey='f4b71bf0-fe50-4eeb-bc2b-b323527ed9e6'
 
@@ -12,7 +13,7 @@ export const Web3Context = createContext({
 })
 
 const OnboardGate = (props) => {
-
+    const history = useHistory()
     const [web3, setWeb3] = useState()
     const [address, setAddress] = useState()
     const [networkId, setNetworkId] = useState()
@@ -28,6 +29,9 @@ const OnboardGate = (props) => {
             setWalletSelected(selected)
             if (selected) {
                 await onboard.walletCheck()
+            } else {
+                // send user back to home page if he rejected wallet selection
+                history.push('/')
             }
             setIsOnboarding(false)
         }
