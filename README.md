@@ -6,6 +6,8 @@ Bounty: https://gitcoin.co/issue/dfuse-io/hackathons/2/3953
 
 __Token Allowance Checker__ is running at __https://triplespeeder.github.io/token-allowance-checker/__.
 
+There is also a short screencast (no audio): https://drive.google.com/file/d/1hS05o5LhC5lc9JU9nEdihURikU3AimVi/view
+
 ### The _unlimited approval_ problem
 Many DApps have the habit of requiring you to approve effectively unlimited amount of tokens. This helps
 improving the user experience, as you only have to sign off an approval once and it will be enough for
