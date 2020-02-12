@@ -1,6 +1,6 @@
 import React from 'react'
 import './App.css'
-import {BrowserRouter as Router, Link, Route, Switch} from 'react-router-dom'
+import {HashRouter as Router, Link, Route, Switch} from 'react-router-dom'
 import AllowanceLister from './components/AllowanceLister'
 import OnboardGate from './components/OnboardGate'
 import {Button, Container, Divider, Grid, Header, Icon, List, Menu, Popup, Segment} from 'semantic-ui-react'
@@ -66,7 +66,7 @@ const App = () => {
         </Segment>
 
     return (
-        <Router basename={'/token-allowance-checker'}>
+        <Router>
             {HomepageHeading}
             <OnboardContext>
                 <Switch>
