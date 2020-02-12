@@ -2,7 +2,7 @@ import React, {useState, useEffect, useContext} from 'react'
 import PropTypes from 'prop-types'
 import AddressInput from './AddressInput'
 import {Web3Context} from './OnboardGate'
-import {Link, useHistory} from 'react-router-dom'
+import {Link, useHistory, useParams} from 'react-router-dom'
 import {Button, Container, Form, Grid, Segment} from 'semantic-ui-react'
 
 export const addressInputStates = {
@@ -14,10 +14,15 @@ export const addressInputStates = {
 
 const AddressInputContainer = () => {
     const web3Context = useContext(Web3Context)
+    const addressFromParams = (useParams().address || '')
     const history = useHistory()
     const [addressInputState, setAddressInputState] = useState(addressInputStates.ADDRESS_INITIAL)
-    const [input, setInput] = useState('')
+    const [input, setInput] = useState(
+        addressFromParams ? addressFromParams.toLowerCase() : ''
+            /*(web3Context.address? web3Context.address.toLowerCase() : '')*/
+    )
     const [address, setAddress] = useState('')
+    const [prevWalletAddress, setPrevWalletAddress] = useState(web3Context.address ? web3Context.address.toLowerCase() : '')
 
     // verify address input
     useEffect(() => {
@@ -53,14 +58,22 @@ const AddressInputContainer = () => {
         handleInput()
     }, [input, setAddress, web3Context.web3])
 
-    // accept address from wallet if available
+    // accept address from wallet depending on context
     useEffect(() => {
-        if (web3Context.address !== '') {
-            // setAddress(web3Context.address)
-            setInput(web3Context.address)
-            history.push(`/address/${web3Context.address}`)
+        const newWalletAddress = web3Context.address ? web3Context.address.toLowerCase() : ''
+        // console.log(`fromParams: ${addressFromParams}`)
+        // console.log(`newWallet : ${newWalletAddress}`)
+        // console.log(`prevWallet: ${prevWalletAddress}`)
+        if (newWalletAddress !== '') {
+            if ((addressFromParams === '') || // in this case always take wallet address
+                (newWalletAddress !== prevWalletAddress) // user actively changed wallet address
+            ) {
+                setInput(newWalletAddress)
+                setPrevWalletAddress(newWalletAddress)
+                history.push(`/address/${newWalletAddress}`)
+            }
         }
-    }, [web3Context.address])
+    }, [web3Context.address, prevWalletAddress])
 
 
     const error = (addressInputState === addressInputStates.ADDRESS_INVALID)

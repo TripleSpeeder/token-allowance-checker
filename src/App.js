@@ -42,7 +42,9 @@ const App = () => {
                 <Route path={['/address/:address', '/address']}>
                     <Container>
                         <OnboardGate>
-                            <AddressInputContainer/>
+                            <Segment basic padded>
+                                <AddressInputContainer/>
+                            </Segment>
                             <AllowanceLister/>
                         </OnboardGate>
                     </Container>

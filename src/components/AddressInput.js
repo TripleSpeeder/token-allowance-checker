@@ -22,14 +22,13 @@ const AddressInput = (props) => {
                     onChange={handleChange}
                     value={value}
                     type={'text'}
-                    iconPosition={'left'}
                     action={{
                         type:'Submit',
                         disabled:!success,
                         content:'Go!',
                         positive:true,
                     }}
-                    label={'Address to check'}
+                    label={'Enter address or select in wallet'}
                 />
             </Form.Field>
     )

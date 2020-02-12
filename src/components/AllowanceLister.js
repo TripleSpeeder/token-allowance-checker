@@ -63,8 +63,8 @@ const AllowanceLister = () => {
     const [tokenSpenders, setTokenSpenders] = useState({})
     const [error, setError] = useState('')
     const [address, setAddress] = useState(
-        addressFromParams ? addressFromParams.toLowerCase() :
-            (web3Context.address? web3Context.address.toLowerCase() : '')
+        addressFromParams ? addressFromParams.toLowerCase() : ''
+            /*(web3Context.address? web3Context.address.toLowerCase() : '')*/
     )
 
     useEffect(() => {
