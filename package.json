@@ -1,5 +1,5 @@
 {
-  "name": "allowance-limiter",
+  "name": "TAC",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -28,7 +28,8 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "storybook": "start-storybook -p 9009 -s public",
-    "build-storybook": "build-storybook -s public"
+    "build-storybook": "build-storybook -s public",
+    "deploy": "gh-pages -d build"
   },
   "browserslist": {
     "production": [
@@ -47,6 +48,7 @@
     "@storybook/addon-links": "^5.3.12",
     "@storybook/addons": "^5.3.12",
     "@storybook/preset-create-react-app": "^1.5.2",
-    "@storybook/react": "^5.3.12"
+    "@storybook/react": "^5.3.12",
+    "gh-pages": "^2.2.0"
   }
 }
