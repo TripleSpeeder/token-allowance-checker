@@ -32,8 +32,9 @@ const App = () => {
                     </Menu.Item>
                     <Menu.Menu position='right'>
                         <Menu.Item>
-                            <a href={'https://github.com/TripleSpeeder/allowance-limiter'}
-                               title={'github.com/TripleSpeeder/allowance-limiter'}
+                            <a href={'https://github.com/TripleSpeeder/token-allowance-checker'}
+                               title={'github.com/TripleSpeeder/token-allowance-checker'}
+                               target={'_blank'} rel="noopener noreferrer"
                             >
                                 <Icon name={'github'} size={'big'}/>
                             </a>
@@ -65,7 +66,7 @@ const App = () => {
         </Segment>
 
     return (
-        <Router>
+        <Router basename={'/token-allowance-checker'}>
             {HomepageHeading}
             <OnboardContext>
                 <Switch>
