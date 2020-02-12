@@ -5,7 +5,7 @@ import AddressDisplay from './AddressDisplay'
 import BN from 'bn.js'
 import bn2DisplayString from '@triplespeeder/bn2string'
 import EditAllowanceFormContainer from './EditAllowanceFormContainer'
-import {Web3Context} from './OnboardGate'
+import {Web3Context} from './OnboardContext'
 import TransactionModal from './TransactionModal'
 
 

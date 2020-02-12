@@ -1,7 +1,7 @@
 import React, {useState, useEffect, useContext} from 'react'
 import PropTypes from 'prop-types'
 import AddressInput from './AddressInput'
-import {Web3Context} from './OnboardGate'
+import {Web3Context} from './OnboardContext'
 import {Link, useHistory, useParams} from 'react-router-dom'
 import {Button, Container, Form, Grid, Segment} from 'semantic-ui-react'
 

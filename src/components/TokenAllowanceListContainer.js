@@ -1,6 +1,6 @@
 import React, {ReactElement, useContext, useEffect, useState} from 'react'
 import ERC20Data from '@openzeppelin/contracts/build/contracts/ERC20Detailed.json'
-import {Web3Context} from './OnboardGate'
+import {Web3Context} from './OnboardContext'
 import PropTypes from 'prop-types'
 import TokenAllowanceItem from './TokenAllowanceItem'
 import EditAllowanceFormContainer from './EditAllowanceFormContainer'

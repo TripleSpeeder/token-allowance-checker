@@ -1,7 +1,7 @@
 import React, {useContext, useEffect, useState} from 'react'
 import {useParams} from 'react-router-dom'
 import {createDfuseClient} from '@dfuse/client'
-import {Web3Context} from './OnboardGate'
+import {Web3Context} from './OnboardContext'
 import TokenAllowanceListContainer from './TokenAllowanceListContainer'
 import 'semantic-ui-css/semantic.min.css'
 import {Icon, Message, Segment} from 'semantic-ui-react'

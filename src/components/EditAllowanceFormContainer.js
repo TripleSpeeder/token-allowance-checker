@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import bnToDisplayString from '@triplespeeder/bn2string'
 import {toBaseUnit} from './erc20-decimals-conversion'
 import EditAllowanceForm from './EditAllowanceForm'
-import {Web3Context} from './OnboardGate'
+import {Web3Context} from './OnboardContext'
 
 
 const EditAllowanceFormContainer = ({handleSubmit, handleClose, tokenDecimals, tokenSupply, tokenName, allowance, spender, tokenSymbol, tokenAddress}) => {

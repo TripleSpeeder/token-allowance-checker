@@ -1,76 +1,37 @@
-import React, {useEffect, useState, createContext} from 'react'
-import Onboard from 'bnc-onboard'
-import Web3 from 'web3'
-import {Button, Grid, Header, Icon, Message, Segment} from 'semantic-ui-react'
+import React, {useEffect, useState, useContext} from 'react'
+import {Web3Context} from './OnboardContext'
+import {Icon, Message, Segment} from 'semantic-ui-react'
 import {useHistory} from 'react-router-dom'
-
-const onboardapikey='f4b71bf0-fe50-4eeb-bc2b-b323527ed9e6'
-
-export const Web3Context = createContext({
-    web3: null,
-    address: null,
-    networkId: null
-})
 
 const OnboardGate = (props) => {
     const history = useHistory()
-    const [web3, setWeb3] = useState()
-    const [address, setAddress] = useState()
-    const [networkId, setNetworkId] = useState()
-    const [onboard, setOnboard] = useState()
-    const [isOnboarding, setIsOnboarding] = useState()
+    const web3Context = useContext(Web3Context)
+    const [isOnboarding, setIsOnboarding] = useState(true)
     const [walletSelected, setWalletSelected] = useState(false)
 
     useEffect(() => {
-        const login = async (onboard) => {
+
+        const doLogin = async() => {
             setIsOnboarding(true)
-            console.log(`waiting for walletSelect`)
-            const selected = await onboard.walletSelect()
-            setWalletSelected(selected)
-            if (selected) {
-                await onboard.walletCheck()
-            } else {
+            const result = await web3Context.loginFunction()
+            if (!result) {
                 // send user back to home page if he rejected wallet selection
                 history.push('/')
             }
+            setWalletSelected(result)
             setIsOnboarding(false)
         }
 
-        console.log(`Initializing OnBoard.js...`)
-        const onboard = (Onboard({
-            dappId: onboardapikey,
-            networkId: 1,
-            subscriptions: {
-                wallet: wallet => {
-                    console.log(`${wallet.name} is now connected!`)
-                    setWeb3(new Web3(wallet.provider))
-                },
-                address: address => {
-                    setAddress(address)
-                    console.log(`Address changed to ${address}!`)
-                },
-                network: networkId => {
-                    setNetworkId(networkId)
-                    console.log(`NetworkId change to ${networkId}`)
-                }
-            }
-        }))
-        setOnboard(onboard)
-        login(onboard)
+        if (web3Context.onboard) {
+            doLogin()
+        }
 
-    }, [])
+    }, [web3Context.onboard])
 
-
-    const contextValue = {
-        web3,
-        address,
-        networkId
-    }
-
-    if (walletSelected && web3) {
-        return <Web3Context.Provider value={contextValue}>
+    if (walletSelected && web3Context.web3) {
+        return <React.Fragment>
             {props.children}
-        </Web3Context.Provider>
+        </React.Fragment>
     }
 
     if (isOnboarding) {

@@ -5,6 +5,7 @@ import AllowanceLister from './components/AllowanceLister'
 import OnboardGate from './components/OnboardGate'
 import {Button, Container, Divider, Grid, Header, Icon, List, Menu, Popup, Segment} from 'semantic-ui-react'
 import AddressInputContainer from './components/AddressInputContainer'
+import OnboardContext from './components/OnboardContext'
 
 
 const App = () => {
@@ -66,7 +67,8 @@ const App = () => {
     return (
         <Router>
             {HomepageHeading}
-            <Switch>
+            <OnboardContext>
+                <Switch>
                 <Route path={['/address/:address', '/address']}>
                     <Container>
                         <OnboardGate>
@@ -124,6 +126,7 @@ const App = () => {
 
                 </Route>
             </Switch>
+            </OnboardContext>
             <Segment basic>
                 <Divider></Divider>
                 <Container textAlign={'center'}>
