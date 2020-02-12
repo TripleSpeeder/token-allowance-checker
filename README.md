@@ -1,44 +1,31 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# Token Allowance Checker ("TAC")
+## Introduction
+This is my entry to the Gitcoin ["Sustain web3"](https://gitcoin.co/hackathon/sustain-web3/) hackathon.
 
-## Available Scripts
+Bounty: https://gitcoin.co/issue/dfuse-io/hackathons/2/3953
 
-In the project directory, you can run:
+__Token Allowance Checker__ is running at __https://triplespeeder.github.io/token-allowance-checker/__.
 
-### `npm start`
+### The _unlimited approval_ problem
+Many DApps have the habit of requiring you to approve effectively unlimited amount of tokens. This helps
+improving the user experience, as you only have to sign off an approval once and it will be enough for
+all future transactions.
 
-Runs the app in the development mode.<br />
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+However this also means that the DApp (or the person/entity controlling it) can at any time transfer
+all of your tokens, without requiring any further approval.
 
-The page will reload if you make edits.<br />
-You will also see any lint errors in the console.
+In addition, there is no concept of expiring approvals. Once approved, the approval will remain forever.
+If you do not trust a DApp or its operators anymore, there is usually no easy way to remove the approval.
 
-### `npm test`
+## Empowering the user
+Token Allowance Checker scans the complete Ethereum transaction history for ERC20-Approvals made by the
+provided address. It collects all ERC20 token contracts and any `spender` addresses that have been 
+approved by the user in the past.
 
-Launches the test runner in the interactive watch mode.<br />
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+This information is displayed to the user, together with the up-to-date allowance amount.
 
-### `npm run build`
+For all entries, the user can edit or delete the allowance.
 
-Builds the app for production to the `build` folder.<br />
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.<br />
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (Webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
+## Technologies used
+ - [dfuse](https://www.dfuse.io/) to search for allowances approved in the past.
+ - [Onboard.js](https://www.blocknative.com/onboard) for setting up web3 provider and accessing user wallet/accounts
