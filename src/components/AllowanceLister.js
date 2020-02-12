@@ -1,10 +1,9 @@
-import React, {ReactElement, useContext, useEffect, useState} from 'react'
-import PropTypes from 'prop-types'
+import React, {useContext, useEffect, useState} from 'react'
 import { createDfuseClient } from '@dfuse/client'
 import {Web3Context} from './OnboardGate'
 import TokenAllowanceListContainer from './TokenAllowanceListContainer'
 import 'semantic-ui-css/semantic.min.css'
-import {Button, Icon, Message, Segment} from 'semantic-ui-react'
+import {Icon, Message, Segment} from 'semantic-ui-react'
 
 const topicHashApprove = '0x8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925'
 const eventABI = [
@@ -92,8 +91,13 @@ const AllowanceLister = () => {
                 }
                 edges.forEach(({node}) => {
                     node.matchingLogs.forEach((logEntry) => {
+                        // Seems the dfuse query based on topic is not working correctly.
+                        // Double-check that the logEntry actually is of the expected topic.
+                        if (logEntry.topics[0] !== topicHashApprove) {
+                            console.warn(`Skipping wrong topic ${logEntry.topics[0]}`)
+                            return
+                        }
                         const decoded = web3Context.web3.eth.abi.decodeLog(eventABI, logEntry.data, logEntry.topics.slice(1))
-                        // console.log(decoded)
                         // double-check owner - Is this necessary?
                         if (decoded.owner.toLowerCase() === address) {
                             // Add tokenContract if its new
@@ -118,6 +122,7 @@ const AllowanceLister = () => {
                     setTokenSpenders(tokenSpenders)
                 })
             } catch(errors) {
+                console.log(errors)
                 if (!cancelled) {
                     setError(JSON.stringify(errors))
                 }
