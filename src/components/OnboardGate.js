@@ -26,11 +26,9 @@ const OnboardGate = (props) => {
             console.log(`waiting for walletSelect`)
             const selected = await onboard.walletSelect()
             setWalletSelected(selected)
-            /*
             if (selected) {
                 await onboard.walletCheck()
             }
-             */
             setIsOnboarding(false)
         }
 

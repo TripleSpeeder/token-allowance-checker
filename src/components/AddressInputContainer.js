@@ -13,7 +13,7 @@ export const addressInputStates = {
 }
 
 const AddressInputContainer = () => {
-    const {web3} = useContext(Web3Context)
+    const web3Context = useContext(Web3Context)
     const history = useHistory()
     const [addressInputState, setAddressInputState] = useState(addressInputStates.ADDRESS_INITIAL)
     const [input, setInput] = useState('')
@@ -32,7 +32,7 @@ const AddressInputContainer = () => {
                     // resolve entered ENS name
                     setAddressInputState(addressInputStates.ADDRESS_RESOLVING)
                     try {
-                        const resolvedAddress = await web3.eth.ens.getAddress(input)
+                        const resolvedAddress = await web3Context.web3.eth.ens.getAddress(input)
                         console.log(`Resolved ${input} to ${resolvedAddress}`)
                         setAddressInputState(addressInputStates.ADDRESS_VALID)
                         setAddress(resolvedAddress)
@@ -51,7 +51,17 @@ const AddressInputContainer = () => {
             }
         }
         handleInput()
-    }, [input, setAddress, web3])
+    }, [input, setAddress, web3Context.web3])
+
+    // accept address from wallet if available
+    useEffect(() => {
+        if (web3Context.address !== '') {
+            // setAddress(web3Context.address)
+            setInput(web3Context.address)
+            history.push(`/address/${web3Context.address}`)
+        }
+    }, [web3Context.address])
+
 
     const error = (addressInputState === addressInputStates.ADDRESS_INVALID)
     const loading = (addressInputState === addressInputStates.ADDRESS_RESOLVING)

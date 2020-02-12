@@ -20,15 +20,18 @@ const App = () => {
             >
                 <Header
                     as='h1'
-                    content='Token Allowance checker'
                     inverted={false}
-                    subheader='Keep allowances in check!'
                     style={{
                         fontSize: '2em',
                         fontWeight: 'normal',
                         marginTop: '0.5em',
                     }}
-                />
+                >
+                    <Link to={'/'}>Token Allowance Checker</Link>
+                    <Header.Subheader>
+                        Keep allowances in check!
+                    </Header.Subheader>
+                </Header>
             </Container>
         </Segment>
 
@@ -45,8 +48,7 @@ const App = () => {
                     </Container>
                 </Route>
                 <Route path={'/'}>
-                    <Container>
-                        <Segment basic style={{ paddingTop: '4em' }} vertical>
+                    <Segment basic vertical style={{ paddingTop: '4em' }}>
                         <Grid container stackable verticalAlign='top'>
                             <Grid.Row>
                                 <Grid.Column width={8}>
@@ -86,8 +88,10 @@ const App = () => {
                             </Grid.Row>
                         </Grid>
                     </Segment>
-                        <Button as={Link} to={`/address/`} positive size={'big'}>test me</Button>
-                    </Container>
+                    <Segment basic textAlign={'center'}>
+                        <Button as={Link} to={`/address/`} positive size={'massive'}>Start</Button>
+                    </Segment>
+
                 </Route>
             </Switch>
 
