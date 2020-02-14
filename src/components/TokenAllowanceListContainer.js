@@ -80,7 +80,7 @@ const TokenAllowanceListContainer = ({contractAddress, owner, spenders}) => {
         return () => {
             cancelled = true
         }
-    }, [web3Context.web3, contractAddress, owner, spenders])
+    }, [web3Context.web3, web3Context.networkId, contractAddress, owner, spenders])
 
     useEffect(() => {
         let cancelled = false

@@ -20,6 +20,7 @@ const TokenAllowanceItem = ({tokenName, tokenAddress, tokenDecimals, tokenSupply
     const [transactionHash, setTransactionHash] = useState('')
     const [confirming, setConfirming] = useState(false)
 
+
     const openEditModal = (spender) => {
         setEditSpender(spender)
         setShowEditModal(true)
@@ -102,15 +103,17 @@ const TokenAllowanceItem = ({tokenName, tokenAddress, tokenDecimals, tokenSupply
         )
     }
 
-    let headline = tokenName
-    if (headline === '') {
-        headline = `Unknown ERC20 at ${tokenAddress}`
+    let tokenDisplayString = tokenName
+    if (tokenDisplayString === '') {
+        tokenDisplayString = `Unknown ERC20`
     }
     const roundToDecimals = new BN(2)
     if (BN.isBN(ownerBalance) && BN.isBN(tokenDecimals)) {
         const {rounded} = bn2DisplayString({value: ownerBalance, decimals: tokenDecimals, roundToDecimals})
-        headline += ` (current balance: ${rounded})`
+        tokenDisplayString += ` (current balance: ${rounded})`
     }
+
+    let headline = <AddressDisplay address={tokenAddress} ensName={tokenDisplayString}/>
 
     return (
         <React.Fragment>

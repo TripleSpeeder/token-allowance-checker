@@ -28,7 +28,7 @@ const AddressInput = (props) => {
                         content:'Go!',
                         positive:true,
                     }}
-                    label={'Enter address or select in wallet'}
+                    label={'Enter address/ENS name or select in wallet'}
                 />
             </Form.Field>
     )

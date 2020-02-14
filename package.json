@@ -21,6 +21,7 @@
     "react-scripts": "3.3.1",
     "semantic-ui-css": "^2.4.1",
     "semantic-ui-react": "^0.88.2",
+    "use-clippy": "^1.0.5",
     "web3": "^1.2.6"
   },
   "scripts": {
