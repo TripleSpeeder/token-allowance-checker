@@ -20,6 +20,25 @@ const OnboardContext = (props) => {
     const [networkId, setNetworkId] = useState()
     const [onboard, setOnboard] = useState()
     const [loggedIn, setLoggedIn] = useState(false)
+    const [selected, setSelected] = useState(false)
+
+    const wallets = [
+        { walletName: 'metamask', preferred: true },
+        { walletName: 'coinbase', preferred: true },
+        {
+            walletName: 'walletConnect',
+            infuraKey: '7f230a5ca832426796454c28577d93f2',
+            preferred: true
+        },
+        { walletName: 'trust', preferred: true },
+        { walletName: 'dapper', preferred: true },
+        { walletName: 'authereum', preferred: true },
+        { walletName: 'opera' },
+        { walletName: 'status' },
+        { walletName: 'operaTouch' },
+        { walletName: 'torus' },
+        { walletName: 'status' }
+    ]
 
     useEffect(() => {
         console.log(`Initializing OnBoard.js...`)
@@ -39,21 +58,43 @@ const OnboardContext = (props) => {
                     setNetworkId(networkId)
                     console.log(`NetworkId change to ${networkId}`)
                 }
+            },
+            walletSelect: {
+                wallets: wallets
             }
         }))
         setOnboard(onboard)
     }, [])
 
+    const selectWallet = async() => {
+        if (onboard) {
+            if (!selected) {
+                console.log('Selecting wallet...')
+                const selected = await onboard.walletSelect()
+                setSelected(selected)
+                return selected
+            } else {
+                console.log('Wallet already selected.')
+                return true
+            }
+        } else {
+            console.log(`Trying select wallet without onboard`)
+            return false
+        }
+    }
+
     const login = async () => {
         if (onboard) {
+            if (!selected) {
+                const success = await selectWallet()
+                if (!success)
+                    return false
+            }
             if (!loggedIn) {
                 console.log(`logging in`)
-                const selected = await onboard.walletSelect()
-                if (selected) {
-                    await onboard.walletCheck()
-                    setLoggedIn(true)
-                }
-                return selected
+                const result = await onboard.walletCheck()
+                setLoggedIn(result)
+                return result
             } else {
                 console.log(`already logged in`)
                 return true
@@ -70,11 +111,11 @@ const OnboardContext = (props) => {
         web3,
         address,
         networkId,
-        loginFunction: login
+        loginFunction: login,
+        selectFunction: selectWallet
     }
 
     if (onboard) {
-        console.log('Onboard initialized!')
         return <Web3Context.Provider value={contextValue}>
             {props.children}
         </Web3Context.Provider>

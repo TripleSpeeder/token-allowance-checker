@@ -27,6 +27,14 @@ const TokenAllowanceItem = ({tokenName, tokenAddress, tokenDecimals, tokenSupply
     }
 
     const handleSubmitEditAllowance = async (newAllowance) => {
+        // make sure wallet is ready to transact before continuing
+        const loginResult = await web3Context.loginFunction()
+        if (!loginResult) {
+            console.log(`User failed to login. Cant create transaction.`)
+            return
+        } else {
+            console.log(`User successfully logged into wallet`)
+        }
         console.log(`Setting new allowance ${newAllowance} for ${editSpender}`)
         setTransactionError('')
         setTransactionHash('')
