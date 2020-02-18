@@ -4,7 +4,7 @@ This is my entry to the Gitcoin ["Sustain web3"](https://gitcoin.co/hackathon/su
 
 Bounty: https://gitcoin.co/issue/dfuse-io/hackathons/2/3953
 
-__Token Allowance Checker__ is running at __https://triplespeeder.github.io/token-allowance-checker/__.
+__Token Allowance Checker__ is running at __https://tac.dappstar.io__.
 
 There is also a short screencast (no audio): https://drive.google.com/file/d/1hS05o5LhC5lc9JU9nEdihURikU3AimVi/view
 
