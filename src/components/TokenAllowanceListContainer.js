@@ -94,7 +94,7 @@ const TokenAllowanceListContainer = ({contractAddress, owner, spenders}) => {
                     const reverseName = await ResolverContract.methods.name(nh).call()
                     foundNames[spender] = reverseName
                 } catch(error) {
-                    console.log(`No reverse name found for ${spender}`)
+                    // console.log(`No reverse name found for ${spender}`)
                 }
             }
             if (cancelled) {

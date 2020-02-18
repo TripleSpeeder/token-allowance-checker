@@ -12,33 +12,37 @@ const eventABI = [
         'indexed': true,
         'internalType': 'address',
         'name': 'owner',
-        'type': 'address'
+        'type': 'address',
     },
     {
         'indexed': true,
         'internalType': 'address',
         'name': 'spender',
-        'type': 'address'
+        'type': 'address',
     },
     {
         'indexed': false,
         'internalType': 'uint256',
         'name': 'value',
-        'type': 'uint256'
-    }
+        'type': 'uint256',
+    },
 ]
 
 const client = createDfuseClient({
     apiKey: 'server_217e99c3f906df80430c3c5f4366c8d0',
     network: 'mainnet.eth.dfuse.io',
 })
-const searchTransactions = `query ($query: String! $limit: Int64!) {
+const searchTransactions = `query ($query: String! $limit: Int64! $cursor: String) {
       searchTransactions(
         indexName: LOGS, 
         query: $query, 
         limit: $limit, 
-        sort: DESC
+        sort: DESC,
+        cursor: $cursor,
       ) {
+        pageInfo {
+          endCursor
+        }
         edges {
           node {
             block {
@@ -63,8 +67,9 @@ const AllowanceLister = () => {
     const [tokenSpenders, setTokenSpenders] = useState({})
     const [error, setError] = useState('')
     const [address, setAddress] = useState(
-        addressFromParams ? addressFromParams.toLowerCase() : ''
+        addressFromParams ? addressFromParams.toLowerCase() : '',
     )
+    const [page, setPage] = useState(0)
 
     useEffect(() => {
         setAddress(addressFromParams ? addressFromParams.toLowerCase() : '')
@@ -74,36 +79,52 @@ const AllowanceLister = () => {
         document.title = `TAC - ${address}`
     }, [address])
 
-
     useEffect(() => {
         let cancelled = false
         const collectAllowances = async () => {
             setLoading(true)
             setError('')
+            setPage(0)
+            let cursor = ''
 
             const tokenSpenders = {}
             // Perform query
             try {
-                const response = await client.graphql(searchTransactions, {
-                    variables: {
-                        limit: '100',
-                        query: `topic.0:${topicHashApprove} topic.1:${address}`
+                // search page by page until no more results are found
+                let searchPage = 0
+                let numPageResults = 0
+                let allEdges = []
+                do {
+                    console.log(`Getting page ${searchPage}. Last page result: ${numPageResults}. Total results so far: ${allEdges.length}`)
+                    const response = await client.graphql(searchTransactions, {
+                        variables: {
+                            limit: '50',
+                            query: `topic.0:${topicHashApprove} topic.1:${address}`,
+                            cursor: cursor,
+                        },
+                    })
+                    if (cancelled) {
+                        console.log(`Received stale response.`)
+                        return
                     }
-                })
-                if (cancelled) {
-                    console.log(`Received stale response.`)
-                    return
-                }
-                // any errors reported?
-                if (response.errors) {
-                    throw response.errors
-                }
-                // get actual results
-                const edges = response.data.searchTransactions.edges || []
-                if (edges.length <= 0) {
+                    // any errors reported?
+                    if (response.errors) {
+                        throw response.errors
+                    }
+                    // get start cursor for next page
+                    cursor = response.data.searchTransactions.pageInfo.endCursor
+                    // get actual results
+                    const edges = response.data.searchTransactions.edges || []
+                    numPageResults = edges.length
+                    allEdges = allEdges.concat(edges)
+                    searchPage++
+                    setPage(searchPage)
+                } while (numPageResults>0)
+
+                if (allEdges.length <= 0) {
                     console.log(`No Approve() calls found for ${address}`)
                 }
-                edges.forEach(({node}) => {
+                allEdges.forEach(({node}) => {
                     node.matchingLogs.forEach((logEntry) => {
                         // Seems the dfuse query based on topic is not working correctly.
                         // Double-check that the logEntry actually is of the expected topic.
@@ -135,7 +156,7 @@ const AllowanceLister = () => {
                     })
                     setTokenSpenders(tokenSpenders)
                 })
-            } catch(errors) {
+            } catch (errors) {
                 console.log(errors)
                 if (!cancelled) {
                     setError(JSON.stringify(errors))
@@ -159,7 +180,7 @@ const AllowanceLister = () => {
         return (
             <Segment basic padded='very' textAlign={'center'}>
                 <Message info icon size={'huge'}>
-                    <Icon name='info' />
+                    <Icon name='info'/>
                     <Message.Content>
                         <Message.Header>Enter an address to start!</Message.Header>
                     </Message.Content>
@@ -172,11 +193,11 @@ const AllowanceLister = () => {
         return (
             <Segment basic padded='very' textAlign={'center'}>
                 <Message icon warning size={'huge'}>
-                    <Icon name='circle notched' loading />
+                    <Icon name='circle notched' loading/>
                     <Message.Content>
-                        <Message.Header>Please wait</Message.Header>
+                        <Message.Header>Please wait while loading events</Message.Header>
                         <p>Checking address: {address}</p>
-                        {`Querying dfuse API for ERC20 Approvals...`}
+                        <div>Querying dfuse API for ERC20 Approvals, getting page {page+1}...</div>
                     </Message.Content>
                 </Message>
             </Segment>
@@ -187,7 +208,7 @@ const AllowanceLister = () => {
         return (
             <Segment basic padded='very' textAlign={'center'}>
                 <Message error icon size={'huge'}>
-                    <Icon name='exclamation triangle' />
+                    <Icon name='exclamation triangle'/>
                     <Message.Content>
                         <Message.Header>Error</Message.Header>
                         {error}
@@ -201,7 +222,7 @@ const AllowanceLister = () => {
         return (
             <Segment basic padded='very' textAlign={'center'}>
                 <Message success icon size={'huge'}>
-                    <Icon name='info' />
+                    <Icon name='info'/>
                     <Message.Content>
                         <Message.Header>No Approvals</Message.Header>
                         Address {address} has no Approvals.
@@ -218,14 +239,14 @@ const AllowanceLister = () => {
                 key={key}
                 owner={address}
                 spenders={value}
-                contractAddress={key}/>
+                contractAddress={key}/>,
         )
     }
 
     return (
         <React.Fragment>
             <Segment basic>
-                <h2>{address} has these allowances</h2>
+                <h2>Allowances of {address}:</h2>
             </Segment>
             {tokens}
         </React.Fragment>
