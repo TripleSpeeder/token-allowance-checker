@@ -64,7 +64,6 @@ const AllowanceLister = () => {
     const [error, setError] = useState('')
     const [address, setAddress] = useState(
         addressFromParams ? addressFromParams.toLowerCase() : ''
-            /*(web3Context.address? web3Context.address.toLowerCase() : '')*/
     )
 
     useEffect(() => {
@@ -87,8 +86,8 @@ const AllowanceLister = () => {
             try {
                 const response = await client.graphql(searchTransactions, {
                     variables: {
-                        limit: '10',
-                        query: `signer:${address} method:'approve(address,uint256)' topic.0:${topicHashApprove}`,
+                        limit: '100',
+                        query: `topic.0:${topicHashApprove} topic.1:${address}`
                     }
                 })
                 if (cancelled) {
