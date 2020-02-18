@@ -25,6 +25,7 @@ const TokenAllowanceListContainer = ({contractAddress, owner, spenders}) => {
     const [loading, setLoading] = useState(true)
     const [reverseNames, setReverseNames] = useState({})
     const [ownerBalance, setOwnerBalance] = useState()
+    const [erc20Compliant, setErc20Compliant] = useState(true)
 
     useEffect(() => {
         let cancelled = false
@@ -32,6 +33,7 @@ const TokenAllowanceListContainer = ({contractAddress, owner, spenders}) => {
             setLoading(true)
 
             // initialize contract
+            let isCompliant = true
             const erc20Contract = contract(ERC20Data)
             erc20Contract.setProvider(web3Context.web3.currentProvider)
             const contractInstance = await erc20Contract.at(contractAddress)
@@ -39,9 +41,9 @@ const TokenAllowanceListContainer = ({contractAddress, owner, spenders}) => {
             let tokenSymbol = ''
             // Some contracts like MKR and SAI do not implement the correct ERC20 name and symbol.
             // Get their data from hardocded fallback
-            if (Object.keys(wellKnownContracts[web3Context.networkId]).includes(contractAddress)) {
-                tokenName = wellKnownContracts[web3Context.networkId][contractAddress].name
-                tokenSymbol = wellKnownContracts[web3Context.networkId][contractAddress].symbol
+            if (Object.keys(wellKnownContracts[web3Context.networkId]).includes(contractAddress.toLowerCase())) {
+                tokenName = wellKnownContracts[web3Context.networkId][contractAddress.toLowerCase()].name
+                tokenSymbol = wellKnownContracts[web3Context.networkId][contractAddress.toLowerCase()].symbol
             } else {
                 try {
                     tokenName = await contractInstance.name()
@@ -52,11 +54,23 @@ const TokenAllowanceListContainer = ({contractAddress, owner, spenders}) => {
                     an issue to add this token at https://github.com/TripleSpeeder/token-allowance-checker/issues!`)
                 }
             }
-            const decimals = await contractInstance.decimals()
-            const totalSupply = await contractInstance.totalSupply()
-            const balance = await contractInstance.balanceOf(owner)
+            let decimals = web3Context.web3.utils.toBN('0')
+            try {
+                decimals = await contractInstance.decimals()
+            } catch(error) {
+                console.warn(`Contract at ${contractAddress} does not provide decimals(). Assuming 0.`)
+            }
+            let totalSupply, balance
+            try {
+                totalSupply = await contractInstance.totalSupply()
+                balance = await contractInstance.balanceOf(owner)
+            } catch (error) {
+                console.warn(`Contract at ${contractAddress} is not ERC20. Ignoring.`)
+                isCompliant = false
+            }
             if (cancelled)
                 return
+            setErc20Compliant(isCompliant)
             setContractInstance(contractInstance)
             setTokenDecimals(decimals)
             setTokenSupply(totalSupply)
@@ -66,14 +80,15 @@ const TokenAllowanceListContainer = ({contractAddress, owner, spenders}) => {
 
             // for each allowedAddress, get current allowance of spender
             const allowances = {}
-            for (const spender of spenders) {
-                const allowance = await contractInstance.allowance(owner, spender)
-                if (cancelled)
-                    return
-                allowances[spender] = allowance
+            if (isCompliant) {
+                for (const spender of spenders) {
+                    const allowance = await contractInstance.allowance(owner, spender)
+                    if (cancelled)
+                        return
+                    allowances[spender] = allowance
+                }
+                setAddressAllowances(allowances)
             }
-            setAddressAllowances(allowances)
-
             setLoading(false)
         }
         getAllowances()
@@ -111,8 +126,8 @@ const TokenAllowanceListContainer = ({contractAddress, owner, spenders}) => {
     }, [web3Context.web3, spenders])
 
     return (
-        <React.Fragment>
-            <TokenAllowanceItem
+        <>
+            {erc20Compliant && <TokenAllowanceItem
                 tokenName={tokenName}
                 tokenAddress={contractAddress}
                 tokenDecimals={tokenDecimals}
@@ -124,8 +139,8 @@ const TokenAllowanceListContainer = ({contractAddress, owner, spenders}) => {
                 spenderENSNames={reverseNames}
                 allowances={addressAllowances}
                 tokenContractInstance={contractInstance}
-            />
-        </React.Fragment>
+            />}
+        </>
     )
 }
 
