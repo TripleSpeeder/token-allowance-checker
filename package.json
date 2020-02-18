@@ -2,7 +2,7 @@
   "name": "TAC",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://triplespeeder.github.io/token-allowance-checker/",
+  "homepage": "https://tac.dappstar.io",
   "dependencies": {
     "@dfuse/client": "^0.3.8",
     "@openzeppelin/contracts": "^2.5.0",
