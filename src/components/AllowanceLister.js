@@ -29,7 +29,7 @@ const eventABI = [
 ]
 
 const client = createDfuseClient({
-    apiKey: 'server_217e99c3f906df80430c3c5f4366c8d0',
+    apiKey: 'web_085aeaac9c520204b1a9dcaa357e5460',
     network: 'mainnet.eth.dfuse.io',
 })
 const searchTransactions = `query ($query: String! $limit: Int64! $cursor: String) {
