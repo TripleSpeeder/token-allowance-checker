@@ -9,7 +9,7 @@
       "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
     }
   },
-    "scripts": {
+  "scripts": {
     "start": "react-scripts start",
     "build": "PUBLIC_URL='.' react-scripts build",
     "test": "react-scripts test",
@@ -42,13 +42,16 @@
   "devDependencies": {
     "@commitlint/cli": "^8.3.5",
     "@commitlint/config-conventional": "^8.3.4",
+    "@semantic-release/changelog": "^5.0.0",
+    "@semantic-release/git": "^9.0.0",
     "@storybook/addon-actions": "^5.3.12",
     "@storybook/addon-links": "^5.3.12",
     "@storybook/addons": "^5.3.12",
     "@storybook/preset-create-react-app": "^1.5.2",
     "@storybook/react": "^5.3.12",
     "gh-pages": "^2.2.0",
-    "husky": "^4.2.3"
+    "husky": "^4.2.3",
+    "semantic-release": "^17.0.4"
   },
   "browserslist": {
     "production": [
