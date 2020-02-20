@@ -14,12 +14,12 @@ const OnboardGate = (props) => {
         const doLogin = async() => {
             setIsOnboarding(true)
             const result = await web3Context.loginFunction()
+            setWalletSelected(result)
+            setIsOnboarding(false)
             if (!result) {
                 // send user back to home page if he rejected wallet selection
                 history.push('/')
             }
-            setWalletSelected(result)
-            setIsOnboarding(false)
         }
 
         if (web3Context.onboard) {
