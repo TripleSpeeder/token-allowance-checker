@@ -1,8 +1,23 @@
 {
-  "name": "TAC",
-  "version": "0.1.0",
+  "name": "Token Allowance Checker",
+  "version": "0.0.0",
   "private": true,
   "homepage": "https://tac.dappstar.io",
+  "repository": "github:TripleSpeeder/token-allowance-checker",
+  "husky": {
+    "hooks": {
+      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
+    }
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "PUBLIC_URL='.' react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject",
+    "storybook": "start-storybook -p 9009 -s public",
+    "build-storybook": "build-storybook -s public",
+    "deploy": "gh-pages -d build"
+  },
   "dependencies": {
     "@dfuse/client": "^0.3.8",
     "@openzeppelin/contracts": "^2.5.0",
@@ -24,14 +39,19 @@
     "use-clippy": "^1.0.5",
     "web3": "^1.2.6"
   },
-  "scripts": {
-    "start": "react-scripts start",
-    "build": "PUBLIC_URL='.' react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject",
-    "storybook": "start-storybook -p 9009 -s public",
-    "build-storybook": "build-storybook -s public",
-    "deploy": "gh-pages -d build"
+  "devDependencies": {
+    "@commitlint/cli": "^8.3.5",
+    "@commitlint/config-conventional": "^8.3.4",
+    "@semantic-release/changelog": "^5.0.0",
+    "@semantic-release/git": "^9.0.0",
+    "@storybook/addon-actions": "^5.3.12",
+    "@storybook/addon-links": "^5.3.12",
+    "@storybook/addons": "^5.3.12",
+    "@storybook/preset-create-react-app": "^1.5.2",
+    "@storybook/react": "^5.3.12",
+    "gh-pages": "^2.2.0",
+    "husky": "^4.2.3",
+    "semantic-release": "^17.0.4"
   },
   "browserslist": {
     "production": [
@@ -44,13 +64,5 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  },
-  "devDependencies": {
-    "@storybook/addon-actions": "^5.3.12",
-    "@storybook/addon-links": "^5.3.12",
-    "@storybook/addons": "^5.3.12",
-    "@storybook/preset-create-react-app": "^1.5.2",
-    "@storybook/react": "^5.3.12",
-    "gh-pages": "^2.2.0"
   }
 }
