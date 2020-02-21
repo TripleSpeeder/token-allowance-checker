@@ -1,0 +1,17 @@
+os: linux
+language: node_js
+node_js: 12
+jobs:
+  include:
+    - name: "Semantic Release"
+      script:
+        - npm run build
+        - npx semantic-release
+      deploy:
+        provider: pages
+        skip_cleanup: true
+        token: $GITHUB_TOKEN
+        keep_history: true
+        local_dir: build
+        on:
+          branch: master
