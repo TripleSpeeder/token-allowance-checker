@@ -1,6 +1,6 @@
 {
   "name": "TAC",
-  "version": "0.0.0",
+  "version": "0.0.0development",
   "private": true,
   "homepage": "https://tac.dappstar.io",
   "repository": "github:TripleSpeeder/token-allowance-checker",
