@@ -1,6 +1,6 @@
 os: linux
 language: node_js
-node_js: 12
+node_js: 10
 jobs:
   include:
     - name: "Semantic Release"
