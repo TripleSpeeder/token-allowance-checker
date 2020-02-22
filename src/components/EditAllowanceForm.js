@@ -5,7 +5,7 @@ import {Form, Grid, Header, Input, Message, Modal} from 'semantic-ui-react'
 const EditAllowanceForm = ({showModal, tokenName, tokenAddress, spenderAddress, currentAllowance, newAllowance, handleClose, handleSubmit, handleChange}) => {
     let headline = tokenName
     if (headline === '') {
-        headline = `Unknown ERC20 at ${tokenAddress}`
+        headline = `Unnamed ERC20 at ${tokenAddress}`
     }
     return (
         <Modal
