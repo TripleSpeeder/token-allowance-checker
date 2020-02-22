@@ -11,7 +11,18 @@ import TransactionModal from './TransactionModal'
 
 const unlimitedAllowance = new BN(2).pow(new BN(256)).subn(1)
 
-const TokenAllowanceItem = ({tokenName, tokenAddress, tokenDecimals, tokenSupply, tokenSymbol, tokenContractInstance, ownerBalance, owner, spenders, spenderENSNames, allowances}) => {
+const TokenAllowanceItem = ({ tokenName,
+                                tokenAddress,
+                                tokenDecimals,
+                                tokenSupply,
+                                tokenSymbol,
+                                tokenContractInstance,
+                                ownerBalance,
+                                owner,
+                                spenders,
+                                spenderENSNames,
+                                allowances,
+                                showZeroAllowances }) => {
     const web3Context = useContext(Web3Context)
     const [editSpender, setEditSpender] = useState('')
     const [showEditModal, setShowEditModal] = useState(false)
@@ -44,8 +55,8 @@ const TokenAllowanceItem = ({tokenName, tokenAddress, tokenDecimals, tokenSupply
         let result
         try {
             result = await tokenContractInstance.approve(editSpender, newAllowance.toString(), {
-                    from: web3Context.address
-                })
+                from: web3Context.address,
+            })
             setTransactionHash(result.tx)
         } catch (e) {
             console.log(`Error while approving: ${e.message}`)
@@ -67,15 +78,14 @@ const TokenAllowanceItem = ({tokenName, tokenAddress, tokenDecimals, tokenSupply
         let allowanceElement
         let criticalAllowance = false
         let editEnabled = false
+        let value = undefined
         let loaded = BN.isBN(allowances[spender]) && BN.isBN(tokenDecimals) && BN.isBN(tokenSupply)
         if (loaded) {
-            const value = allowances[spender]
+            value = allowances[spender]
             // wallet account has to be owner in order to edit allowance
             editEnabled = (owner.toLowerCase() === web3Context.address.toLowerCase())
             criticalAllowance = (value.eq(unlimitedAllowance)) || (value.gte(tokenSupply))
             if (criticalAllowance) {
-                // \u221E is 'infinity'
-                // allowanceElement = <span>{'\u221E'}</span>
                 allowanceElement = <em>unlimited</em>
             } else {
                 const decimals = tokenDecimals
@@ -86,29 +96,39 @@ const TokenAllowanceItem = ({tokenName, tokenAddress, tokenDecimals, tokenSupply
         } else {
             allowanceElement = <Loader active inline size={'mini'}/>
         }
-        rows.push(
-            <Table.Row key={spender}>
-                <Table.Cell>
-                    <AddressDisplay address={spender} ensName={spenderENSNames[spender]}/>
-                </Table.Cell>
-                <Table.Cell negative={criticalAllowance}>
-                    {allowanceElement}
-                </Table.Cell>
-                <Table.Cell>
-                    <Popup
-                        content={editEnabled ? 'edit allowance' : 'Only address owner can edit allowance'}
-                        trigger={<span><Button
-                            icon={'edit'}
-                            size={'small'}
-                            compact
-                            primary
-                            disabled={!editEnabled}
-                            onClick={()=>{openEditModal(spender)}}
-                        /></span>}
-                    />
-                </Table.Cell>
-            </Table.Row>
-        )
+
+        const isZeroAllowance = (value && value.isZero())
+        if (!(isZeroAllowance && !showZeroAllowances)) {
+            rows.push(
+                <Table.Row key={`${tokenAddress}-${spender}`}>
+                    <Table.Cell>
+                        <AddressDisplay address={spender} ensName={spenderENSNames[spender]}/>
+                    </Table.Cell>
+                    <Table.Cell negative={criticalAllowance}>
+                        {allowanceElement}
+                    </Table.Cell>
+                    <Table.Cell>
+                        <Popup
+                            content={editEnabled ? 'edit allowance' : 'Only address owner can edit allowance'}
+                            trigger={<span><Button
+                                icon={'edit'}
+                                size={'small'}
+                                compact
+                                primary
+                                disabled={!editEnabled}
+                                onClick={() => {
+                                    openEditModal(spender)
+                                }}
+                            /></span>}
+                        />
+                    </Table.Cell>
+                </Table.Row>
+            )
+        }
+    }
+
+    if (rows.length === 0) {
+        return null
     }
 
     let tokenDisplayString = tokenName
@@ -142,7 +162,6 @@ const TokenAllowanceItem = ({tokenName, tokenAddress, tokenDecimals, tokenSupply
                     </Table.Body>
                 </Table>
             </Segment>
-
             {showEditModal && <EditAllowanceFormContainer
                 spender={editSpender}
                 tokenDecimals={tokenDecimals}
@@ -177,6 +196,7 @@ TokenAllowanceItem.propTypes = {
     spenders: PropTypes.array.isRequired,
     spenderENSNames: PropTypes.object.isRequired,
     allowances: PropTypes.object.isRequired,
+    showZeroAllowances: PropTypes.bool.isRequired,
 }
 
 

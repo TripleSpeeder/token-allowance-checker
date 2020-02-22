@@ -6,6 +6,7 @@ import OnboardGate from './components/OnboardGate'
 import {Button, Container, Divider, Grid, Header, Icon, List, Menu, Popup, Segment} from 'semantic-ui-react'
 import AddressInputContainer from './components/AddressInputContainer'
 import OnboardContext from './components/OnboardContext'
+import pkg from '../package.json'
 
 
 const App = () => {
@@ -129,8 +130,9 @@ const App = () => {
             </Switch>
             </OnboardContext>
             <Segment basic>
-                <Divider></Divider>
+                <Divider/>
                 <Container textAlign={'center'}>
+                    <span style={{ fontSize: '1em', float: 'right' }}><Icon name={'copyright outline'}/> Michael Bauer</span>
                     <List horizontal >
                         <List.Item as={'a'} href={'https://twitter.com/TripleSpeeder'} target={'_blank'}>
                             <Popup content='@triplespeeder' trigger={<Icon size={'big'} name={'twitter'}/>}/>
@@ -148,13 +150,10 @@ const App = () => {
                             <Popup content='u/TripleSpeeder' trigger={<Icon size={'big'} name={'reddit'}/>}/>
                         </List.Item>
                     </List>
-                </Container>
-                <Container textAlign={'center'}>
-                    <p style={{ fontSize: '1em', float: 'right' }}><Icon name={'copyright outline'}/> Michael Bauer</p>
+                    <span style={{ fontSize: '1em', float: 'left' }}>{pkg.version}</span>
                 </Container>
             </Segment>
         </Router>
-
     )
 }
 

@@ -14,6 +14,24 @@ export const Web3Context = createContext({
     loginFunction: null,
 })
 
+const wallets = [
+    { walletName: 'metamask', preferred: true },
+    { walletName: 'coinbase', preferred: true },
+    {
+        walletName: 'walletConnect',
+        infuraKey: '7f230a5ca832426796454c28577d93f2',
+        preferred: true
+    },
+    { walletName: 'trust', preferred: true },
+    { walletName: 'dapper', preferred: true },
+    { walletName: 'authereum', preferred: true },
+    { walletName: 'opera' },
+    { walletName: 'status' },
+    { walletName: 'operaTouch' },
+    { walletName: 'torus' },
+    { walletName: 'status' }
+]
+
 const OnboardContext = (props) => {
     const [web3, setWeb3] = useState()
     const [address, setAddress] = useState()
@@ -21,24 +39,6 @@ const OnboardContext = (props) => {
     const [onboard, setOnboard] = useState()
     const [loggedIn, setLoggedIn] = useState(false)
     const [selected, setSelected] = useState(false)
-
-    const wallets = [
-        { walletName: 'metamask', preferred: true },
-        { walletName: 'coinbase', preferred: true },
-        {
-            walletName: 'walletConnect',
-            infuraKey: '7f230a5ca832426796454c28577d93f2',
-            preferred: true
-        },
-        { walletName: 'trust', preferred: true },
-        { walletName: 'dapper', preferred: true },
-        { walletName: 'authereum', preferred: true },
-        { walletName: 'opera' },
-        { walletName: 'status' },
-        { walletName: 'operaTouch' },
-        { walletName: 'torus' },
-        { walletName: 'status' }
-    ]
 
     useEffect(() => {
         console.log(`Initializing OnBoard.js...`)
