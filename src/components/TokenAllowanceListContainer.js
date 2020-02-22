@@ -14,7 +14,7 @@ const namehash = require('eth-ens-namehash')
     - list of addresses that have an allowance
     - Renders TokenAllowanceListItem for each address having an allowance
  */
-const TokenAllowanceListContainer = ({contractAddress, owner, spenders}) => {
+const TokenAllowanceListContainer = ({contractAddress, owner, spenders, showZeroAllowances, addressFilter}) => {
     const web3Context = useContext(Web3Context)
     const [contractInstance, setContractInstance] = useState(null)
     const [tokenDecimals, setTokenDecimals] = useState()
@@ -22,7 +22,7 @@ const TokenAllowanceListContainer = ({contractAddress, owner, spenders}) => {
     const [tokenName, setTokenName] = useState('')
     const [tokenSymbol, setTokenSymbol] = useState('')
     const [addressAllowances, setAddressAllowances] = useState({})
-    const [loading, setLoading] = useState(true)
+    const [, setLoading] = useState(true)
     const [reverseNames, setReverseNames] = useState({})
     const [ownerBalance, setOwnerBalance] = useState()
     const [erc20Compliant, setErc20Compliant] = useState(true)
@@ -125,9 +125,21 @@ const TokenAllowanceListContainer = ({contractAddress, owner, spenders}) => {
         }
     }, [web3Context.web3, spenders])
 
-    return (
-        <>
-            {erc20Compliant && <TokenAllowanceItem
+    let matchedFilter = true
+    if (addressFilter.length) {
+        const filterString = addressFilter.toLowerCase()
+        matchedFilter = (
+                tokenName.toLowerCase().includes(filterString) ||
+                tokenSymbol.toLowerCase().includes(filterString) ||
+                contractAddress.toLowerCase().includes(filterString)
+        )
+    }
+
+    if (!erc20Compliant || !matchedFilter) {
+        return null
+    }
+
+    return (<TokenAllowanceItem
                 tokenName={tokenName}
                 tokenAddress={contractAddress}
                 tokenDecimals={tokenDecimals}
@@ -139,15 +151,17 @@ const TokenAllowanceListContainer = ({contractAddress, owner, spenders}) => {
                 spenderENSNames={reverseNames}
                 allowances={addressAllowances}
                 tokenContractInstance={contractInstance}
-            />}
-        </>
-    )
+                showZeroAllowances={showZeroAllowances}
+                addressFilter={addressFilter}
+            />)
 }
 
 TokenAllowanceListContainer.propTypes = {
     contractAddress: PropTypes.string.isRequired,
     owner: PropTypes.string.isRequired,
     spenders: PropTypes.array.isRequired,
+    showZeroAllowances: PropTypes.bool.isRequired,
+    addressFilter: PropTypes.string.isRequired,
 }
 
 export default TokenAllowanceListContainer

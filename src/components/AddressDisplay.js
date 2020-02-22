@@ -1,11 +1,17 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import {Icon, Popup} from 'semantic-ui-react'
-import useClippy from 'use-clippy'
+
 
 const AddressDisplay = (props) => {
     const {address, ensName} = props
-    const [, setClipboard ] = useClippy()
+    const setClipboard = () => {
+        navigator.clipboard.writeText(address).then(function() {
+            /* clipboard successfully set */
+        }, function() {
+            console.log(`failed to set clipboard`)
+        })
+    }
 
     if (ensName) {
         return <>
