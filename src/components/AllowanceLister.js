@@ -2,9 +2,10 @@ import React, {useContext, useEffect, useState} from 'react'
 import {useParams} from 'react-router-dom'
 import {createDfuseClient} from '@dfuse/client'
 import {Web3Context} from './OnboardContext'
-import TokenAllowanceListContainer from './TokenAllowanceListContainer'
 import 'semantic-ui-css/semantic.min.css'
-import {Icon, Message, Segment} from 'semantic-ui-react'
+import {Segment} from 'semantic-ui-react'
+import AllowancesListContainer from './AllowancesListContainer'
+import AllowancesListFilter from './AllowancesListFilter'
 
 const topicHashApprove = '0x8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925'
 const eventABI = [
@@ -70,6 +71,20 @@ const AllowanceLister = () => {
         addressFromParams ? addressFromParams.toLowerCase() : '',
     )
     const [page, setPage] = useState(0)
+    const [showZeroAllowances, setShowZeroAllowances] = useState(true)
+    const [addressFilter, setAddressFilter] = useState('')
+
+    const toggleShowZeroAllowances = () => {
+        setShowZeroAllowances(!showZeroAllowances)
+    }
+
+    const clearAddressFilter = () => {
+        setAddressFilter('')
+    }
+
+    const handleAddressFilterChange = (e, {name, value}) => {
+        setAddressFilter(value)
+    }
 
     useEffect(() => {
         setAddress(addressFromParams ? addressFromParams.toLowerCase() : '')
@@ -136,19 +151,19 @@ const AllowanceLister = () => {
                         // double-check owner - Is this necessary?
                         if (decoded.owner.toLowerCase() === address) {
                             // Add tokenContract if its new
-                            const tokenContract = logEntry.address
-                            if (Object.keys(tokenSpenders).includes(tokenContract)) {
+                            const tokenContractAddress = logEntry.address
+                            if (Object.keys(tokenSpenders).includes(tokenContractAddress)) {
                                 // console.log(`tokenContract ${tokenContract} already known`)
                             } else {
-                                console.log(`Adding tokenContract ${tokenContract}`)
-                                tokenSpenders[tokenContract] = []
+                                console.log(`Adding tokenContract ${tokenContractAddress}`)
+                                tokenSpenders[tokenContractAddress] = []
                             }
                             // Add spender address if its new
-                            if (tokenSpenders[tokenContract].includes(decoded.spender)) {
+                            if (tokenSpenders[tokenContractAddress].includes(decoded.spender)) {
                                 // console.log(`Spender ${decoded.spender} for ${tokenContract} already known`)
                             } else {
-                                console.log(`Adding Spender ${decoded.spender} for ${tokenContract}`)
-                                tokenSpenders[tokenContract].push(decoded.spender)
+                                console.log(`Adding Spender ${decoded.spender} for ${tokenContractAddress}`)
+                                tokenSpenders[tokenContractAddress].push(decoded.spender)
                             }
                         } else {
                             console.log(`Skipping log event due to owner mismatch. Expected ${address}, got ${decoded.owner}`)
@@ -176,79 +191,27 @@ const AllowanceLister = () => {
         }
     }, [web3Context.web3, address])
 
-    if (address === '') {
-        return (
-            <Segment basic padded='very' textAlign={'center'}>
-                <Message info icon size={'huge'}>
-                    <Icon name='info'/>
-                    <Message.Content>
-                        <Message.Header>Enter an address to start!</Message.Header>
-                    </Message.Content>
-                </Message>
-            </Segment>
-        )
-    }
-
-    if (loading) {
-        return (
-            <Segment basic padded='very' textAlign={'center'}>
-                <Message icon warning size={'huge'}>
-                    <Icon name='circle notched' loading/>
-                    <Message.Content>
-                        <Message.Header>Please wait while loading events</Message.Header>
-                        <p>Checking address: {address}</p>
-                        <div>Querying dfuse API for ERC20 Approvals, getting page {page+1}...</div>
-                    </Message.Content>
-                </Message>
-            </Segment>
-        )
-    }
-
-    if (error) {
-        return (
-            <Segment basic padded='very' textAlign={'center'}>
-                <Message error icon size={'huge'}>
-                    <Icon name='exclamation triangle'/>
-                    <Message.Content>
-                        <Message.Header>Error</Message.Header>
-                        {error}
-                    </Message.Content>
-                </Message>
-            </Segment>
-        )
-    }
-
-    if (Object.keys(tokenSpenders).length === 0) {
-        return (
-            <Segment basic padded='very' textAlign={'center'}>
-                <Message success icon size={'huge'}>
-                    <Icon name='info'/>
-                    <Message.Content>
-                        <Message.Header>No Approvals</Message.Header>
-                        Address {address} has no Approvals.
-                    </Message.Content>
-                </Message>
-            </Segment>
-        )
-    }
-
-    const tokens = []
-    for (const [key, value] of Object.entries(tokenSpenders)) {
-        tokens.push(
-            <TokenAllowanceListContainer
-                key={key}
-                owner={address}
-                spenders={value}
-                contractAddress={key}/>,
-        )
-    }
 
     return (
         <React.Fragment>
             <Segment basic>
                 <h2>Allowances of {address}:</h2>
             </Segment>
-            {tokens}
+            <AllowancesListFilter showZeroAllowances={showZeroAllowances}
+                                  toggleShowZeroAllowances={toggleShowZeroAllowances}
+                                  addressFilterValue={addressFilter}
+                                  handleAddressFilterChange={handleAddressFilterChange}
+                                  clearAddressFilter={clearAddressFilter}
+            />
+            <AllowancesListContainer
+                tokenSpenders={tokenSpenders}
+                address={address}
+                showZeroAllowances={showZeroAllowances}
+                addressFilter={addressFilter}
+                error={error}
+                loading={loading}
+                page={page}
+            />
         </React.Fragment>
     )
 }
