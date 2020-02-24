@@ -1,6 +1,6 @@
 {
   "name": "TAC",
-  "version": "0.0.0development",
+  "version": "1.1.1",
   "private": true,
   "homepage": "https://tac.dappstar.io",
   "repository": "github:TripleSpeeder/token-allowance-checker",
@@ -16,7 +16,7 @@
     "eject": "react-scripts eject",
     "storybook": "start-storybook -p 9009 -s public",
     "build-storybook": "build-storybook -s public",
-    "deploy": "gh-pages -d build"
+    "release": "standard-version"
   },
   "dependencies": {
     "@dfuse/client": "^0.3.8",
@@ -51,7 +51,8 @@
     "@storybook/react": "^5.3.12",
     "gh-pages": "^2.2.0",
     "husky": "^4.2.3",
-    "semantic-release": "^17.0.4"
+    "semantic-release": "^17.0.4",
+    "standard-version": "^7.1.0"
   },
   "browserslist": {
     "production": [

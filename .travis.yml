@@ -3,9 +3,9 @@ language: node_js
 node_js: 10
 jobs:
   include:
-    - name: "Semantic Release"
+    - name: "build"
       script:
-        - CI=false npm run build && npx semantic-release
+        - CI=false npm run build
       deploy:
         provider: pages
         skip_cleanup: true
