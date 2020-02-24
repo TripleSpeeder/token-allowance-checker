@@ -1,3 +1,10 @@
+## [1.1.1](https://github.com/TripleSpeeder/token-allowance-checker/compare/v1.1.0...v1.1.1) (2020-02-22)
+
+
+### Bug Fixes
+
+* change string 'unknown ERC20' to 'unnamed ERC20' ([3719183](https://github.com/TripleSpeeder/token-allowance-checker/commit/3719183cb21dfe8eba86bc1571f8703a723a0fc4))
+
 # 1.0.0 (2020-02-20)
 
 
