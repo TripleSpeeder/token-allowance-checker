@@ -5,7 +5,7 @@ jobs:
   include:
     - name: "Semantic Release"
       script:
-        - npm run build && npx semantic-release
+        - CI=false npm run build && npx semantic-release
       deploy:
         provider: pages
         skip_cleanup: true
