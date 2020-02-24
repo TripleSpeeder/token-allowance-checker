@@ -1,3 +1,21 @@
+# Changelog
+
+All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
+
+## [1.2.0](https://github.com/TripleSpeeder/token-allowance-checker/compare/v1.0.0...v1.2.0) (2020-02-24)
+
+
+### Features
+
+* filter allowances ([2cf5b2a](https://github.com/TripleSpeeder/token-allowance-checker/commit/2cf5b2ac84c8bfd7a207919a4a39be15da8cff9c))
+* show version number ([4537a97](https://github.com/TripleSpeeder/token-allowance-checker/commit/4537a97a725313ee19293414d133d86453cda718)), closes [#17](https://github.com/TripleSpeeder/token-allowance-checker/issues/17)
+
+
+### Bug Fixes
+
+* change string 'unknown ERC20' to 'unnamed ERC20' ([3719183](https://github.com/TripleSpeeder/token-allowance-checker/commit/3719183cb21dfe8eba86bc1571f8703a723a0fc4))
+* forgot to change 'unknown' to 'unnamed' in another location ([04412b3](https://github.com/TripleSpeeder/token-allowance-checker/commit/04412b30498667524c9a613d14a2bfc74cc15cf6))
+
 ## [1.1.1](https://github.com/TripleSpeeder/token-allowance-checker/compare/v1.1.0...v1.1.1) (2020-02-22)
 
 
