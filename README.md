@@ -31,3 +31,12 @@ For all entries, the user can edit or delete the allowance.
 ## Technologies used
  - [dfuse](https://www.dfuse.io/) to search for allowances approved in the past.
  - [Onboard.js](https://www.blocknative.com/onboard) for setting up web3 provider and accessing user wallet/accounts
+
+## Release workflow
+ - PRs should go against development branch
+ - To create a new release:
+   - checkout development branch
+   - issue `npm run release` - This will update the Changelog.md with all changes and create a new version tag
+   - Create a PR against master
+   - When the PR gets merged, travisCI will automatically deploy the latest release to gh-pages.
+  
