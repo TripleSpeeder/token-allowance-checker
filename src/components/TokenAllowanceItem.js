@@ -133,7 +133,7 @@ const TokenAllowanceItem = ({ tokenName,
 
     let tokenDisplayString = tokenName
     if (tokenDisplayString === '') {
-        tokenDisplayString = `Unknown ERC20`
+        tokenDisplayString = `Unnamed ERC20`
     }
     const roundToDecimals = new BN(2)
     if (BN.isBN(ownerBalance) && BN.isBN(tokenDecimals)) {
