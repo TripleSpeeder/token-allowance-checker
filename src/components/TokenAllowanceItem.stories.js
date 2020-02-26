@@ -1,9 +1,10 @@
 import React from 'react'
 import { action } from '@storybook/addon-actions'
-import {Button, Container, Modal} from 'semantic-ui-react'
-import TokenAllowanceItem from './TokenAllowanceItem'
+import {Container} from 'semantic-ui-react'
 import BN from 'bn.js'
+import TokenAllowanceItem from './TokenAllowanceItem'
 
+// noinspection JSUnusedGlobalSymbols
 export default {
     title: 'TokenAllowanceItem',
     component: TokenAllowanceItem,
@@ -18,6 +19,8 @@ export default {
 const unlimitedAllowance = new BN(2).pow(new BN(256)).subn(1)
 const decimals = new BN(12)
 const supply = new BN('51696243591050228877165296')
+const owner = '0x7Bf5E507216Da9316Bb7EA32A081270462cE41C7'
+const ownerBalance = new BN('750000000000000')
 
 const spenderAddresses = [
     '0x73FbC940ACcDc620c0D6E27e1511D06Cd406228b',
@@ -37,6 +40,25 @@ const partAllowances = {
     '0x493C57C4763932315A328269E1ADaD09653B9081': new BN(783442234576453)
 }
 
+export const tokenLoading = () => (
+    <TokenAllowanceItem
+        tokenName={''}
+        tokenSymbol={''}
+        tokenAddress={'0x73FbC940ACcDc620c0D6E27e1511D06Cd406228b'}
+        tokenDecimals={undefined}
+        tokenSupply={undefined}
+        spenders={spenderAddresses}
+        spenderENSNames={spenderENSNames}
+        allowances={allowances}
+        owner={owner}
+        ownerBalance={ownerBalance}
+        showZeroAllowances={true}
+        tokenContractInstance={{}}
+        editEnabled={true}
+        openEditModal={action('OpenEditModal')}
+    />
+)
+
 export const loaded = () => (
     <TokenAllowanceItem
         tokenName={'Dai Stablecoin'}
@@ -47,19 +69,12 @@ export const loaded = () => (
         spenders={spenderAddresses}
         spenderENSNames={spenderENSNames}
         allowances={allowances}
-    />
-)
-
-export const loading = () => (
-    <TokenAllowanceItem
-        tokenName={'Dai Stablecoin'}
-        tokenSymbol={'DAI'}
-        tokenAddress={'0x73FbC940ACcDc620c0D6E27e1511D06Cd406228b'}
-        tokenDecimals={decimals}
-        tokenSupply={supply}
-        spenders={spenderAddresses}
-        spenderENSNames={spenderENSNames}
-        allowances={{}}
+        owner={owner}
+        ownerBalance={ownerBalance}
+        showZeroAllowances={true}
+        tokenContractInstance={{}}
+        editEnabled={true}
+        openEditModal={action('OpenEditModal')}
     />
 )
 
@@ -73,10 +88,35 @@ export const partlyLoaded = () => (
         spenders={spenderAddresses}
         spenderENSNames={spenderENSNames}
         allowances={partAllowances}
+        owner={owner}
+        ownerBalance={ownerBalance}
+        showZeroAllowances={true}
+        tokenContractInstance={{}}
+        editEnabled={true}
+        openEditModal={action('OpenEditModal')}
     />
 )
 
-export const unknownToken = () => (
+export const notOwner = () => (
+    <TokenAllowanceItem
+        tokenName={'Dai Stablecoin'}
+        tokenSymbol={'DAI'}
+        tokenAddress={'0x73FbC940ACcDc620c0D6E27e1511D06Cd406228b'}
+        tokenDecimals={decimals}
+        tokenSupply={supply}
+        spenders={spenderAddresses}
+        spenderENSNames={spenderENSNames}
+        allowances={allowances}
+        owner={owner}
+        ownerBalance={ownerBalance}
+        showZeroAllowances={true}
+        tokenContractInstance={{}}
+        editEnabled={false}
+        openEditModal={action('OpenEditModal')}
+    />
+)
+
+export const unnamedToken = () => (
     <TokenAllowanceItem
         tokenName={''}
         tokenSymbol={''}
@@ -85,6 +125,13 @@ export const unknownToken = () => (
         tokenSupply={supply}
         spenders={spenderAddresses}
         spenderENSNames={spenderENSNames}
-        allowances={partAllowances}
+        allowances={allowances}
+        owner={owner}
+        ownerBalance={ownerBalance}
+        showZeroAllowances={true}
+        tokenContractInstance={{}}
+        editEnabled={true}
+        openEditModal={action('OpenEditModal')}
     />
 )
+
