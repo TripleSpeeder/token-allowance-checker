@@ -7,17 +7,18 @@ import TokenAllowanceItem from './TokenAllowanceItem'
 
 
 const TokenAllowanceItemContainer = ({ tokenName,
-                                tokenAddress,
-                                tokenDecimals,
-                                tokenSupply,
-                                tokenSymbol,
-                                tokenContractInstance,
-                                ownerBalance,
-                                owner,
-                                spenders,
-                                spenderENSNames,
-                                allowances,
-                                showZeroAllowances }) => {
+                                       tokenAddress,
+                                       tokenDecimals,
+                                       tokenSupply,
+                                       tokenSymbol,
+                                       tokenContractInstance,
+                                       ownerBalance,
+                                       owner,
+                                       spenders,
+                                       spenderENSNames,
+                                       allowances,
+                                       showZeroAllowances,
+                                       reloadAllowanceFunc }) => {
     const web3Context = useContext(Web3Context)
     const [editSpender, setEditSpender] = useState('')
     const [showEditModal, setShowEditModal] = useState(false)
@@ -52,6 +53,7 @@ const TokenAllowanceItemContainer = ({ tokenName,
                 from: web3Context.address,
             })
             setTransactionHash(result.tx)
+            reloadAllowanceFunc(owner, editSpender)
         } catch (e) {
             console.log(`Error while approving: ${e.message}`)
             setTransactionError(e.message)
@@ -119,6 +121,7 @@ TokenAllowanceItemContainer.propTypes = {
     spenderENSNames: PropTypes.object.isRequired,
     allowances: PropTypes.object.isRequired,
     showZeroAllowances: PropTypes.bool.isRequired,
+    reloadAllowanceFunc: PropTypes.func.isRequired,
 }
 
 
