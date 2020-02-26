@@ -2,7 +2,7 @@ import React, {useContext, useEffect, useState} from 'react'
 import ERC20Data from '@openzeppelin/contracts/build/contracts/ERC20Detailed.json'
 import {Web3Context} from './OnboardContext'
 import PropTypes from 'prop-types'
-import TokenAllowanceItem from './TokenAllowanceItem'
+import TokenAllowanceItemContainer from './TokenAllowanceItemContainer'
 import wellKnownContracts from './wellKnownContracts'
 const contract = require('@truffle/contract')
 const namehash = require('eth-ens-namehash')
@@ -139,7 +139,7 @@ const TokenAllowanceListContainer = ({contractAddress, owner, spenders, showZero
         return null
     }
 
-    return (<TokenAllowanceItem
+    return (<TokenAllowanceItemContainer
                 tokenName={tokenName}
                 tokenAddress={contractAddress}
                 tokenDecimals={tokenDecimals}
