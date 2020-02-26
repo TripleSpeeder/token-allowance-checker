@@ -3,7 +3,8 @@ import Onboard from 'bnc-onboard'
 import Web3 from 'web3'
 import {Icon, Message, Segment} from 'semantic-ui-react'
 
-const onboardapikey='f4b71bf0-fe50-4eeb-bc2b-b323527ed9e6'
+const onboardApiKey='f4b71bf0-fe50-4eeb-bc2b-b323527ed9e6'
+const infuraApiKey='7f230a5ca832426796454c28577d93f2'
 
 export const Web3Context = createContext({
     onboard: null,
@@ -19,7 +20,7 @@ const wallets = [
     { walletName: 'coinbase', preferred: true },
     {
         walletName: 'walletConnect',
-        infuraKey: '7f230a5ca832426796454c28577d93f2',
+        infuraKey: infuraApiKey,
         preferred: true
     },
     { walletName: 'trust', preferred: true },
@@ -29,7 +30,17 @@ const wallets = [
     { walletName: 'status' },
     { walletName: 'operaTouch' },
     { walletName: 'torus' },
-    { walletName: 'status' }
+    { walletName: 'status' },
+    {
+        walletName: 'ledger',
+        rpcUrl: `mainnet.infura.io/v3/${infuraApiKey}`
+    },
+    {
+        walletName: 'trezor',
+        appUrl: 'https://tac.dappstar.io',
+        email: 'michael@m-bauer.org',
+        rpcUrl: `mainnet.infura.io/v3/${infuraApiKey}`
+    }
 ]
 
 const OnboardContext = (props) => {
@@ -43,7 +54,7 @@ const OnboardContext = (props) => {
     useEffect(() => {
         console.log(`Initializing OnBoard.js...`)
         const onboard = (Onboard({
-            dappId: onboardapikey,
+            dappId: onboardApiKey,
             networkId: 1,
             subscriptions: {
                 wallet: wallet => {
@@ -71,6 +82,7 @@ const OnboardContext = (props) => {
             if (!selected) {
                 console.log('Selecting wallet...')
                 const selected = await onboard.walletSelect()
+                console.log('... Got wallet!')
                 setSelected(selected)
                 return selected
             } else {
@@ -87,12 +99,15 @@ const OnboardContext = (props) => {
         if (onboard) {
             if (!selected) {
                 const success = await selectWallet()
-                if (!success)
+                if (!success) {
+                    console.log(`Selecting wallet failed in login`)
                     return false
+                }
             }
             if (!loggedIn) {
-                console.log(`logging in`)
+                console.log(`performing walletCheck()...`)
                 const result = await onboard.walletCheck()
+                console.log(`... Done! Result: ${result}`)
                 setLoggedIn(result)
                 return result
             } else {
