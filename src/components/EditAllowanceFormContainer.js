@@ -8,7 +8,7 @@ import {Web3Context} from './OnboardContext'
 
 const EditAllowanceFormContainer = ({handleSubmit, handleClose, tokenDecimals, tokenSupply, tokenName, allowance, spender, tokenSymbol, tokenAddress}) => {
     const web3Context = useContext(Web3Context)
-    const [newAllowance, setNewAllowance] = useState('')
+    const [newAllowance, setNewAllowance] = useState('0')
 
     const convertAllowanceToDisplaystring = useCallback(() => {
         if (allowance.gte(tokenSupply)) {
