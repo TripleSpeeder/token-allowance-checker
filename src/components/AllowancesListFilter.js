@@ -18,7 +18,6 @@ const AllowancesListFilter = ( { showZeroAllowances,
                            value={addressFilterValue}
                            icon={<Icon name='eraser' circular link onClick={clearAddressFilter} />}
                            fluid
-                           autofocus
                     />
                 </Grid.Column>
                 <Grid.Column width={8}>

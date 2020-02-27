@@ -2,7 +2,7 @@ import React, {useContext, useEffect, useState} from 'react'
 import ERC20Data from '@openzeppelin/contracts/build/contracts/ERC20Detailed.json'
 import {Web3Context} from './OnboardContext'
 import PropTypes from 'prop-types'
-import TokenAllowanceItem from './TokenAllowanceItem'
+import TokenAllowanceItemContainer from './TokenAllowanceItemContainer'
 import wellKnownContracts from './wellKnownContracts'
 const contract = require('@truffle/contract')
 const namehash = require('eth-ens-namehash')
@@ -125,6 +125,18 @@ const TokenAllowanceListContainer = ({contractAddress, owner, spenders, showZero
         }
     }, [web3Context.web3, spenders])
 
+    const reloadAllowance = async (owner, spender) => {
+        try {
+            addressAllowances[spender] = undefined
+            setAddressAllowances(addressAllowances)
+            const allowance = await contractInstance.allowance(owner, spender)
+            addressAllowances[spender] = allowance
+            setAddressAllowances(addressAllowances)
+        }catch(e) {
+            console.log(`Error loading allowance: ${e}`)
+        }
+    }
+
     let matchedFilter = true
     if (addressFilter.length) {
         const filterString = addressFilter.toLowerCase()
@@ -139,7 +151,7 @@ const TokenAllowanceListContainer = ({contractAddress, owner, spenders, showZero
         return null
     }
 
-    return (<TokenAllowanceItem
+    return (<TokenAllowanceItemContainer
                 tokenName={tokenName}
                 tokenAddress={contractAddress}
                 tokenDecimals={tokenDecimals}
@@ -153,6 +165,7 @@ const TokenAllowanceListContainer = ({contractAddress, owner, spenders, showZero
                 tokenContractInstance={contractInstance}
                 showZeroAllowances={showZeroAllowances}
                 addressFilter={addressFilter}
+                reloadAllowanceFunc={reloadAllowance}
             />)
 }
 

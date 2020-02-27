@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.3.0](https://github.com/TripleSpeeder/token-allowance-checker/compare/v1.2.0...v1.3.0) (2020-02-27)
+
+
+### Features
+
+* support Trezor and Ledger ([1352998](https://github.com/TripleSpeeder/token-allowance-checker/commit/13529986ccd15f3e49e94653a738467e5b784faa))
+
+
+### Bug Fixes
+
+* don't autofocus on tokenFilter ([cc59442](https://github.com/TripleSpeeder/token-allowance-checker/commit/cc594429b86e0fbbd5bffe79c7b968f02dc2f255))
+* reload allowance after editing ([9f576a5](https://github.com/TripleSpeeder/token-allowance-checker/commit/9f576a568467464b4508bdadc94002180c3a1e7a)), closes [#18](https://github.com/TripleSpeeder/token-allowance-checker/issues/18)
+* set initial value '0' in EditAllowanceFormContainer.js ([6b54805](https://github.com/TripleSpeeder/token-allowance-checker/commit/6b5480529434a2f487134ee3fab6c8d3c019918c))
+
 ## [1.2.0](https://github.com/TripleSpeeder/token-allowance-checker/compare/v1.0.0...v1.2.0) (2020-02-24)
 
 

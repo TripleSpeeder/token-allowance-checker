@@ -1,12 +1,9 @@
-import React, {useContext, useState} from 'react'
+import React from 'react'
 import PropTypes from 'prop-types'
 import {Button, Header, Loader, Popup, Segment, Table} from 'semantic-ui-react'
 import AddressDisplay from './AddressDisplay'
 import BN from 'bn.js'
 import bn2DisplayString from '@triplespeeder/bn2string'
-import EditAllowanceFormContainer from './EditAllowanceFormContainer'
-import {Web3Context} from './OnboardContext'
-import TransactionModal from './TransactionModal'
 
 
 const unlimitedAllowance = new BN(2).pow(new BN(256)).subn(1)
@@ -16,74 +13,23 @@ const TokenAllowanceItem = ({ tokenName,
                                 tokenDecimals,
                                 tokenSupply,
                                 tokenSymbol,
-                                tokenContractInstance,
                                 ownerBalance,
-                                owner,
                                 spenders,
                                 spenderENSNames,
                                 allowances,
-                                showZeroAllowances }) => {
-    const web3Context = useContext(Web3Context)
-    const [editSpender, setEditSpender] = useState('')
-    const [showEditModal, setShowEditModal] = useState(false)
-    const [showTransactionModal, setShowTransactionModal] = useState(false)
-    const [transactionError, setTransactionError] = useState('')
-    const [transactionHash, setTransactionHash] = useState('')
-    const [confirming, setConfirming] = useState(false)
-
-
-    const openEditModal = (spender) => {
-        setEditSpender(spender)
-        setShowEditModal(true)
-    }
-
-    const handleSubmitEditAllowance = async (newAllowance) => {
-        // make sure wallet is ready to transact before continuing
-        const loginResult = await web3Context.loginFunction()
-        if (!loginResult) {
-            console.log(`User failed to login. Cant create transaction.`)
-            return
-        } else {
-            console.log(`User successfully logged into wallet`)
-        }
-        console.log(`Setting new allowance ${newAllowance} for ${editSpender}`)
-        setTransactionError('')
-        setTransactionHash('')
-        setShowEditModal(false)
-        setShowTransactionModal(true)
-        setConfirming(true)
-        let result
-        try {
-            result = await tokenContractInstance.approve(editSpender, newAllowance.toString(), {
-                from: web3Context.address,
-            })
-            setTransactionHash(result.tx)
-        } catch (e) {
-            console.log(`Error while approving: ${e.message}`)
-            setTransactionError(e.message)
-        }
-        setConfirming(false)
-    }
-
-    const handleCloseEditAllowance = () => {
-        setShowEditModal(false)
-    }
-
-    const handleCloseTransactionModal = () => {
-        setShowTransactionModal(false)
-    }
+                                showZeroAllowances,
+                                editEnabled,
+                                openEditModal,
+                            }) => {
 
     const rows = []
     for (const spender of spenders) {
         let allowanceElement
         let criticalAllowance = false
-        let editEnabled = false
         let value = undefined
         let loaded = BN.isBN(allowances[spender]) && BN.isBN(tokenDecimals) && BN.isBN(tokenSupply)
         if (loaded) {
             value = allowances[spender]
-            // wallet account has to be owner in order to edit allowance
-            editEnabled = (owner.toLowerCase() === web3Context.address.toLowerCase())
             criticalAllowance = (value.eq(unlimitedAllowance)) || (value.gte(tokenSupply))
             if (criticalAllowance) {
                 allowanceElement = <em>unlimited</em>
@@ -97,6 +43,25 @@ const TokenAllowanceItem = ({ tokenName,
             allowanceElement = <Loader active inline size={'mini'}/>
         }
 
+        let actionContent
+        if (loaded) {
+            actionContent = <Popup
+                content={editEnabled ? 'edit allowance' : 'Only address owner can edit allowance'}
+                trigger={<span><Button
+                    icon={'edit'}
+                    size={'small'}
+                    compact
+                    primary
+                    disabled={!editEnabled}
+                    onClick={() => {
+                        openEditModal(spender)
+                    }}
+                /></span>}
+            />
+        } else {
+            actionContent = <Loader active inline size={'mini'}/>
+        }
+
         const isZeroAllowance = (value && value.isZero())
         if (!(isZeroAllowance && !showZeroAllowances)) {
             rows.push(
@@ -108,19 +73,7 @@ const TokenAllowanceItem = ({ tokenName,
                         {allowanceElement}
                     </Table.Cell>
                     <Table.Cell>
-                        <Popup
-                            content={editEnabled ? 'edit allowance' : 'Only address owner can edit allowance'}
-                            trigger={<span><Button
-                                icon={'edit'}
-                                size={'small'}
-                                compact
-                                primary
-                                disabled={!editEnabled}
-                                onClick={() => {
-                                    openEditModal(spender)
-                                }}
-                            /></span>}
-                        />
+                        {actionContent}
                     </Table.Cell>
                 </Table.Row>
             )
@@ -162,24 +115,6 @@ const TokenAllowanceItem = ({ tokenName,
                     </Table.Body>
                 </Table>
             </Segment>
-            {showEditModal && <EditAllowanceFormContainer
-                spender={editSpender}
-                tokenDecimals={tokenDecimals}
-                allowance={allowances[editSpender]}
-                tokenSymbol={tokenSymbol}
-                tokenName={tokenName}
-                tokenSupply={tokenSupply}
-                tokenAddress={tokenAddress}
-                handleSubmit={handleSubmitEditAllowance}
-                handleClose={handleCloseEditAllowance}
-            />}
-            {showTransactionModal && <TransactionModal
-                showModal={showTransactionModal}
-                isConfirming={confirming}
-                handleClose={handleCloseTransactionModal}
-                error={transactionError}
-                transactionHash={transactionHash}
-            />}
         </React.Fragment>
     )
 }
@@ -190,13 +125,13 @@ TokenAllowanceItem.propTypes = {
     tokenDecimals: PropTypes.object, // bignumber
     tokenSupply: PropTypes.object, // bignumber
     tokenSymbol: PropTypes.string,
-    tokenContractInstance: PropTypes.object,
-    owner: PropTypes.string.isRequired,
     ownerBalance: PropTypes.object, // bignumber
     spenders: PropTypes.array.isRequired,
     spenderENSNames: PropTypes.object.isRequired,
     allowances: PropTypes.object.isRequired,
     showZeroAllowances: PropTypes.bool.isRequired,
+    editEnabled: PropTypes.bool.isRequired,
+    openEditModal: PropTypes.func.isRequired,
 }
 
 
