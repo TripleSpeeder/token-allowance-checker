@@ -125,6 +125,18 @@ const TokenAllowanceListContainer = ({contractAddress, owner, spenders, showZero
         }
     }, [web3Context.web3, spenders])
 
+    const reloadAllowance = async (owner, spender) => {
+        try {
+            addressAllowances[spender] = undefined
+            setAddressAllowances(addressAllowances)
+            const allowance = await contractInstance.allowance(owner, spender)
+            addressAllowances[spender] = allowance
+            setAddressAllowances(addressAllowances)
+        }catch(e) {
+            console.log(`Error loading allowance: ${e}`)
+        }
+    }
+
     let matchedFilter = true
     if (addressFilter.length) {
         const filterString = addressFilter.toLowerCase()
@@ -153,6 +165,7 @@ const TokenAllowanceListContainer = ({contractAddress, owner, spenders, showZero
                 tokenContractInstance={contractInstance}
                 showZeroAllowances={showZeroAllowances}
                 addressFilter={addressFilter}
+                reloadAllowanceFunc={reloadAllowance}
             />)
 }
 
