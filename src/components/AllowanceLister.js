@@ -1,7 +1,6 @@
 import React, {useContext, useEffect, useState} from 'react'
 import {useParams} from 'react-router-dom'
 import {createDfuseClient} from '@dfuse/client'
-import {Web3Context} from './OnboardContext'
 import 'semantic-ui-css/semantic.min.css'
 import {Segment} from 'semantic-ui-react'
 import AllowancesListContainer from './AllowancesListContainer'
@@ -61,7 +60,7 @@ const searchTransactions = `query ($query: String! $limit: Int64! $cursor: Strin
 
 const AllowanceLister = () => {
 
-    const web3Context = useContext(Web3Context)
+    const web3Context = undefined //useContext(Web3Context)
     const addressFromParams = useParams().address
 
     const [loading, setLoading] = useState(false)

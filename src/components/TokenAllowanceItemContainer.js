@@ -1,7 +1,6 @@
 import React, {useContext, useState} from 'react'
 import PropTypes from 'prop-types'
 import EditAllowanceFormContainer from './EditAllowanceFormContainer'
-import {Web3Context} from './OnboardContext'
 import TransactionModal from './TransactionModal'
 import TokenAllowanceItem from './TokenAllowanceItem'
 
@@ -19,7 +18,7 @@ const TokenAllowanceItemContainer = ({ tokenName,
                                        allowances,
                                        showZeroAllowances,
                                        reloadAllowanceFunc }) => {
-    const web3Context = useContext(Web3Context)
+    const web3Context = undefined //useContext(Web3Context)
     const [editSpender, setEditSpender] = useState('')
     const [showEditModal, setShowEditModal] = useState(false)
     const [showTransactionModal, setShowTransactionModal] = useState(false)

@@ -3,11 +3,10 @@ import PropTypes from 'prop-types'
 import bnToDisplayString from '@triplespeeder/bn2string'
 import {toBaseUnit} from './erc20-decimals-conversion'
 import EditAllowanceForm from './EditAllowanceForm'
-import {Web3Context} from './OnboardContext'
 
 
 const EditAllowanceFormContainer = ({handleSubmit, handleClose, tokenDecimals, tokenSupply, tokenName, allowance, spender, tokenSymbol, tokenAddress}) => {
-    const web3Context = useContext(Web3Context)
+    const web3Context = undefined//useContext(Web3Context)
     const [newAllowance, setNewAllowance] = useState('0')
 
     const convertAllowanceToDisplaystring = useCallback(() => {

@@ -1,8 +1,10 @@
-import React, {useState, useEffect, useContext} from 'react'
+import React, {useState, useEffect} from 'react'
 import AddressInput from './AddressInput'
-import {Web3Context} from './OnboardContext'
 import {useHistory, useParams} from 'react-router-dom'
 import {Form, Grid} from 'semantic-ui-react'
+import {useSelector, useDispatch} from 'react-redux'
+import {RootState} from '../../app/rootReducer'
+import {addAddressThunk} from './AddressSlice'
 
 export const addressInputStates = {
     ADDRESS_INITIAL: 'address_initial', // no user interaction
@@ -12,16 +14,18 @@ export const addressInputStates = {
 }
 
 const AddressInputContainer = () => {
-    const web3Context = useContext(Web3Context)
-    const addressFromParams = (useParams().address || '')
+    const dispatch = useDispatch()
+    const {web3, address: addressFromWallet} = useSelector(
+        (state: RootState) => state.onboard
+    )
+    const {address: addressFromParams} = useParams()
     const history = useHistory()
     const [addressInputState, setAddressInputState] = useState(addressInputStates.ADDRESS_INITIAL)
     const [input, setInput] = useState(
         addressFromParams ? addressFromParams.toLowerCase() : ''
-            /*(web3Context.address? web3Context.address.toLowerCase() : '')*/
     )
     const [address, setAddress] = useState('')
-    const [prevWalletAddress, setPrevWalletAddress] = useState(web3Context.address ? web3Context.address.toLowerCase() : '')
+    const [prevWalletAddress, setPrevWalletAddress] = useState(addressFromWallet ? addressFromWallet.toLowerCase() : '')
 
     // verify address input
     useEffect(() => {
@@ -32,11 +36,11 @@ const AddressInputContainer = () => {
                 // check for valid input (raw address and ENS name)
                 const validAddress = (/^(0x)?[0-9a-f]{40}$/i.test(input))
                 const validENSName = (/.*\.eth$/i.test(input))
-                if (validENSName) {
+                if (validENSName && web3) {
                     // resolve entered ENS name
                     setAddressInputState(addressInputStates.ADDRESS_RESOLVING)
                     try {
-                        const resolvedAddress = await web3Context.web3.eth.ens.getAddress(input)
+                        const resolvedAddress = await web3.eth.ens.getAddress(input)
                         console.log(`Resolved ${input} to ${resolvedAddress}`)
                         setAddressInputState(addressInputStates.ADDRESS_VALID)
                         setAddress(resolvedAddress)
@@ -55,11 +59,11 @@ const AddressInputContainer = () => {
             }
         }
         handleInput()
-    }, [input, setAddress, web3Context.web3])
+    }, [input, setAddress, web3])
 
     // accept address from wallet depending on context
     useEffect(() => {
-        const newWalletAddress = web3Context.address ? web3Context.address.toLowerCase() : ''
+        const newWalletAddress = addressFromWallet ? addressFromWallet.toLowerCase() : ''
         // console.log(`fromParams: ${addressFromParams}`)
         // console.log(`newWallet : ${newWalletAddress}`)
         // console.log(`prevWallet: ${prevWalletAddress}`)
@@ -72,7 +76,7 @@ const AddressInputContainer = () => {
                 history.push(`/address/${newWalletAddress}`)
             }
         }
-    }, [web3Context.address, prevWalletAddress, addressFromParams, history])
+    }, [addressFromWallet, prevWalletAddress, addressFromParams, history])
 
     const error = (addressInputState === addressInputStates.ADDRESS_INVALID)
     const loading = (addressInputState === addressInputStates.ADDRESS_RESOLVING)
@@ -81,6 +85,7 @@ const AddressInputContainer = () => {
     const handleSubmit = () => {
         if (success) {
             console.log(`Submit! Address: ${address}`)
+            dispatch(addAddressThunk(address))
             history.push(`/address/${address}`)
         } else {
             console.log(`Submit with invalid address`)
@@ -111,9 +116,6 @@ const AddressInputContainer = () => {
             </Grid.Row>
         </Grid>
     )
-}
-
-AddressInputContainer.propTypes = {
 }
 
 export default AddressInputContainer

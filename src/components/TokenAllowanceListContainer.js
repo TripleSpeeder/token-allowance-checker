@@ -1,6 +1,5 @@
 import React, {useContext, useEffect, useState} from 'react'
 import ERC20Data from '@openzeppelin/contracts/build/contracts/ERC20Detailed.json'
-import {Web3Context} from './OnboardContext'
 import PropTypes from 'prop-types'
 import TokenAllowanceItemContainer from './TokenAllowanceItemContainer'
 import wellKnownContracts from './wellKnownContracts'
@@ -15,7 +14,7 @@ const namehash = require('eth-ens-namehash')
     - Renders TokenAllowanceListItem for each address having an allowance
  */
 const TokenAllowanceListContainer = ({contractAddress, owner, spenders, showZeroAllowances, addressFilter}) => {
-    const web3Context = useContext(Web3Context)
+    const web3Context = undefined // (Web3Context)
     const [contractInstance, setContractInstance] = useState(null)
     const [tokenDecimals, setTokenDecimals] = useState()
     const [tokenSupply, setTokenSupply] = useState()

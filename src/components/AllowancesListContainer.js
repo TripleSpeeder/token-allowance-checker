@@ -6,6 +6,8 @@ import {Icon, Message, Segment} from 'semantic-ui-react'
 
 const AllowancesListContainer = ({tokenSpenders, address, showZeroAllowances, addressFilter, loading, error, page}) => {
 
+    return null
+
     // TODO: useMemo
     const tokens = []
     for (const [contractAddress, spenders] of Object.entries(tokenSpenders)) {

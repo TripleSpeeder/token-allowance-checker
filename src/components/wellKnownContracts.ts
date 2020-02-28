@@ -1,4 +1,16 @@
-const wellKnownContracts = {
+interface contractMetadata {
+    name: string,
+    symbol: string
+}
+interface contractInfo {
+    [key:string]: contractMetadata
+}
+
+export interface IWellKnownContracts {
+    [key: number]: contractInfo
+}
+
+export const wellKnownContracts:IWellKnownContracts = {
     // main network
     1: {
         '0x89d24a6b4ccb1b6faa2625fe562bdd9a23260359': {
