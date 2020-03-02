@@ -82,12 +82,20 @@ const TokenAllowanceListContainer = ({contractAddress, owner, spenders, showZero
             const allowances = {}
             if (isCompliant) {
                 for (const spender of spenders) {
-                    const allowance = await contractInstance.allowance(owner, spender)
-                    if (cancelled)
-                        return
-                    allowances[spender] = allowance
+                    try {
+                        const allowance = await contractInstance.allowance(owner, spender)
+                        if (cancelled)
+                            return
+                        allowances[spender] = allowance
+                    }catch (e) {
+                        console.warn(`Contract at ${contractAddress} not ERC20 compliant. Failed to get allowance.`)
+                        isCompliant = false
+                        setErc20Compliant(false)
+                        break
+                    }
                 }
-                setAddressAllowances(allowances)
+                if (isCompliant)
+                    setAddressAllowances(allowances)
             }
             setLoading(false)
         }
