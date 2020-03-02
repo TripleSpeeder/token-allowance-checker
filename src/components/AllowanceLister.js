@@ -136,37 +136,48 @@ const AllowanceLister = () => {
                     setPage(searchPage)
                 } while (numPageResults>0)
 
-                if (allEdges.length <= 0) {
-                    console.log(`No Approve() calls found for ${address}`)
-                }
                 allEdges.forEach(({node}) => {
                     node.matchingLogs.forEach((logEntry) => {
                         // Seems the dfuse query based on topic is not working correctly.
                         // Double-check that the logEntry actually is of the expected topic.
                         if (logEntry.topics[0] !== topicHashApprove) {
-                            console.warn(`Skipping wrong topic ${logEntry.topics[0]}`)
+                            console.warn(`Skipping log event. Topic is wrong, expected ${topicHashApprove}, got ${logEntry.topics[0]}`)
                             return
                         }
-                        const decoded = web3Context.web3.eth.abi.decodeLog(eventABI, logEntry.data, logEntry.topics.slice(1))
-                        // double-check owner - Is this necessary?
-                        if (decoded.owner.toLowerCase() === address) {
-                            // Add tokenContract if its new
-                            const tokenContractAddress = logEntry.address
-                            if (Object.keys(tokenSpenders).includes(tokenContractAddress)) {
-                                // console.log(`tokenContract ${tokenContract} already known`)
-                            } else {
-                                console.log(`Adding tokenContract ${tokenContractAddress}`)
-                                tokenSpenders[tokenContractAddress] = []
-                            }
-                            // Add spender address if its new
-                            if (tokenSpenders[tokenContractAddress].includes(decoded.spender)) {
-                                // console.log(`Spender ${decoded.spender} for ${tokenContract} already known`)
-                            } else {
-                                console.log(`Adding Spender ${decoded.spender} for ${tokenContractAddress}`)
-                                tokenSpenders[tokenContractAddress].push(decoded.spender)
-                            }
-                        } else {
-                            console.log(`Skipping log event due to owner mismatch. Expected ${address}, got ${decoded.owner}`)
+                        if (logEntry.data === '0x') {
+                            console.warn(`Skipping log event. LogEntry.data is missing:`)
+                            console.warn(logEntry)
+                            return
+                        }
+                        let decoded
+                        try {
+                            decoded = web3Context.web3.eth.abi.decodeLog(eventABI, logEntry.data, logEntry.topics.slice(1))
+                        }catch (e) {
+                            console.warn(`Skipping log event. Failed to decode logEntry:`)
+                            console.warn(logEntry)
+                            return
+                        }
+                        // check if spender is an actual address. Some contracts emit logs with spender 0x0...
+                        if (!(parseInt(decoded.spender))) {
+                            console.log(`Skipping log event. Spender is ${decoded.spender}.`)
+                            return
+                        }
+                        // double-check owner is correct
+                        if (decoded.owner.toLowerCase() !== address) {
+                            console.warn(`Skipping log event due to owner mismatch. Expected ${address}, got ${decoded.owner}.`)
+                            return
+                        }
+
+                        // Add tokenContract if its new
+                        const tokenContractAddress = logEntry.address
+                        if (!(Object.keys(tokenSpenders).includes(tokenContractAddress))) {
+                            // console.log(`Adding tokenContract ${tokenContractAddress}`)
+                            tokenSpenders[tokenContractAddress] = []
+                        }
+                        // Add spender address if its new
+                        if (! (tokenSpenders[tokenContractAddress].includes(decoded.spender))) {
+                            // console.log(`Adding Spender ${decoded.spender} for ${tokenContractAddress}`)
+                            tokenSpenders[tokenContractAddress].push(decoded.spender)
                         }
                     })
                     setTokenSpenders(tokenSpenders)
@@ -182,7 +193,6 @@ const AllowanceLister = () => {
 
         setTokenSpenders({})
         if (web3Context.web3 && address) {
-            console.log(`Starting query for "${address}"`)
             collectAllowances(address)
         }
 
