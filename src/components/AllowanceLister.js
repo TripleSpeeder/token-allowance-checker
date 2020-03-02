@@ -136,9 +136,6 @@ const AllowanceLister = () => {
                     setPage(searchPage)
                 } while (numPageResults>0)
 
-                if (allEdges.length <= 0) {
-                    console.log(`No Approve() calls found for ${address}`)
-                }
                 allEdges.forEach(({node}) => {
                     node.matchingLogs.forEach((logEntry) => {
                         // Seems the dfuse query based on topic is not working correctly.
@@ -147,7 +144,19 @@ const AllowanceLister = () => {
                             console.warn(`Skipping wrong topic ${logEntry.topics[0]}`)
                             return
                         }
-                        const decoded = web3Context.web3.eth.abi.decodeLog(eventABI, logEntry.data, logEntry.topics.slice(1))
+                        if (logEntry.data === '0x') {
+                            console.warn(`logEntry.data is missing:`)
+                            console.warn(logEntry)
+                            return
+                        }
+                        let decoded
+                        try {
+                            decoded = web3Context.web3.eth.abi.decodeLog(eventABI, logEntry.data, logEntry.topics.slice(1))
+                        }catch (e) {
+                            console.warn(`Failed to decode logEntry:`)
+                            console.warn(logEntry)
+                            return
+                        }
                         // double-check owner - Is this necessary?
                         if (decoded.owner.toLowerCase() === address) {
                             // Add tokenContract if its new
@@ -155,18 +164,18 @@ const AllowanceLister = () => {
                             if (Object.keys(tokenSpenders).includes(tokenContractAddress)) {
                                 // console.log(`tokenContract ${tokenContract} already known`)
                             } else {
-                                console.log(`Adding tokenContract ${tokenContractAddress}`)
+                                // console.log(`Adding tokenContract ${tokenContractAddress}`)
                                 tokenSpenders[tokenContractAddress] = []
                             }
                             // Add spender address if its new
                             if (tokenSpenders[tokenContractAddress].includes(decoded.spender)) {
                                 // console.log(`Spender ${decoded.spender} for ${tokenContract} already known`)
                             } else {
-                                console.log(`Adding Spender ${decoded.spender} for ${tokenContractAddress}`)
+                                // console.log(`Adding Spender ${decoded.spender} for ${tokenContractAddress}`)
                                 tokenSpenders[tokenContractAddress].push(decoded.spender)
                             }
                         } else {
-                            console.log(`Skipping log event due to owner mismatch. Expected ${address}, got ${decoded.owner}`)
+                            console.warn(`Skipping log event due to owner mismatch. Expected ${address}, got ${decoded.owner}`)
                         }
                     })
                     setTokenSpenders(tokenSpenders)
@@ -182,7 +191,6 @@ const AllowanceLister = () => {
 
         setTokenSpenders({})
         if (web3Context.web3 && address) {
-            console.log(`Starting query for "${address}"`)
             collectAllowances(address)
         }
 
