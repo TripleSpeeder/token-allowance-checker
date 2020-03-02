@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.3.1](https://github.com/TripleSpeeder/token-allowance-checker/compare/v1.3.0...v1.3.1) (2020-03-02)
+
+
+### Bug Fixes
+
+* handle failing allowance() calls ([bbf6796](https://github.com/TripleSpeeder/token-allowance-checker/commit/bbf6796697b2bc231144531cae8921cc6afdc3f7))
+* handle logEntries with empty data (0x) ([5ca31e1](https://github.com/TripleSpeeder/token-allowance-checker/commit/5ca31e1b0f0a03cc2d14f218f87e3c58cdba2ba3))
+* improve detection of non-ERC20 contracts ([a4d1756](https://github.com/TripleSpeeder/token-allowance-checker/commit/a4d17560993091bac30e120f56ab8d9b5d808040))
+
 ## [1.3.0](https://github.com/TripleSpeeder/token-allowance-checker/compare/v1.2.0...v1.3.0) (2020-02-27)
 
 
