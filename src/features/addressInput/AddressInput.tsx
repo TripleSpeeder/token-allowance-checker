@@ -1,13 +1,19 @@
 import React from 'react'
-import PropTypes from 'prop-types'
 import {Form, Input} from 'semantic-ui-react'
 
-const AddressInput = (props) => {
-    const {handleInput, loading, error, value, success} = props
+interface AddressInputProps {
+    value: string
+    loading: boolean
+    error: boolean,
+    success: boolean,
+    handleInput: (input: string)=>void,
+}
 
-    const handleChange = async (e) => {
-        const input=e.target.value
-        handleInput(input)
+const AddressInput = ({handleInput, loading, error, value, success}:AddressInputProps) => {
+
+    const handleChange = (e: React.FormEvent<EventTarget>) => {
+        let {value} = e.target as HTMLInputElement;
+        handleInput(value)
     }
 
     return (
@@ -32,14 +38,6 @@ const AddressInput = (props) => {
                 />
             </Form.Field>
     )
-}
-
-AddressInput.propTypes = {
-    value: PropTypes.string.isRequired,
-    loading: PropTypes.bool,
-    error: PropTypes.bool,
-    success: PropTypes.bool,
-    handleInput: PropTypes.func.isRequired,
 }
 
 export default AddressInput
