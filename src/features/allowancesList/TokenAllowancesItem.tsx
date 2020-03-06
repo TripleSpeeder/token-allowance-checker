@@ -20,20 +20,30 @@ const unlimitedAllowance = new BN(2).pow(new BN(256)).subn(1)
 const TokenAllowancesItem = ({tokenId, allowanceIds}:TokenAllowanceItemProps) => {
 
     const tokenContract = useSelector((state:RootState) => state.tokenContracts.contractsById[tokenId])
+    if (!tokenContract) {
+        return null
+    }
 
     // populate rows with one entry per allowance from allowanceIds
     let rows:any = []
     allowanceIds.forEach(allowanceId => {
-        rows.push(<TokenAllowanceItem allowanceId={allowanceId}/>)
+        rows.push(<TokenAllowanceItem key={allowanceId} allowanceId={allowanceId}/>)
     })
 
-    let headline = <AddressDisplay address={tokenId}/>
+    let tokenDisplayString = tokenContract.name
+    if (tokenDisplayString === '') {
+        tokenDisplayString = `Unnamed ERC20`
+    }
+    let headline = <div>{tokenDisplayString}</div>
 
     return (
         <React.Fragment>
             <Segment raised>
                 <Header as={'h3'}>
                     {headline}
+                    <Header.Subheader>
+                        <AddressDisplay addressId={tokenId}/>
+                    </Header.Subheader>
                 </Header>
                 <Table basic={'very'} celled selectable>
                     <Table.Header>

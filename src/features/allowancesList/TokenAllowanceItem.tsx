@@ -25,7 +25,7 @@ const TokenAllowanceItem = ({allowanceId}:TokenAllowanceItemProps) => {
     return (
         <Table.Row key={`${allowanceId}`}>
             <Table.Cell>
-                <AddressDisplay address={spender.address} ensName={spender.ensName}/>
+                <AddressDisplay addressId={allowance.spenderId}/>
             </Table.Cell>
             <Table.Cell negative={criticalAllowance}>
                 {allowanceElement}

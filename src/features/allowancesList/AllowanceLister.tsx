@@ -6,15 +6,21 @@ import AllowancesListContainer from './AllowancesListContainer'
 import AllowancesListFilter from '../../components/AllowancesListFilter'
 import {useDispatch, useSelector} from 'react-redux'
 import {RootState} from '../../app/rootReducer'
-import {fetchAllowancesThunk} from './AllowancesListSlice'
+import {fetchAllowancesThunk, QueryState, QueryStates} from './AllowancesListSlice'
 
 
 const AllowanceLister = () => {
     const dispatch = useDispatch()
+    const {address} = useParams()
     const {web3} = useSelector(
         (state: RootState) => state.onboard
     )
-    const {address} = useParams()
+    const queryState = useSelector((state:RootState) => {
+        if (address)
+            return state.allowances.allowanceQueryStateByOwner[address]
+        else
+            return undefined
+    })
 
     const [showZeroAllowances, setShowZeroAllowances] = useState(true)
     const [addressFilter, setAddressFilter] = useState('')
@@ -37,6 +43,13 @@ const AllowanceLister = () => {
         document.title = `TAC - ${address}`
     }, [address])
 
+    useEffect(() => {
+        console.log(`useEffect querystate: ${queryState}`)
+        if (queryState && (queryState.state === QueryStates.QUERY_STATE_INITIAL)) {
+            loadAllowances()
+        }
+    }, [queryState])
+
     const loadAllowances = () => {
         if (address) {
             console.log(`Starting query for "${address}"`)
@@ -55,7 +68,7 @@ const AllowanceLister = () => {
                                   handleAddressFilterChange={handleAddressFilterChange}
                                   clearAddressFilter={clearAddressFilter}
             />
-            <Button onClick={loadAllowances}>load for ${address}</Button>
+            <Button onClick={loadAllowances}>refresh allowances</Button>
             <AllowancesListContainer
                 owner={address?address:''}
                 showZeroAllowances={showZeroAllowances}

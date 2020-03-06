@@ -1,6 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import namehash from 'eth-ens-namehash'
 import {AppDispatch, AppThunk} from '../../app/store'
+import { addContract } from 'features/tokenContracts/tokenContractsSlice'
 
 enum ResolvingStates {
     Initial,
@@ -43,23 +44,7 @@ interface EthAddressesState {
 
 // initial state: contains 3 test entries
 let initialState:EthAddressesState = {
-    addressesById: {
-        '0x123': {
-            address: '0x123',
-            description: 'First address',
-            ensName: 'first.address.eth',
-            resolvingState: ResolvingStates.Resolved
-        },
-        '0xabc': {
-            address: '0xabc',
-            description: 'Address without ENS',
-            resolvingState: ResolvingStates.Resolved
-        },
-        '0x456': {
-            address: '0x456',
-            resolvingState: ResolvingStates.Resolved
-        }
-    }
+    addressesById: {}
 }
 
 const addressSlice = createSlice({

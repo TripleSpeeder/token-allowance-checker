@@ -4,7 +4,7 @@ import wellKnownContracts from '../../components/wellKnownContracts'
 import ERC20Data from '@openzeppelin/contracts/build/contracts/ERC20Detailed.json'
 import {ERC20DetailedContract, ERC20DetailedInstance} from '../../contracts'
 import ERC20Detailed from 'contracts'
-import { AddressId } from 'features/addressInput/AddressSlice'
+import {AddressId, addAddress, addAddressThunk} from 'features/addressInput/AddressSlice'
 const contract = require('@truffle/contract')
 
 export type ContractAddress = string
@@ -99,6 +99,7 @@ export const addContractThunk = (contractAddress: string): AppThunk => async (di
             console.warn(`Contract at ${contractAddress} is not ERC20. Ignoring.`)
             return
         }
+        dispatch(addAddressThunk(contractAddress))
         dispatch(addContract(contractAddress, tokenName, tokenSymbol, contractInstance))
     }
 }

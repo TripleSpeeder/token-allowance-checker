@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import {AppDispatch, AppThunk} from '../../app/store'
 import {addContractThunk, ContractAddress} from 'features/tokenContracts/tokenContractsSlice'
-import {addAddressThunk, AddressId, EthAddressPayload} from '../addressInput/AddressSlice'
+import {addAddressThunk, AddressId, EthAddressPayload, addAddress} from '../addressInput/AddressSlice'
 import BN from 'bn.js'
 import {createDfuseClient, GraphqlResponse, SearchTransactionRow} from '@dfuse/client'
 
@@ -103,12 +103,21 @@ interface QueryStatePayload {
     queryState: QueryState,
 }
 
+interface AddOwnerPayload {
+    ownerId: AddressId
+}
+
 // initial state
 let initialState:AllowancesState = {
     allowancesById: {},
     allowanceValuesById: {},
     allowancesByOwnerId: {},
     allowanceQueryStateByOwner: {}
+}
+
+let defaultQueryStateByOwner:QueryState = {
+    currentPage: 0,
+    state:QueryStates.QUERY_STATE_INITIAL
 }
 
 export const buildAllowanceId = (tokenContractId: AddressId, ownerId: AddressId, spenderId: AddressId) => {
@@ -119,10 +128,6 @@ const allowancesSlice = createSlice({
     name: 'Allowances',
     initialState: initialState,
     reducers: {
-        addOwner(state, action:PayloadAction<EthAddressPayload>){
-            const {id} = action.payload
-            state.allowancesByOwnerId[id] = []
-        },
         addAllowance: {
             reducer(state, action: PayloadAction<AllowancePayload>) {
                 const {id, allowance} = action.payload
@@ -154,6 +159,13 @@ const allowancesSlice = createSlice({
         setQueryState(state, action: PayloadAction<QueryStatePayload>) {
             const {ownerId, queryState} = action.payload
             state.allowanceQueryStateByOwner[ownerId] = queryState
+        }
+    },
+    extraReducers: {
+        [addAddress.type](state, action:PayloadAction<EthAddressPayload>){
+            const {id} = action.payload
+            state.allowancesByOwnerId[id] = []
+            state.allowanceQueryStateByOwner[id] = defaultQueryStateByOwner
         }
     }
 })

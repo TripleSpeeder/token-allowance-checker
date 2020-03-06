@@ -41,7 +41,7 @@ const AllowancesListContainer = ({owner, showZeroAllowances, addressFilter}:Allo
             allowanceIds.forEach(allowance => {
                 console.log(allowance)
             })
-            items.push(<TokenAllowancesItem tokenId={tokenId} allowanceIds={allowanceIds}/>)
+            items.push(<TokenAllowancesItem key={tokenId} tokenId={tokenId} allowanceIds={allowanceIds}/>)
         }
         return (<>{items}</>)
     }

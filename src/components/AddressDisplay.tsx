@@ -1,12 +1,29 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import {Icon, Popup} from 'semantic-ui-react'
+import { AddressId } from 'features/addressInput/AddressSlice'
+import {useSelector} from 'react-redux'
+import {RootState} from '../app/rootReducer'
 
+interface AddressDisplayProps {
+    addressId: AddressId
+}
 
-const AddressDisplay = (props) => {
-    const {address, ensName} = props
-    const setClipboard = () => {
-        navigator.clipboard.writeText(address).then(function() {
+const AddressDisplay = ({addressId}:AddressDisplayProps) => {
+    const addressEntry = useSelector((state:RootState) => state.addresses.addressesById[addressId])
+    let address:string
+    let ensName:string|undefined
+    if (!addressEntry) {
+        // No addressEntry in store. Should not happen :-(
+        console.log(`AddressDisplay: Trying to get non-existing address ${addressId}`)
+        address=addressId
+    } else {
+        address = addressEntry.address
+        ensName = addressEntry.ensName
+    }
+
+    const setClipboard = (content: string) => {
+        navigator.clipboard.writeText(content).then(function() {
             /* clipboard successfully set */
         }, function() {
             console.log(`failed to set clipboard`)
@@ -31,11 +48,5 @@ const AddressDisplay = (props) => {
         )
     }
 }
-
-AddressDisplay.propTypes = {
-    address: PropTypes.string.isRequired,
-    ensName: PropTypes.string
-}
-
 
 export default AddressDisplay
