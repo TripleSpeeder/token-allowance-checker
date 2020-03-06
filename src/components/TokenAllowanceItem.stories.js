@@ -2,12 +2,12 @@ import React from 'react'
 import { action } from '@storybook/addon-actions'
 import {Container} from 'semantic-ui-react'
 import BN from 'bn.js'
-import TokenAllowanceItem from './TokenAllowanceItem'
+import TokenAllowancesItem from '../features/allowancesList/TokenAllowancesItem'
 
 // noinspection JSUnusedGlobalSymbols
 export default {
-    title: 'TokenAllowanceItem',
-    component: TokenAllowanceItem,
+    title: 'TokenAllowancesItem',
+    component: TokenAllowancesItem,
     decorators: [
         story => (
             <Container>
@@ -41,7 +41,7 @@ const partAllowances = {
 }
 
 export const tokenLoading = () => (
-    <TokenAllowanceItem
+    <TokenAllowancesItem
         tokenName={''}
         tokenSymbol={''}
         tokenAddress={'0x73FbC940ACcDc620c0D6E27e1511D06Cd406228b'}
@@ -60,7 +60,7 @@ export const tokenLoading = () => (
 )
 
 export const loaded = () => (
-    <TokenAllowanceItem
+    <TokenAllowancesItem
         tokenName={'Dai Stablecoin'}
         tokenSymbol={'DAI'}
         tokenAddress={'0x73FbC940ACcDc620c0D6E27e1511D06Cd406228b'}
@@ -79,7 +79,7 @@ export const loaded = () => (
 )
 
 export const partlyLoaded = () => (
-    <TokenAllowanceItem
+    <TokenAllowancesItem
         tokenName={'Dai Stablecoin'}
         tokenSymbol={'DAI'}
         tokenAddress={'0x73FbC940ACcDc620c0D6E27e1511D06Cd406228b'}
@@ -98,7 +98,7 @@ export const partlyLoaded = () => (
 )
 
 export const notOwner = () => (
-    <TokenAllowanceItem
+    <TokenAllowancesItem
         tokenName={'Dai Stablecoin'}
         tokenSymbol={'DAI'}
         tokenAddress={'0x73FbC940ACcDc620c0D6E27e1511D06Cd406228b'}
@@ -117,7 +117,7 @@ export const notOwner = () => (
 )
 
 export const unnamedToken = () => (
-    <TokenAllowanceItem
+    <TokenAllowancesItem
         tokenName={''}
         tokenSymbol={''}
         tokenAddress={'0x73FbC940ACcDc620c0D6E27e1511D06Cd406228b'}

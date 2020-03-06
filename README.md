@@ -1,4 +1,13 @@
 # Token Allowance Checker ("TAC")
+
+### TODO on redux/typescript refactor branch after initial implementation
+
+ - Verify if contracts are ERC20-conform before adding them
+ - Use names & symbols from WellKnownContracts.js if necessary
+ - Add TokenBalanceSlice to track token balance of provided addresses
+ - Add typechain generation to travis config for building
+
+
 ## Introduction
 This is my entry to the Gitcoin ["Sustain web3"](https://gitcoin.co/hackathon/sustain-web3/) hackathon.
 

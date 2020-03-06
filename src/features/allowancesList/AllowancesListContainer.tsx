@@ -1,9 +1,12 @@
 import React from 'react'
-import PropTypes from 'prop-types'
-import TokenAllowanceListContainer from '../../components/TokenAllowanceListContainer'
-import {Icon, Message, Segment} from 'semantic-ui-react'
 import {useSelector} from 'react-redux'
+// import * as _ from 'lodash'
+import _ from 'lodash'
 import {RootState} from '../../app/rootReducer'
+import TokenAllowanceItemContainer from './TokenAllowanceItemContainer'
+import TokenAllowancesItem from './TokenAllowancesItem'
+import {AllowanceId} from './AllowancesListSlice'
+import {AddressId} from '../addressInput/AddressSlice'
 
 
 interface AllowancesListContainerProps {
@@ -14,17 +17,35 @@ interface AllowancesListContainerProps {
 
 const AllowancesListContainer = ({owner, showZeroAllowances, addressFilter}:AllowancesListContainerProps) => {
 
-    const allowanceIds = useSelector(
+    // TODO: implement showZeroAllowances, addressFilter
+    const ownerAllowanceIds = useSelector(
         (state: RootState) => state.allowances.allowancesByOwnerId[owner]
     )
+    const allowancesById = useSelector(
+        (state: RootState) => state.allowances.allowancesById
+    )
 
-    const items = []
-    for (const allowanceId in allowanceIds) {
-        console.log(`Adding allowance ${allowanceId}`)
-        items.push(<li key={allowanceId}>AllowanceId: {allowanceId}</li>)
+    if (ownerAllowanceIds) {
+        // get all allowances of owner
+        const allowances = ownerAllowanceIds.map((allowanceId) => (allowancesById[allowanceId]))
+        console.log(`Allowances: ${allowances}`)
+        // group allowances by tokenID
+        const allowancesByTokenId = _.groupBy(allowances, 'tokenContractId')
+        console.log(`Grouped Allowances: ${allowancesByTokenId}`)
+
+        const items:Array<any> = []
+        for (let entry of Object.entries(allowancesByTokenId)) {
+            const tokenId = entry[0]
+            const allowanceIds = entry[1].map(allowance => (allowance.id))
+            console.log(`Allowances for tokenId ${tokenId}:`)
+            allowanceIds.forEach(allowance => {
+                console.log(allowance)
+            })
+            items.push(<TokenAllowancesItem tokenId={tokenId} allowanceIds={allowanceIds}/>)
+        }
+        return (<>{items}</>)
     }
-    return (<ul>{items}</ul>)
-
+    return (<div>no entries</div>)
     /*
     // TODO: useMemo
     const tokens = []

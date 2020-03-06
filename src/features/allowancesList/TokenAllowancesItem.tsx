@@ -1,27 +1,56 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import {Button, Header, Loader, Popup, Segment, Table} from 'semantic-ui-react'
-import AddressDisplay from './AddressDisplay'
+import AddressDisplay from '../../components/AddressDisplay'
 import BN from 'bn.js'
-import bn2DisplayString from '@triplespeeder/bn2string'
+import {AddressId} from '../addressInput/AddressSlice'
+import {AllowanceId} from './AllowancesListSlice'
+import {useSelector} from 'react-redux'
+import { RootState } from 'app/rootReducer'
+import TokenAllowanceItem from './TokenAllowanceItem'
 
+
+interface TokenAllowanceItemProps {
+    tokenId: AddressId
+    allowanceIds: Array<AllowanceId>
+}
 
 const unlimitedAllowance = new BN(2).pow(new BN(256)).subn(1)
 
-const TokenAllowanceItem = ({ tokenName,
-                                tokenAddress,
-                                tokenDecimals,
-                                tokenSupply,
-                                tokenSymbol,
-                                ownerBalance,
-                                spenders,
-                                spenderENSNames,
-                                allowances,
-                                showZeroAllowances,
-                                editEnabled,
-                                openEditModal,
-                            }) => {
+const TokenAllowancesItem = ({tokenId, allowanceIds}:TokenAllowanceItemProps) => {
 
+    const tokenContract = useSelector((state:RootState) => state.tokenContracts.contractsById[tokenId])
+
+    // populate rows with one entry per allowance from allowanceIds
+    let rows:any = []
+    allowanceIds.forEach(allowanceId => {
+        rows.push(<TokenAllowanceItem allowanceId={allowanceId}/>)
+    })
+
+    let headline = <AddressDisplay address={tokenId}/>
+
+    return (
+        <React.Fragment>
+            <Segment raised>
+                <Header as={'h3'}>
+                    {headline}
+                </Header>
+                <Table basic={'very'} celled selectable>
+                    <Table.Header>
+                        <Table.Row>
+                            <Table.HeaderCell>Spender</Table.HeaderCell>
+                            <Table.HeaderCell>Allowance</Table.HeaderCell>
+                            <Table.HeaderCell>Action</Table.HeaderCell>
+                        </Table.Row>
+                    </Table.Header>
+                    <Table.Body>
+                        {rows}
+                    </Table.Body>
+                </Table>
+            </Segment>
+        </React.Fragment>
+    )
+/*
     const rows = []
     for (const spender of spenders) {
         let allowanceElement
@@ -117,22 +146,8 @@ const TokenAllowanceItem = ({ tokenName,
             </Segment>
         </React.Fragment>
     )
+
+ */
 }
 
-TokenAllowanceItem.propTypes = {
-    tokenName: PropTypes.string,
-    tokenAddress: PropTypes.string,
-    tokenDecimals: PropTypes.object, // bignumber
-    tokenSupply: PropTypes.object, // bignumber
-    tokenSymbol: PropTypes.string,
-    ownerBalance: PropTypes.object, // bignumber
-    spenders: PropTypes.array.isRequired,
-    spenderENSNames: PropTypes.object.isRequired,
-    allowances: PropTypes.object.isRequired,
-    showZeroAllowances: PropTypes.bool.isRequired,
-    editEnabled: PropTypes.bool.isRequired,
-    openEditModal: PropTypes.func.isRequired,
-}
-
-
-export default TokenAllowanceItem
+export default TokenAllowancesItem

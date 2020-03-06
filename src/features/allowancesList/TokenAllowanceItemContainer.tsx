@@ -1,24 +1,36 @@
 import React, {useContext, useState} from 'react'
 import PropTypes from 'prop-types'
-import EditAllowanceFormContainer from './EditAllowanceFormContainer'
-import TransactionModal from './TransactionModal'
-import TokenAllowanceItem from './TokenAllowanceItem'
+import EditAllowanceFormContainer from '../../components/EditAllowanceFormContainer'
+import TransactionModal from '../../components/TransactionModal'
+import TokenAllowancesItem from './TokenAllowancesItem'
+import {useSelector} from 'react-redux'
+import {RootState} from '../../app/rootReducer'
+import {AllowanceId} from './AllowancesListSlice'
+import {AddressId} from '../addressInput/AddressSlice'
+
+interface AllowanceItemContainerProps {
+    tokenId: AddressId
+    ownerId: AddressId
+}
+
+const TokenAllowanceItemContainer = ({ tokenId, ownerId }:AllowanceItemContainerProps) => {
+
+    // collect all allowances of tokenId owned by ownerId
+    const allowanceIds = useSelector((state:RootState) => {
+        return state.allowances.allowancesByOwnerId[ownerId].filter(allowanceId => {
+            // return allowanceId if it is matching the current tokenId
+            return (state.allowances.allowancesById[allowanceId].tokenContractId === tokenId)
+        })
+    })
 
 
-const TokenAllowanceItemContainer = ({ tokenName,
-                                       tokenAddress,
-                                       tokenDecimals,
-                                       tokenSupply,
-                                       tokenSymbol,
-                                       tokenContractInstance,
-                                       ownerBalance,
-                                       owner,
-                                       spenders,
-                                       spenderENSNames,
-                                       allowances,
-                                       showZeroAllowances,
-                                       reloadAllowanceFunc }) => {
-    const web3Context = undefined //useContext(Web3Context)
+//    const allowance = useSelector((state:RootState) => state.allowances.allowancesById[allowanceId])
+//    const tokenContract = useSelector((state:RootState) => state.tokenContracts.contractsById[allowance.tokenContractId])
+//    const owner = useSelector((state:RootState) => state.addresses.addressesById[allowance.ownerId])
+ //   const spender = useSelector((state:RootState) => state.addresses.addressesById[allowance.spenderId])
+
+
+/*
     const [editSpender, setEditSpender] = useState('')
     const [showEditModal, setShowEditModal] = useState(false)
     const [showTransactionModal, setShowTransactionModal] = useState(false)
@@ -67,12 +79,16 @@ const TokenAllowanceItemContainer = ({ tokenName,
     const handleCloseTransactionModal = () => {
         setShowTransactionModal(false)
     }
-
     const editEnabled = (owner.toLowerCase() === web3Context.address.toLowerCase())
+    */
+    const editEnabled = false
 
+    return null
+
+/*
     return (
         <>
-            <TokenAllowanceItem
+            <TokenAllowancesItem
                 allowances={allowances}
                 tokenDecimals={tokenDecimals}
                 tokenSupply={tokenSupply}
@@ -85,7 +101,9 @@ const TokenAllowanceItemContainer = ({ tokenName,
                 openEditModal={openEditModal}
                 ownerBalance={ownerBalance}
             />
-            {showEditModal && <EditAllowanceFormContainer
+        </>)
+*/
+    /*            {showEditModal && <EditAllowanceFormContainer
                 spender={editSpender}
                 tokenDecimals={tokenDecimals}
                 allowance={allowances[editSpender]}
@@ -103,25 +121,7 @@ const TokenAllowanceItemContainer = ({ tokenName,
                 error={transactionError}
                 transactionHash={transactionHash}
             />}
-
-        </>)
+     */
 }
-
-TokenAllowanceItemContainer.propTypes = {
-    tokenName: PropTypes.string,
-    tokenAddress: PropTypes.string,
-    tokenDecimals: PropTypes.object, // bignumber
-    tokenSupply: PropTypes.object, // bignumber
-    tokenSymbol: PropTypes.string,
-    tokenContractInstance: PropTypes.object,
-    owner: PropTypes.string.isRequired,
-    ownerBalance: PropTypes.object, // bignumber
-    spenders: PropTypes.array.isRequired,
-    spenderENSNames: PropTypes.object.isRequired,
-    allowances: PropTypes.object.isRequired,
-    showZeroAllowances: PropTypes.bool.isRequired,
-    reloadAllowanceFunc: PropTypes.func.isRequired,
-}
-
 
 export default TokenAllowanceItemContainer
