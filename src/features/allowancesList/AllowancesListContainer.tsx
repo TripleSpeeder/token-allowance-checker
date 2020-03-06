@@ -1,13 +1,31 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import TokenAllowanceListContainer from './TokenAllowanceListContainer'
+import TokenAllowanceListContainer from '../../components/TokenAllowanceListContainer'
 import {Icon, Message, Segment} from 'semantic-ui-react'
+import {useSelector} from 'react-redux'
+import {RootState} from '../../app/rootReducer'
 
 
-const AllowancesListContainer = ({tokenSpenders, address, showZeroAllowances, addressFilter, loading, error, page}) => {
+interface AllowancesListContainerProps {
+    owner: string,
+    showZeroAllowances: boolean,
+    addressFilter: string
+}
 
-    return null
+const AllowancesListContainer = ({owner, showZeroAllowances, addressFilter}:AllowancesListContainerProps) => {
 
+    const allowanceIds = useSelector(
+        (state: RootState) => state.allowances.allowancesByOwnerId[owner]
+    )
+
+    const items = []
+    for (const allowanceId in allowanceIds) {
+        console.log(`Adding allowance ${allowanceId}`)
+        items.push(<li key={allowanceId}>AllowanceId: {allowanceId}</li>)
+    }
+    return (<ul>{items}</ul>)
+
+    /*
     // TODO: useMemo
     const tokens = []
     for (const [contractAddress, spenders] of Object.entries(tokenSpenders)) {
@@ -82,16 +100,8 @@ const AllowancesListContainer = ({tokenSpenders, address, showZeroAllowances, ad
     return (<>
         {tokens}
     </>)
-}
 
-AllowancesListContainer.propTypes = {
-    tokenSpenders: PropTypes.object.isRequired,
-    address: PropTypes.string.isRequired,
-    showZeroAllowances: PropTypes.bool.isRequired,
-    addressFilter: PropTypes.string.isRequired,
-    loading: PropTypes.bool.isRequired,
-    error: PropTypes.string.isRequired,
-    page: PropTypes.number.isRequired,
+     */
 }
 
 export default AllowancesListContainer

@@ -1,12 +1,13 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import namehash from 'eth-ens-namehash'
-import {AppThunk} from '../../app/store'
+import {AppDispatch, AppThunk} from '../../app/store'
 
 enum ResolvingStates {
     Initial,
     Resolving,
     Resolved
 }
+export type AddressId = string
 
 // the plain address data without internal info like ID or resolving state
 interface EthAddress {
@@ -20,24 +21,24 @@ type EthAddressWithId = {
     resolvingState?: ResolvingStates
 } & EthAddress
 
-interface EthAddressPayload {
-    id: string,
+export interface EthAddressPayload {
+    id: AddressId,
     ethAddressWithId: EthAddressWithId
 }
 
 interface ResolvingStatePayload {
-    id: string,
+    id: AddressId,
     resolvingState: ResolvingStates
 }
 
 interface ENSNamePayload {
-    id: string,
+    id: AddressId,
     ensName: string
 }
 
 // The state contains all known EthAddressess, indexed by the address id
 interface EthAddressesState {
-    addressesById: Record<string, EthAddressWithId>
+    addressesById: Record<AddressId, EthAddressWithId>
 }
 
 // initial state: contains 3 test entries
@@ -65,9 +66,22 @@ const addressSlice = createSlice({
     name: 'ethAddresses',
     initialState: initialState,
     reducers: {
-        addAddress(state, action: PayloadAction<EthAddressPayload>) {
-            const {id, ethAddressWithId} = action.payload
-            state.addressesById[id] = ethAddressWithId
+        addAddress: {
+            reducer(state, action: PayloadAction<EthAddressPayload>) {
+                const {id, ethAddressWithId} = action.payload
+                state.addressesById[id] = ethAddressWithId
+            },
+            prepare(address: string) {
+                return {
+                    payload: {
+                        id: address,
+                        ethAddressWithId: {
+                            address: address,
+                            resolvingState: ResolvingStates.Initial
+                        }
+                    }
+                }
+            }
         },
         setResolvingState(state, action: PayloadAction<ResolvingStatePayload>) {
             const {id, resolvingState} = action.payload
@@ -84,17 +98,11 @@ export const { addAddress, setResolvingState, setENSName } = addressSlice.action
 
 export default addressSlice.reducer
 
-export const addAddressThunk = (address: string): AppThunk => async (dispatch, getState) => {
+export const addAddressThunk = (address: string): AppThunk => async (dispatch: AppDispatch, getState) => {
     const web3 = getState().onboard.web3
     if (web3) {
         // first add address
-        dispatch(addAddress({
-            id: address,
-            ethAddressWithId: {
-                address: address,
-                resolvingState: ResolvingStates.Initial
-            }
-        }))
+        dispatch(addAddress(address))
         // indicate starting resolving process
         dispatch(setResolvingState({
             id: address,

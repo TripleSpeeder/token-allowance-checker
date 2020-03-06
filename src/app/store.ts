@@ -1,25 +1,28 @@
 import {configureStore, Action, getDefaultMiddleware} from '@reduxjs/toolkit'
 import { ThunkAction } from 'redux-thunk'
-
 import rootReducer ,{ RootState } from './rootReducer'
 import { setOnboardAPI, setWeb3Instance } from '../features/onboard/onboardSlice'
+import { addContract } from 'features/tokenContracts/tokenContractsSlice'
 
 const customizedMiddleware = getDefaultMiddleware({
     serializableCheck: {
         ignoredActions: [
             setOnboardAPI.type,
             setWeb3Instance.type,
+            addContract.type,
         ],
         ignoredPaths: [
             'onboard.web3',
-            'onboard.onboardAPI'
+            'onboard.onboardAPI',
+            'tokenContracts.contractsById'
         ]
     },
     immutableCheck: {
         ignore: [
             'onboard.web3',
-            'onboard.onboardAPI'
-        ]
+            'onboard.onboardAPI',
+            'tokenContracts.contractsById'
+        ],
     }
 })
 

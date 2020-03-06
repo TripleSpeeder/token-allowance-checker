@@ -1,7 +1,7 @@
 import React from 'react'
 import './App.css'
 import {HashRouter as Router, Link, Route, Switch} from 'react-router-dom'
-import AllowanceLister from '../components/AllowanceLister'
+import AllowanceLister from '../features/allowancesList/AllowanceLister'
 import OnboardGate from '../features/onboard/OnboardGate'
 import {Button, Container, Divider, Grid, Header, Icon, List, Menu, Popup, Segment} from 'semantic-ui-react'
 import AddressInputContainer from '../features/addressInput/AddressInputContainer'

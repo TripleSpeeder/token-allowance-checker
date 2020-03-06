@@ -12,6 +12,7 @@
   "scripts": {
     "start": "react-scripts start",
     "start:https": "HTTPS=true react-scripts start",
+    "typechain":"typechain --target truffle --outDir src/contracts ./node_modules/@openzeppelin/contracts/build/contracts/ERC20Detailed.json",
     "build": "PUBLIC_URL='.' react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
@@ -29,7 +30,6 @@
     "@triplespeeder/bn2string": "^1.0.0",
     "@truffle/contract": "^4.1.8",
     "@types/react-redux": "^7.1.7",
-    "bn.js": "^5.1.1",
     "bnc-onboard": "^1.3",
     "eth-ens-namehash": "^2.0.8",
     "prop-types": "^15.7.2",
@@ -54,15 +54,21 @@
     "@storybook/addons": "^5.3.12",
     "@storybook/preset-create-react-app": "^1.5.2",
     "@storybook/react": "^5.3.12",
+    "@types/bn.js": "^4.11.6",
     "@types/jest": "^25.1.3",
     "@types/node": "^13.7.6",
     "@types/react": "^16.9.23",
     "@types/react-dom": "^16.9.5",
     "@types/react-router-dom": "^5.1.3",
+    "bn.js": "^5.1.1",
     "gh-pages": "^2.2.0",
+    "human-standard-token-abi": "^2.0.0",
     "husky": "^4.2.3",
     "semantic-release": "^17.0.4",
-    "standard-version": "^7.1.0"
+    "standard-version": "^7.1.0",
+    "truffle-typings": "^1.0.8",
+    "typechain": "^1.0.5",
+    "typechain-target-truffle": "^1.0.2"
   },
   "browserslist": {
     "production": [

@@ -1,45 +1,55 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
-import ERC20Data from '@openzeppelin/contracts/build/contracts/ERC20Detailed.json'
 import {AppThunk} from '../../app/store'
 import wellKnownContracts from '../../components/wellKnownContracts'
+import ERC20Data from '@openzeppelin/contracts/build/contracts/ERC20Detailed.json'
+import {ERC20DetailedContract, ERC20DetailedInstance} from '../../contracts'
+import ERC20Detailed from 'contracts'
+import { AddressId } from 'features/addressInput/AddressSlice'
 const contract = require('@truffle/contract')
 
-type contractAddress = string
+export type ContractAddress = string
 
 interface tokenContract {
-    address: contractAddress,
+    addressId: AddressId,
     name: string
     symbol: string
-    contractInstance: object
+    contractInstance: ERC20DetailedInstance
 }
-
 interface tokenContractPayload {
-    id: contractAddress,
+    id: AddressId,
     tokenContract: tokenContract
 }
 
 interface tokenContractsState {
-    contractsByToken: Record<contractAddress, tokenContract>
+    contractsById: Record<AddressId, tokenContract>
 }
 
 let initialState:tokenContractsState = {
-    contractsByToken: {
-        '0x123': {
-            address: '0x123',
-            name: 'test contract',
-            symbol: 'TCT',
-            contractInstance: {}
-        }
-    }
+    contractsById: {}
 }
 
 const tokenContractSlice = createSlice({
     name: 'tokenContracts',
     initialState: initialState,
     reducers: {
-        addContract(state, action: PayloadAction<tokenContractPayload>) {
-            const {id, tokenContract} = action.payload
-            state.contractsByToken[id] = tokenContract
+        addContract: {
+            reducer(state, action: PayloadAction<tokenContractPayload>) {
+                const {id, tokenContract} = action.payload
+                state.contractsById[id] = tokenContract
+            },
+            prepare(contractAddress: AddressId, tokenName: string, tokenSymbol: string, contractInstance:ERC20Detailed.ERC20DetailedInstance) {
+                return {
+                    payload: {
+                        id: contractAddress,
+                        tokenContract: {
+                            addressId: contractAddress,
+                            name: tokenName,
+                            symbol: tokenSymbol,
+                            contractInstance
+                        }
+                    }
+                }
+            }
         }
     }
 })
@@ -53,9 +63,10 @@ export const addContractThunk = (contractAddress: string): AppThunk => async (di
     if (web3) {
         // initialize contract
         let isCompliant = true
-        const erc20Contract = new contract(ERC20Data)
+        const erc20Contract = contract(ERC20Data)
         erc20Contract.setProvider(web3.currentProvider)
-        const contractInstance = await erc20Contract.at(contractAddress)
+        const contractInstance:ERC20Detailed.ERC20DetailedInstance = await erc20Contract.at(contractAddress)
+
         let tokenName = ''
         let tokenSymbol = ''
         // Some contracts like MKR and SAI do not implement the correct ERC20 name and symbol.
@@ -68,6 +79,7 @@ export const addContractThunk = (contractAddress: string): AppThunk => async (di
                 tokenName = await contractInstance.name()
                 tokenSymbol = await contractInstance.symbol()
             } catch(error) {
+                console.log(error)
                 // Most likely token contract does not implement the name() method. Ignore error.
                 console.warn(`Failed to get name/symbol of contract at ${contractAddress}. Please raise
                     an issue to add this token at https://github.com/TripleSpeeder/token-allowance-checker/issues!`)
@@ -87,9 +99,6 @@ export const addContractThunk = (contractAddress: string): AppThunk => async (di
             console.warn(`Contract at ${contractAddress} is not ERC20. Ignoring.`)
             return
         }
-        dispatch(addContract({
-            id: contractAddress,
-            tokenContract: contractInstance
-        }))
+        dispatch(addContract(contractAddress, tokenName, tokenSymbol, contractInstance))
     }
 }
