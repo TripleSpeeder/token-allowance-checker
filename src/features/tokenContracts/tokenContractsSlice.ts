@@ -13,6 +13,8 @@ interface tokenContract {
     addressId: AddressId,
     name: string
     symbol: string
+    decimals: BN
+    totalSupply: BN
     contractInstance: ERC20DetailedInstance
 }
 interface tokenContractPayload {
@@ -37,7 +39,7 @@ const tokenContractSlice = createSlice({
                 const {id, tokenContract} = action.payload
                 state.contractsById[id] = tokenContract
             },
-            prepare(contractAddress: AddressId, tokenName: string, tokenSymbol: string, contractInstance:ERC20Detailed.ERC20DetailedInstance) {
+            prepare(contractAddress: AddressId, tokenName: string, tokenSymbol: string, decimals:BN, totalSupply:BN, contractInstance:ERC20Detailed.ERC20DetailedInstance) {
                 return {
                     payload: {
                         id: contractAddress,
@@ -45,6 +47,8 @@ const tokenContractSlice = createSlice({
                             addressId: contractAddress,
                             name: tokenName,
                             symbol: tokenSymbol,
+                            decimals,
+                            totalSupply,
                             contractInstance
                         }
                     }
@@ -100,6 +104,6 @@ export const addContractThunk = (contractAddress: string): AppThunk => async (di
             return
         }
         dispatch(addAddressThunk(contractAddress))
-        dispatch(addContract(contractAddress, tokenName, tokenSymbol, contractInstance))
+        dispatch(addContract(contractAddress, tokenName, tokenSymbol, decimals, totalSupply, contractInstance))
     }
 }

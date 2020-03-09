@@ -4,10 +4,14 @@ import {useDispatch, useSelector} from 'react-redux'
 import { RootState } from 'app/rootReducer'
 import { Table, Loader } from 'semantic-ui-react'
 import AddressDisplay from 'components/AddressDisplay'
+import bnToDisplayString from '@triplespeeder/bn2string'
+import BN from 'bn.js'
 
 interface TokenAllowanceItemProps {
     allowanceId: AllowanceId
 }
+
+const unlimitedAllowance = new BN(2).pow(new BN(256)).subn(1)
 
 const TokenAllowanceItem = ({allowanceId}:TokenAllowanceItemProps) => {
     const dispatch = useDispatch()
@@ -24,16 +28,24 @@ const TokenAllowanceItem = ({allowanceId}:TokenAllowanceItemProps) => {
         }
     }, [allowanceValue, allowanceId])
 
-    // TODO: const criticalAllowance = (value.eq(unlimitedAllowance)) || (value.gte(tokenSupply))
-    const criticalAllowance = false
-
-    let allowanceElement
+    let allowanceElement, criticalAllowance
     switch(allowanceValue.state) {
         case QueryStates.QUERY_STATE_RUNNING:
             allowanceElement = <Loader active inline size={'mini'}/>
             break
         case QueryStates.QUERY_STATE_COMPLETE:
-            allowanceElement = <span>{allowanceValue.value.toString()}</span>
+            criticalAllowance = (allowanceValue.value.eq(unlimitedAllowance)) || (allowanceValue.value.gte(tokenContract.totalSupply))
+            if (criticalAllowance) {
+                allowanceElement = <em>unlimited</em>
+            } else {
+                const roundToDecimals = new BN('2')
+                const {precise, rounded} = bnToDisplayString({
+                    value: allowanceValue.value,
+                    decimals: tokenContract.decimals,
+                    roundToDecimals
+                })
+                allowanceElement = <span>{rounded}</span>
+            }
             break
         case QueryStates.QUERY_STATE_ERROR:
             allowanceElement = <span>error</span>
