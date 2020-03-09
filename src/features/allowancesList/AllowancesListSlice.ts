@@ -3,7 +3,7 @@ import {AppDispatch, AppThunk} from '../../app/store'
 import {addContractThunk, ContractAddress} from 'features/tokenContracts/tokenContractsSlice'
 import {addAddressThunk, AddressId, EthAddressPayload, addAddress} from '../addressInput/AddressSlice'
 import BN from 'bn.js'
-import {createDfuseClient, GraphqlResponse, SearchTransactionRow} from '@dfuse/client'
+import {createDfuseClient} from '@dfuse/client'
 
 const topicHashApprove = '0x8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925'
 const eventABI = [
@@ -44,6 +44,7 @@ const searchTransactions = `query ($query: String! $limit: Int64! $cursor: Strin
         }
         edges {
           node {
+            hash
             block {
               number
             }
@@ -132,10 +133,6 @@ const allowancesSlice = createSlice({
                     return
                 }
                 state.allowancesById[id] = allowance
-                // should not be necessary anymore since i create this entry in extraReducers below
-                // if (!Object.keys(state.allowanceIdsByOwnerId).includes(allowance.ownerId)) {
-                //    state.allowanceIdsByOwnerId[allowance.ownerId] = []
-                //}
                 state.allowanceIdsByOwnerId[allowance.ownerId].push(allowance.id)
                 state.allowanceValuesById[id] = {
                     allowanceId: id,
@@ -274,17 +271,42 @@ export const fetchAllowancesThunk = (
             }))
         } while (numPageResults>0)
 
+        const badContracts:Array<string> = []
         const knownContracts:Array<string> = []
         const knownSpenders:Array<string> = []
         allEdges.forEach(({node}) => {
-            node.matchingLogs.forEach((logEntry:any) => {
-                // Seems the dfuse query based on topic is not working correctly. Double-check that the logEntry
-                // actually is of the expected topic.
-                if (logEntry.topics[0] !== topicHashApprove) {
-                    console.warn(`Skipping wrong topic ${logEntry.topics[0]}`)
+            node.matchingLogs.forEach(async(logEntry:any) => {
+                // skip bad contracts
+                if (badContracts.includes(logEntry.address.toLowerCase())) {
+                    //console.log(`Skipping log of non-compliant contract ${logEntry.address}`)
                     return
                 }
-                const decoded = web3.eth.abi.decodeLog(eventABI, logEntry.data, logEntry.topics.slice(1))
+                // Seems the dfuse query based on topic is not working correctly.
+                // Double-check that the logEntry actually is of the expected topic.
+                if (logEntry.topics[0] !== topicHashApprove) {
+                    console.log(`Skipping log event. Topic is wrong, expected ${topicHashApprove}, got ${logEntry.topics[0]}. Transaction: ${node.hash}`)
+                    return
+                }
+                if (logEntry.data === '0x') {
+                    console.log(`Detected bad contract at ${logEntry.address}: LogEntry.data is missing. Transaction: ${node.hash}.`)
+                    badContracts.push(logEntry.address.toLowerCase())
+                    return
+                }
+
+                let decoded
+                try {
+                    decoded = web3.eth.abi.decodeLog(eventABI, logEntry.data, logEntry.topics.slice(1))
+                }catch (e) {
+                    console.log(`Detected bad contract at ${logEntry.address}: Can not decode logEntry from transaction: ${node.hash}:`)
+                    console.log(logEntry)
+                    badContracts.push(logEntry.address.toLowerCase())
+                    return
+                }
+                // check if spender is an actual address. Some contracts emit logs with spender 0x0...
+                if (!(parseInt(decoded.spender))) {
+                    console.log(`Skipping log event: Invalid spender ${decoded.spender}, contract: ${logEntry.address}`)
+                    return
+                }
                 // double-check owner
                 if (decoded.owner.toLowerCase() === owner.address.toLowerCase()) {
                     // Add tokenContract
@@ -304,7 +326,7 @@ export const fetchAllowancesThunk = (
                         dispatch(addAllowance(tokenContractAddress, ownerId, spenderAddress))
                     }
                 } else {
-                    console.log(`Skipping log event due to owner mismatch. Expected ${owner.address}, got ${decoded.owner}`)
+                    console.log(`Skipping log event due to owner mismatch. Expected ${owner.address}, got ${decoded.owner}. Transaction: ${node.hash}`)
                 }
             })
         })

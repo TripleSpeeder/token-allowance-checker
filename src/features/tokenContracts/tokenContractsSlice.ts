@@ -83,9 +83,8 @@ export const addContractThunk = (contractAddress: string): AppThunk => async (di
                 tokenName = await contractInstance.name()
                 tokenSymbol = await contractInstance.symbol()
             } catch(error) {
-                console.log(error)
                 // Most likely token contract does not implement the name() method. Ignore error.
-                console.warn(`Failed to get name/symbol of contract at ${contractAddress}. Please raise
+                console.log(`Failed to get name/symbol of contract at ${contractAddress}. Please raise
                     an issue to add this token at https://github.com/TripleSpeeder/token-allowance-checker/issues!`)
             }
         }
@@ -93,14 +92,15 @@ export const addContractThunk = (contractAddress: string): AppThunk => async (di
         try {
             decimals = await contractInstance.decimals()
         } catch(error) {
-            console.warn(`Contract at ${contractAddress} does not provide decimals(). Assuming 0.`)
+            console.log(`Contract at ${contractAddress} does not provide decimals(). Assuming 0.`)
         }
-        let totalSupply, balance
+        let totalSupply
         try {
             totalSupply = await contractInstance.totalSupply()
-            // balance = await contractInstance.balanceOf(owner)
+            await contractInstance.balanceOf(contractAddress)
+            await contractInstance.allowance(contractAddress, contractAddress)
         } catch (error) {
-            console.warn(`Contract at ${contractAddress} is not ERC20. Ignoring.`)
+            console.log(`Contract at ${contractAddress} is not ERC20. Ignoring.`)
             return
         }
         dispatch(addAddressThunk(contractAddress))
