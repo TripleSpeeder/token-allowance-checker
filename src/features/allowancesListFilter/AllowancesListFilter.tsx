@@ -1,12 +1,21 @@
 import React from 'react'
-import PropTypes from 'prop-types'
 import {Checkbox, Grid, Icon, Input} from 'semantic-ui-react'
+import {InputOnChangeData} from 'semantic-ui-react/dist/commonjs/elements/Input/Input'
+import {CheckboxProps} from 'semantic-ui-react/dist/commonjs/modules/Checkbox/Checkbox'
+
+interface AllowancesListFilterProps {
+    showZeroAllowances: boolean,
+    toggleShowZeroAllowances: (event: React.FormEvent<HTMLInputElement>, data: CheckboxProps) => void,
+    addressFilterValue: string,
+    handleAddressFilterChange: (event: React.ChangeEvent<HTMLInputElement>, data: InputOnChangeData) => void,
+    clearAddressFilter: (input: void)=>void,
+}
 
 const AllowancesListFilter = ( { showZeroAllowances,
                                   toggleShowZeroAllowances,
                                   addressFilterValue,
                                   handleAddressFilterChange,
-                                  clearAddressFilter } ) => {
+                                  clearAddressFilter }:AllowancesListFilterProps ) => {
     return (
         <Grid verticalAlign='middle' centered textAlign={'center'} columns={2} divided>
             <Grid.Row>
@@ -33,12 +42,5 @@ const AllowancesListFilter = ( { showZeroAllowances,
     )
 }
 
-AllowancesListFilter.propTypes = {
-    showZeroAllowances: PropTypes.bool.isRequired,
-    toggleShowZeroAllowances: PropTypes.func.isRequired,
-    addressFilterValue: PropTypes.string.isRequired,
-    handleAddressFilterChange: PropTypes.func.isRequired,
-    clearAddressFilter: PropTypes.func.isRequired,
-}
 
 export default AllowancesListFilter

@@ -3,7 +3,7 @@ import {useSelector} from 'react-redux'
 import _ from 'lodash'
 import {RootState} from '../../app/rootReducer'
 import TokenAllowancesItem from './TokenAllowancesItem'
-import {AllowanceId, QueryStates} from './AllowancesListSlice'
+import {QueryStates} from './AllowancesListSlice'
 import { Segment, Message, Icon } from 'semantic-ui-react'
 import AddressDisplay from '../../components/AddressDisplay'
 
@@ -15,8 +15,6 @@ interface AllowancesListContainerProps {
 }
 
 const AllowancesListContainer = ({owner, showZeroAllowances, addressFilter}:AllowancesListContainerProps) => {
-
-    console.log(`showZeroAllowances: ${showZeroAllowances}, addressFilter: ${addressFilter}`)
     const ownerAllowanceIds = useSelector(
         (state: RootState) => {
             if ((showZeroAllowances) && (addressFilter==='')) {
@@ -80,6 +78,7 @@ const AllowancesListContainer = ({owner, showZeroAllowances, addressFilter}:Allo
             )
         case QueryStates.QUERY_STATE_COMPLETE:
             if (ownerAllowanceIds.length) {
+                // TODO: Move this to selector and use reselect to cache results
                 // get all allowances of owner
                 const allowances = ownerAllowanceIds.map((allowanceId) => (allowancesById[allowanceId]))
                 // group allowances by tokenID

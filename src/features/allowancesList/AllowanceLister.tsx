@@ -3,10 +3,11 @@ import {useParams} from 'react-router-dom'
 import 'semantic-ui-css/semantic.min.css'
 import {Segment, Button} from 'semantic-ui-react'
 import AllowancesListContainer from './AllowancesListContainer'
-import AllowancesListFilter from '../../components/AllowancesListFilter'
+import AllowancesListFilter from '../allowancesListFilter/AllowancesListFilter'
 import {useDispatch, useSelector} from 'react-redux'
 import {RootState} from '../../app/rootReducer'
 import {fetchAllowancesThunk, QueryStates} from './AllowancesListSlice'
+import {CheckboxProps} from 'semantic-ui-react/dist/commonjs/modules/Checkbox/Checkbox'
 
 
 const AllowanceLister = () => {
@@ -25,7 +26,7 @@ const AllowanceLister = () => {
     const [showZeroAllowances, setShowZeroAllowances] = useState(true)
     const [addressFilter, setAddressFilter] = useState('')
 
-    const toggleShowZeroAllowances = () => {
+    const toggleShowZeroAllowances = (event: React.FormEvent<HTMLInputElement>, data: CheckboxProps) => {
         setShowZeroAllowances(!showZeroAllowances)
     }
 
