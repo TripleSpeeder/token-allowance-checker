@@ -4,6 +4,7 @@ import rootReducer ,{ RootState } from './rootReducer'
 import { setOnboardAPI, setWeb3Instance } from '../features/onboard/onboardSlice'
 import { addContract } from 'features/tokenContracts/tokenContractsSlice'
 import { setAllowanceValue } from 'features/allowancesList/AllowancesListSlice'
+import { setBalanceValue, addBalance } from 'features/balances/BalancesSlice'
 
 const customizedMiddleware = getDefaultMiddleware({
     serializableCheck: {
@@ -11,13 +12,16 @@ const customizedMiddleware = getDefaultMiddleware({
             setOnboardAPI.type,
             setWeb3Instance.type,
             addContract.type,
-            setAllowanceValue.type
+            setAllowanceValue.type,
+            addBalance.type,
+            setBalanceValue.type
         ],
         ignoredPaths: [
             'onboard.web3',
             'onboard.onboardAPI',
             'tokenContracts.contractsById',
-            'allowances.allowanceValuesById'
+            'allowances.allowanceValuesById',
+            'balances.balancesById'
         ]
     },
     immutableCheck: {

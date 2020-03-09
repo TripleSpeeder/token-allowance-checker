@@ -2,9 +2,9 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import {AppThunk} from '../../app/store'
 import wellKnownContracts from '../../components/wellKnownContracts'
 import ERC20Data from '@openzeppelin/contracts/build/contracts/ERC20Detailed.json'
-import {ERC20DetailedContract, ERC20DetailedInstance} from '../../contracts'
+import {ERC20DetailedInstance} from '../../contracts'
 import ERC20Detailed from 'contracts'
-import {AddressId, addAddress, addAddressThunk} from 'features/addressInput/AddressSlice'
+import {AddressId, addAddressThunk} from 'features/addressInput/AddressSlice'
 const contract = require('@truffle/contract')
 
 export type ContractAddress = string

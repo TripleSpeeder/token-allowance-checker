@@ -92,7 +92,11 @@ const AllowancesListContainer = ({owner, showZeroAllowances, addressFilter}:Allo
                 for (let entry of Object.entries(allowancesByTokenId)) {
                     const tokenId = entry[0]
                     const allowanceIds = entry[1].map(allowance => (allowance.id))
-                    items.push(<TokenAllowancesItem key={tokenId} tokenId={tokenId} allowanceIds={allowanceIds}/>)
+                    items.push(<TokenAllowancesItem
+                        key={tokenId}
+                        tokenId={tokenId}
+                        ownerId={owner}
+                        allowanceIds={allowanceIds}/>)
                 }
                 return (<>{items}</>)
             }
