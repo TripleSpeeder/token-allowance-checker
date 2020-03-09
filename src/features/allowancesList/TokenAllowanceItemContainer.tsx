@@ -17,7 +17,7 @@ const TokenAllowanceItemContainer = ({ tokenId, ownerId }:AllowanceItemContainer
 
     // collect all allowances of tokenId owned by ownerId
     const allowanceIds = useSelector((state:RootState) => {
-        return state.allowances.allowancesByOwnerId[ownerId].filter(allowanceId => {
+        return state.allowances.allowanceIdsByOwnerId[ownerId].filter(allowanceId => {
             // return allowanceId if it is matching the current tokenId
             return (state.allowances.allowancesById[allowanceId].tokenContractId === tokenId)
         })

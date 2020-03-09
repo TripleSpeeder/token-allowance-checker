@@ -16,9 +16,41 @@ interface AllowancesListContainerProps {
 
 const AllowancesListContainer = ({owner, showZeroAllowances, addressFilter}:AllowancesListContainerProps) => {
 
-    // TODO: implement showZeroAllowances, addressFilter
+    console.log(`showZeroAllowances: ${showZeroAllowances}, addressFilter: ${addressFilter}`)
     const ownerAllowanceIds = useSelector(
-        (state: RootState) => state.allowances.allowancesByOwnerId[owner]
+        (state: RootState) => {
+            if ((showZeroAllowances) && (addressFilter==='')) {
+                // no filter required, just return all IDs.
+                return state.allowances.allowanceIdsByOwnerId[owner]
+            } else {
+                // apply filter
+                return state.allowances.allowanceIdsByOwnerId[owner].filter(allowanceId => {
+                    const allowance = state.allowances.allowancesById[allowanceId]
+                    if (!showZeroAllowances) {
+                        const allowanceValue = state.allowances.allowanceValuesById[allowanceId]
+                        const isZeroAllowance = ((allowanceValue.state === QueryStates.QUERY_STATE_COMPLETE) && (allowanceValue.value.isZero()))
+                        if (isZeroAllowance) {
+                            return false
+                        }
+                    }
+                    if (addressFilter) {
+                        const filterString = addressFilter.toLowerCase()
+                        const tokenContract = state.tokenContracts.contractsById[allowance.tokenContractId]
+                        const tokenContractAddress = state.addresses.addressesById[tokenContract.addressId]
+                        const matchedFilter = (
+                            tokenContract.name.toLowerCase().includes(filterString) ||
+                            tokenContract.symbol.toLowerCase().includes(filterString) ||
+                            tokenContractAddress.address.toLowerCase().includes(filterString) ||
+                            tokenContractAddress.ensName?.toLowerCase().includes(filterString)
+                        )
+                        if (!matchedFilter) {
+                            return false
+                        }
+                    }
+                    return true
+                })
+            }
+        }
     )
     const allowancesById = useSelector(
         (state: RootState) => state.allowances.allowancesById

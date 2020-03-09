@@ -89,7 +89,7 @@ export interface QueryState {
 interface AllowancesState {
     allowancesById: Record<AllowanceId, Allowance>
     allowanceValuesById: Record<AllowanceId, AllowanceValue>
-    allowancesByOwnerId: Record<AddressId, AllowanceId[]>
+    allowanceIdsByOwnerId: Record<AddressId, AllowanceId[]>
     allowanceQueryStateByOwner: Record<AddressId, QueryState>
 }
 
@@ -107,7 +107,7 @@ interface QueryStatePayload {
 let initialState:AllowancesState = {
     allowancesById: {},
     allowanceValuesById: {},
-    allowancesByOwnerId: {},
+    allowanceIdsByOwnerId: {},
     allowanceQueryStateByOwner: {}
 }
 
@@ -133,10 +133,10 @@ const allowancesSlice = createSlice({
                 }
                 state.allowancesById[id] = allowance
                 // should not be necessary anymore since i create this entry in extraReducers below
-                // if (!Object.keys(state.allowancesByOwnerId).includes(allowance.ownerId)) {
-                //    state.allowancesByOwnerId[allowance.ownerId] = []
+                // if (!Object.keys(state.allowanceIdsByOwnerId).includes(allowance.ownerId)) {
+                //    state.allowanceIdsByOwnerId[allowance.ownerId] = []
                 //}
-                state.allowancesByOwnerId[allowance.ownerId].push(allowance.id)
+                state.allowanceIdsByOwnerId[allowance.ownerId].push(allowance.id)
                 state.allowanceValuesById[id] = {
                     allowanceId: id,
                     state: QueryStates.QUERY_STATE_INITIAL,
@@ -170,11 +170,11 @@ const allowancesSlice = createSlice({
     extraReducers: {
         [addAddress.type](state, action:PayloadAction<EthAddressPayload>){
             const {id:ownerId} = action.payload
-            if (Object.keys(state.allowancesByOwnerId).includes(ownerId)) {
+            if (Object.keys(state.allowanceIdsByOwnerId).includes(ownerId)) {
                 // owner already known.
                 return
             }
-            state.allowancesByOwnerId[ownerId] = []
+            state.allowanceIdsByOwnerId[ownerId] = []
             state.allowanceQueryStateByOwner[ownerId] = defaultQueryStateByOwner
         }
     }
