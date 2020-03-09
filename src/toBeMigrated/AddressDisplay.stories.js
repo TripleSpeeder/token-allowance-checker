@@ -1,5 +1,5 @@
 import React from 'react'
-import AddressDisplay from './AddressDisplay'
+import AddressDisplay from '../components/AddressDisplay'
 import {Container} from 'semantic-ui-react'
 
 export default {

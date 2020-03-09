@@ -25,7 +25,6 @@ const AddressInputContainer = () => {
         addressFromParams ? addressFromParams.toLowerCase() : ''
     )
     const [address, setAddress] = useState('')
-    const [prevWalletAddress, setPrevWalletAddress] = useState(addressFromWallet ? addressFromWallet.toLowerCase() : '')
 
     // verify address input
     useEffect(() => {
@@ -61,22 +60,12 @@ const AddressInputContainer = () => {
         handleInput()
     }, [input, setAddress, web3])
 
-    // accept address from wallet depending on context
+    // keep address input field in sync with address from url params
     useEffect(() => {
-        const newWalletAddress = addressFromWallet ? addressFromWallet.toLowerCase() : ''
-        // console.log(`fromParams: ${addressFromParams}`)
-        // console.log(`newWallet : ${newWalletAddress}`)
-        // console.log(`prevWallet: ${prevWalletAddress}`)
-        if (newWalletAddress !== '') {
-            if ((addressFromParams === '') || // in this case always take wallet address
-                (newWalletAddress !== prevWalletAddress) // user actively changed wallet address
-            ) {
-                setInput(newWalletAddress)
-                setPrevWalletAddress(newWalletAddress)
-                history.push(`/address/${newWalletAddress}`)
-            }
+        if (addressFromParams) {
+            setInput(addressFromParams.toLowerCase())
         }
-    }, [addressFromWallet, prevWalletAddress, addressFromParams, history])
+    }, [addressFromParams])
 
     const error = (addressInputState === addressInputStates.ADDRESS_INVALID)
     const loading = (addressInputState === addressInputStates.ADDRESS_RESOLVING)

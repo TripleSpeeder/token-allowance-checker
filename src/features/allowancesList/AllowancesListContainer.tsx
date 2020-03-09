@@ -34,15 +34,19 @@ const AllowancesListContainer = ({owner, showZeroAllowances, addressFilter}:Allo
                     if (addressFilter) {
                         const filterString = addressFilter.toLowerCase()
                         const tokenContract = state.tokenContracts.contractsById[allowance.tokenContractId]
-                        const tokenContractAddress = state.addresses.addressesById[tokenContract.addressId]
-                        const matchedFilter = (
-                            tokenContract.name.toLowerCase().includes(filterString) ||
-                            tokenContract.symbol.toLowerCase().includes(filterString) ||
-                            tokenContractAddress.address.toLowerCase().includes(filterString) ||
-                            tokenContractAddress.ensName?.toLowerCase().includes(filterString)
-                        )
-                        if (!matchedFilter) {
-                            return false
+                        if(tokenContract) {
+                            const tokenContractAddress = state.addresses.addressesById[tokenContract.addressId]
+                            const matchedFilter = (
+                                tokenContract.name.toLowerCase().includes(filterString) ||
+                                tokenContract.symbol.toLowerCase().includes(filterString) ||
+                                tokenContractAddress.address.toLowerCase().includes(filterString) ||
+                                tokenContractAddress.ensName?.toLowerCase().includes(filterString)
+                            )
+                            if (!matchedFilter) {
+                                return false
+                            }
+                        } else {
+                            console.warn(`No tokencontract for ${allowance.tokenContractId}`)
                         }
                     }
                     return true

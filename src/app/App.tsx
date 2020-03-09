@@ -6,9 +6,15 @@ import OnboardGate from '../features/onboard/OnboardGate'
 import {Button, Container, Divider, Grid, Header, Icon, List, Menu, Popup, Segment} from 'semantic-ui-react'
 import AddressInputContainer from '../features/addressInput/AddressInputContainer'
 import pkg from '../../package.json'
+import {useSelector} from 'react-redux'
+import {RootState} from './rootReducer'
 
 
 const App: React.FC = () => {
+
+    const {address} = useSelector(
+        (state: RootState) => state.onboard
+    )
 
     const HomepageHeading =
         <Segment
@@ -122,7 +128,7 @@ const App: React.FC = () => {
                         </Segment>
                         <Segment basic textAlign={'center'}>
                             <Button primary
-                                    as={Link} to={`/address/`}
+                                    as={Link} to={`/address/${address}`}
                                     size={'massive'}>
                                 Check Allowances<Icon name='arrow right' />
                             </Button>

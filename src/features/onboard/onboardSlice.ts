@@ -3,6 +3,7 @@ import Onboard from 'bnc-onboard'
 import Web3 from 'web3'
 import {AppThunk} from '../../app/store'
 import {API, WalletInitOptions} from 'bnc-onboard/dist/src/interfaces'
+import {addAddressThunk} from '../addressInput/AddressSlice'
 
 const onboardApiKey='f4b71bf0-fe50-4eeb-bc2b-b323527ed9e6'
 const infuraApiKey='7f230a5ca832426796454c28577d93f2'
@@ -81,13 +82,16 @@ export const {
 
 export default onboardSlice.reducer
 
-export const selectWallet = () : AppThunk => async (dispatch, getState) => {
+export const selectWallet = (history: any) : AppThunk => async (dispatch, getState) => {
     console.log(`Selecting wallet...`)
     const onboardAPI = getState().onboard.onboardAPI
     if (onboardAPI) {
         let result = await onboardAPI.walletSelect()
-        console.log(`walletSelect result: ${result}`)
         dispatch(setWalletSelected(result))
+        if (!result) {
+            // send user back to home page
+            history.push('/')
+        }
     } else {
         console.log(`dispatched selectWallet() without initialization...`)
     }
@@ -104,7 +108,7 @@ export const checkWallet = () : AppThunk => async (dispatch, getState) => {
     }
 }
 
-export const initialize = (): AppThunk => async dispatch => {
+export const initialize = (history: any): AppThunk => async dispatch => {
     console.log(`Initializing OnBoard.js...`)
     const onboard = (Onboard({
         dappId: onboardApiKey,
@@ -116,6 +120,8 @@ export const initialize = (): AppThunk => async dispatch => {
             },
             address: address => {
                 console.log(`Address changed to ${address}!`)
+                dispatch(addAddressThunk(address))
+                history.push(`/address/${address}`)
                 dispatch(setAddress(address))
             },
             network: networkId => {

@@ -12,13 +12,13 @@ import {CheckboxProps} from 'semantic-ui-react/dist/commonjs/modules/Checkbox/Ch
 
 const AllowanceLister = () => {
     const dispatch = useDispatch()
-    const {address} = useParams()
+    const {address:addressFromParams} = useParams()
     const {web3} = useSelector(
         (state: RootState) => state.onboard
     )
     const queryState = useSelector((state:RootState) => {
-        if (address)
-            return state.allowances.allowanceQueryStateByOwner[address]
+        if (addressFromParams)
+            return state.allowances.allowanceQueryStateByOwner[addressFromParams]
         else
             return undefined
     })
@@ -41,8 +41,8 @@ const AllowanceLister = () => {
 
     // TODO: Check this code
     useEffect(() => {
-        document.title = `TAC - ${address}`
-    }, [address])
+        document.title = `TAC - ${addressFromParams}`
+    }, [addressFromParams])
 
     useEffect(() => {
         if (queryState && (queryState.state === QueryStates.QUERY_STATE_INITIAL)) {
@@ -51,16 +51,16 @@ const AllowanceLister = () => {
     }, [queryState])
 
     const loadAllowances = () => {
-        if (address) {
-            console.log(`Starting query for "${address}"`)
-            dispatch(fetchAllowancesThunk(address))
+        if (addressFromParams) {
+            console.log(`Starting query for "${addressFromParams}"`)
+            dispatch(fetchAllowancesThunk(addressFromParams))
         }
     }
 
     return (
         <React.Fragment>
             <Segment basic>
-                <h2>Allowances of {address}:</h2>
+                <h2>Allowances of {addressFromParams}:</h2>
             </Segment>
             <AllowancesListFilter showZeroAllowances={showZeroAllowances}
                                   toggleShowZeroAllowances={toggleShowZeroAllowances}
@@ -70,7 +70,7 @@ const AllowanceLister = () => {
             />
             <Button onClick={loadAllowances}>refresh allowances</Button>
             <AllowancesListContainer
-                owner={address?address:''}
+                owner={addressFromParams?addressFromParams:''}
                 showZeroAllowances={showZeroAllowances}
                 addressFilter={addressFilter}
             />

@@ -2,7 +2,7 @@ import React, {useContext, useEffect, useState} from 'react'
 import ERC20Data from '@openzeppelin/contracts/build/contracts/ERC20Detailed.json'
 import PropTypes from 'prop-types'
 import TokenAllowanceItemContainer from '../features/allowancesList/TokenAllowanceItemContainer'
-import wellKnownContracts from './wellKnownContracts'
+import wellKnownContracts from '../components/wellKnownContracts'
 const contract = require('@truffle/contract')
 const namehash = require('eth-ens-namehash')
 
