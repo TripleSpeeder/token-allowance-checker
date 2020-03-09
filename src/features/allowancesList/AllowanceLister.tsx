@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useState} from 'react'
+import React, {useEffect, useState} from 'react'
 import {useParams} from 'react-router-dom'
 import 'semantic-ui-css/semantic.min.css'
 import {Segment, Button} from 'semantic-ui-react'
@@ -6,7 +6,7 @@ import AllowancesListContainer from './AllowancesListContainer'
 import AllowancesListFilter from '../../components/AllowancesListFilter'
 import {useDispatch, useSelector} from 'react-redux'
 import {RootState} from '../../app/rootReducer'
-import {fetchAllowancesThunk, QueryState, QueryStates} from './AllowancesListSlice'
+import {fetchAllowancesThunk, QueryStates} from './AllowancesListSlice'
 
 
 const AllowanceLister = () => {

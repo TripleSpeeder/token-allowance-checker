@@ -169,9 +169,13 @@ const allowancesSlice = createSlice({
     },
     extraReducers: {
         [addAddress.type](state, action:PayloadAction<EthAddressPayload>){
-            const {id} = action.payload
-            state.allowancesByOwnerId[id] = []
-            state.allowanceQueryStateByOwner[id] = defaultQueryStateByOwner
+            const {id:ownerId} = action.payload
+            if (Object.keys(state.allowancesByOwnerId).includes(ownerId)) {
+                // owner already known.
+                return
+            }
+            state.allowancesByOwnerId[ownerId] = []
+            state.allowanceQueryStateByOwner[ownerId] = defaultQueryStateByOwner
         }
     }
 })

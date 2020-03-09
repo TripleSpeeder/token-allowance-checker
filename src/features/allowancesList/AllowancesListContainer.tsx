@@ -1,12 +1,9 @@
 import React from 'react'
 import {useSelector} from 'react-redux'
-// import * as _ from 'lodash'
 import _ from 'lodash'
 import {RootState} from '../../app/rootReducer'
-import TokenAllowanceItemContainer from './TokenAllowanceItemContainer'
 import TokenAllowancesItem from './TokenAllowancesItem'
 import {AllowanceId, QueryStates} from './AllowancesListSlice'
-import {AddressId} from '../addressInput/AddressSlice'
 import { Segment, Message, Icon } from 'semantic-ui-react'
 import AddressDisplay from '../../components/AddressDisplay'
 
