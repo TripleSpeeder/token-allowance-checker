@@ -21,9 +21,7 @@ const AddressInputContainer = () => {
 
     const history = useHistory()
     const [addressInputState, setAddressInputState] = useState(addressInputStates.ADDRESS_INITIAL)
-    const [input, setInput] = useState(
-        /*addressFromParams ? addressFromParams.toLowerCase() : */''
-    )
+    const [input, setInput] = useState('')
     const [address, setAddress] = useState('')
 
     // verify address input
@@ -60,15 +58,12 @@ const AddressInputContainer = () => {
         handleInput()
     }, [input, setAddress, web3])
 
-    /*
-    // keep address input field in sync with address from url params
+    // keep address input field in sync with address provided by wallet or url
     useEffect(() => {
-        if (addressFromParams) {
-            setInput(addressFromParams.toLowerCase())
+        if (checkAddressId) {
+            setInput(checkAddressId)
         }
-    }, [addressFromParams])
-
-     */
+    }, [checkAddressId])
 
     const error = (addressInputState === addressInputStates.ADDRESS_INVALID)
     const loading = (addressInputState === addressInputStates.ADDRESS_RESOLVING)
@@ -76,10 +71,7 @@ const AddressInputContainer = () => {
 
     const handleSubmit = () => {
         if (success) {
-            console.log(`Submit! Address: ${address}`)
             history.push(`/address/${address}`)
-        } else {
-            console.log(`Submit with invalid address`)
         }
     }
 

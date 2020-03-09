@@ -123,19 +123,12 @@ export const initialize = (history: any): AppThunk => async (dispatch:AppDispatc
                 console.log(`Wallet address changed to ${address}!`)
                 dispatch(setWalletAddressThunk(address))
                 const {prevWalletAddressId} = getState().onboard
+                //  Only trigger history push when user changed the wallet address
                 if (prevWalletAddressId && (prevWalletAddressId !== address.toLowerCase())) {
                     console.log(`Pushing ${address}. Prev walletId: ${prevWalletAddressId}`)
                     history.push(`/address/${address}`)
                 }
                 dispatch(setPrevWalletAddressId(address.toLowerCase()))
-
-                /*const {checkAddressId} = getState().addresses
-                if (checkAddressId !== address) {
-                    console.log(`Pushing ${address}. Current checkAddressId: ${checkAddressId}`)
-                    history.push(`/address/${address}`)
-                }
-
-                 */
             },
             network: networkId => {
                 dispatch(setNetworkId(networkId))
