@@ -44,7 +44,6 @@ const AllowanceLister = () => {
     }, [address])
 
     useEffect(() => {
-        console.log(`useEffect querystate: ${queryState}`)
         if (queryState && (queryState.state === QueryStates.QUERY_STATE_INITIAL)) {
             loadAllowances()
         }

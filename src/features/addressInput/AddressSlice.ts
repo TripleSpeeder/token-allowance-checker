@@ -103,7 +103,7 @@ export const addAddressThunk = (address: string): AppThunk => async (dispatch: A
                 ensName: reverseENS
             }))
         } catch(error) {
-            console.log(`Error getting reverse ENS: ${error}`)
+            // console.log(`Error getting reverse ENS: ${error}`)
         }
         dispatch(setResolvingState({
             id: address,

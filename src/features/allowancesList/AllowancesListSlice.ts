@@ -103,10 +103,6 @@ interface QueryStatePayload {
     queryState: QueryState,
 }
 
-interface AddOwnerPayload {
-    ownerId: AddressId
-}
-
 // initial state
 let initialState:AllowancesState = {
     allowancesById: {},
@@ -136,10 +132,16 @@ const allowancesSlice = createSlice({
                     return
                 }
                 state.allowancesById[id] = allowance
-                if (!Object.keys(state.allowancesByOwnerId).includes(allowance.ownerId)) {
-                    state.allowancesByOwnerId[allowance.ownerId] = []
-                }
+                // should not be necessary anymore since i create this entry in extraReducers below
+                // if (!Object.keys(state.allowancesByOwnerId).includes(allowance.ownerId)) {
+                //    state.allowancesByOwnerId[allowance.ownerId] = []
+                //}
                 state.allowancesByOwnerId[allowance.ownerId].push(allowance.id)
+                state.allowanceValuesById[id] = {
+                    allowanceId: id,
+                    state: QueryStates.QUERY_STATE_INITIAL,
+                    value: new BN('-1')
+                }
             },
             prepare(tokenContractId: AddressId, ownerId: AddressId, spenderId: AddressId) {
                 const id = buildAllowanceId(tokenContractId, ownerId, spenderId)
@@ -159,6 +161,10 @@ const allowancesSlice = createSlice({
         setQueryState(state, action: PayloadAction<QueryStatePayload>) {
             const {ownerId, queryState} = action.payload
             state.allowanceQueryStateByOwner[ownerId] = queryState
+        },
+        setAllowanceValue(state, action: PayloadAction<AllowanceValue>) {
+            const allowanceValue = action.payload
+            state.allowanceValuesById[allowanceValue.allowanceId] = allowanceValue
         }
     },
     extraReducers: {
@@ -170,9 +176,41 @@ const allowancesSlice = createSlice({
     }
 })
 
-export const { addAllowance, setQueryState } = allowancesSlice.actions
+export const { addAllowance, setQueryState, setAllowanceValue } = allowancesSlice.actions
 
 export default allowancesSlice.reducer
+
+export const fetchAllowanceValueThunk = (
+    allowanceId: AllowanceId
+):AppThunk => async (dispatch:AppDispatch, getState) => {
+    // indicate start of loading
+    dispatch(setAllowanceValue({
+        allowanceId,
+        value: new BN('-1'),
+        state: QueryStates.QUERY_STATE_RUNNING
+    }))
+
+    const allowance = getState().allowances.allowancesById[allowanceId]
+    const owner = getState().addresses.addressesById[allowance.ownerId]
+    const spender = getState().addresses.addressesById[allowance.spenderId]
+    const tokenContract = getState().tokenContracts.contractsById[allowance.tokenContractId]
+
+    try {
+        const value = await tokenContract.contractInstance.allowance(owner.address, spender.address)
+        dispatch(setAllowanceValue({
+            allowanceId,
+            value,
+            state: QueryStates.QUERY_STATE_COMPLETE
+        }))
+    }catch(error) {
+        console.log(`Failed to get allowance from token ${tokenContract.addressId}`)
+        dispatch(setAllowanceValue({
+            allowanceId,
+            value: new BN('-1'),
+            state: QueryStates.QUERY_STATE_ERROR
+        }))
+    }
+}
 
 export const fetchAllowancesThunk = (
     ownerId: AddressId
@@ -232,10 +270,6 @@ export const fetchAllowancesThunk = (
             }))
         } while (numPageResults>0)
 
-        if (allEdges.length <= 0) {
-            console.log(`No Approve() calls found for ${owner.address}`)
-        }
-
         const knownContracts:Array<string> = []
         const knownSpenders:Array<string> = []
         allEdges.forEach(({node}) => {
@@ -253,14 +287,14 @@ export const fetchAllowancesThunk = (
                     const tokenContractAddress = logEntry.address.toLowerCase()
                     if (!knownContracts.includes(tokenContractAddress)) {
                         knownContracts.push(tokenContractAddress)
-                        console.log(`Adding tokenContract ${tokenContractAddress}`)
+                        // console.log(`Adding tokenContract ${tokenContractAddress}`)
                         dispatch(addContractThunk(tokenContractAddress))
                     }
                     // Add spender address and create allowance entry
                     const spenderAddress = decoded.spender.toLowerCase()
                     if (!knownSpenders.includes(spenderAddress)) {
                         knownSpenders.push(spenderAddress)
-                        console.log(`Adding Spender ${spenderAddress} for ${tokenContractAddress}`)
+                        // console.log(`Adding Spender ${spenderAddress} for ${tokenContractAddress}`)
                         dispatch(addAddressThunk(spenderAddress))
                         // Add allowance entry
                         dispatch(addAllowance(tokenContractAddress, ownerId, spenderAddress))
