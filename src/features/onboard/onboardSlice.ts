@@ -1,9 +1,10 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import Onboard from 'bnc-onboard'
 import Web3 from 'web3'
-import {AppThunk} from '../../app/store'
+import {AppDispatch, AppThunk} from '../../app/store'
 import {API, WalletInitOptions} from 'bnc-onboard/dist/src/interfaces'
-import {addAddressThunk} from '../addressInput/AddressSlice'
+import {addAddressThunk, AddressId, setWalletAddressThunk} from '../addressInput/AddressSlice'
+import check from 'bnc-onboard/dist/src/modules/check'
 
 const onboardApiKey='f4b71bf0-fe50-4eeb-bc2b-b323527ed9e6'
 const infuraApiKey='7f230a5ca832426796454c28577d93f2'
@@ -39,15 +40,16 @@ const wallets:Partial<WalletInitOptions>[] = [
 interface IOnboard {
     onboardAPI: API | null,
     web3?: Web3,
-    address?: string,
     networkId: number,
-    walletSelected: boolean
+    walletSelected: boolean,
+    prevWalletAddressId: AddressId | undefined
 }
 
 let initialState:IOnboard = {
     networkId: 0,
     onboardAPI: null,
-    walletSelected: false
+    walletSelected: false,
+    prevWalletAddressId: undefined
 }
 
 const onboardSlice = createSlice({
@@ -63,8 +65,8 @@ const onboardSlice = createSlice({
         setNetworkId(state, action: PayloadAction<number>) {
             state.networkId = action.payload
         },
-        setAddress(state, action: PayloadAction<string>) {
-            state.address = action.payload
+        setPrevWalletAddressId(state, action: PayloadAction<string>) {
+            state.prevWalletAddressId = action.payload
         },
         setWalletSelected(state, action: PayloadAction<boolean>) {
             state.walletSelected = action.payload
@@ -74,10 +76,10 @@ const onboardSlice = createSlice({
 
 export const {
     setOnboardAPI,
-    setAddress,
     setNetworkId,
     setWeb3Instance,
     setWalletSelected,
+    setPrevWalletAddressId
 } = onboardSlice.actions
 
 export default onboardSlice.reducer
@@ -108,24 +110,34 @@ export const checkWallet = () : AppThunk => async (dispatch, getState) => {
     }
 }
 
-export const initialize = (history: any): AppThunk => async dispatch => {
+export const initialize = (history: any): AppThunk => async (dispatch:AppDispatch, getState) => {
     console.log(`Initializing OnBoard.js...`)
     const onboard = (Onboard({
         dappId: onboardApiKey,
         networkId: 1,
         subscriptions: {
             wallet: wallet => {
-                console.log(`${wallet.name} is now connected!`)
                 dispatch(setWeb3Instance(new Web3(wallet.provider)))
             },
             address: address => {
-                console.log(`Address changed to ${address}!`)
-                dispatch(addAddressThunk(address))
-                history.push(`/address/${address}`)
-                dispatch(setAddress(address))
+                console.log(`Wallet address changed to ${address}!`)
+                dispatch(setWalletAddressThunk(address))
+                const {prevWalletAddressId} = getState().onboard
+                if (prevWalletAddressId && (prevWalletAddressId !== address.toLowerCase())) {
+                    console.log(`Pushing ${address}. Prev walletId: ${prevWalletAddressId}`)
+                    history.push(`/address/${address}`)
+                }
+                dispatch(setPrevWalletAddressId(address.toLowerCase()))
+
+                /*const {checkAddressId} = getState().addresses
+                if (checkAddressId !== address) {
+                    console.log(`Pushing ${address}. Current checkAddressId: ${checkAddressId}`)
+                    history.push(`/address/${address}`)
+                }
+
+                 */
             },
             network: networkId => {
-                console.log(`NetworkId change to ${networkId}`)
                 dispatch(setNetworkId(networkId))
             },
             balance: balance => {}

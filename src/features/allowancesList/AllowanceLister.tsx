@@ -1,5 +1,4 @@
 import React, {useEffect, useState} from 'react'
-import {useParams} from 'react-router-dom'
 import 'semantic-ui-css/semantic.min.css'
 import {Segment, Button} from 'semantic-ui-react'
 import AllowancesListContainer from './AllowancesListContainer'
@@ -12,13 +11,15 @@ import {CheckboxProps} from 'semantic-ui-react/dist/commonjs/modules/Checkbox/Ch
 
 const AllowanceLister = () => {
     const dispatch = useDispatch()
-    const {address:addressFromParams} = useParams()
+    const address = useSelector(
+        (state:RootState) => state.addresses.checkAddressId
+    )
     const {web3} = useSelector(
         (state: RootState) => state.onboard
     )
     const queryState = useSelector((state:RootState) => {
-        if (addressFromParams)
-            return state.allowances.allowanceQueryStateByOwner[addressFromParams]
+        if (address)
+            return state.allowances.allowanceQueryStateByOwner[address]
         else
             return undefined
     })
@@ -41,8 +42,8 @@ const AllowanceLister = () => {
 
     // TODO: Check this code
     useEffect(() => {
-        document.title = `TAC - ${addressFromParams}`
-    }, [addressFromParams])
+        document.title = `TAC - ${address}`
+    }, [address])
 
     useEffect(() => {
         if (queryState && (queryState.state === QueryStates.QUERY_STATE_INITIAL)) {
@@ -51,16 +52,20 @@ const AllowanceLister = () => {
     }, [queryState])
 
     const loadAllowances = () => {
-        if (addressFromParams) {
-            console.log(`Starting query for "${addressFromParams}"`)
-            dispatch(fetchAllowancesThunk(addressFromParams))
+        if (address) {
+            console.log(`Starting query for "${address}"`)
+            dispatch(fetchAllowancesThunk(address))
         }
+    }
+
+    if (!address) {
+        return <div>No address set</div>
     }
 
     return (
         <React.Fragment>
             <Segment basic>
-                <h2>Allowances of {addressFromParams}:</h2>
+                <h2>Allowances of {address}:</h2>
             </Segment>
             <AllowancesListFilter showZeroAllowances={showZeroAllowances}
                                   toggleShowZeroAllowances={toggleShowZeroAllowances}
@@ -70,7 +75,7 @@ const AllowanceLister = () => {
             />
             <Button onClick={loadAllowances}>refresh allowances</Button>
             <AllowancesListContainer
-                owner={addressFromParams?addressFromParams:''}
+                owner={address}
                 showZeroAllowances={showZeroAllowances}
                 addressFilter={addressFilter}
             />

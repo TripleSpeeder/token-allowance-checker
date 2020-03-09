@@ -14,15 +14,15 @@ export const addressInputStates = {
 }
 
 const AddressInputContainer = () => {
-    const dispatch = useDispatch()
-    const {web3, address: addressFromWallet} = useSelector(
+    const {web3} = useSelector(
         (state: RootState) => state.onboard
     )
-    const {address: addressFromParams} = useParams()
+    const {checkAddressId} = useSelector((state:RootState) => state.addresses)
+
     const history = useHistory()
     const [addressInputState, setAddressInputState] = useState(addressInputStates.ADDRESS_INITIAL)
     const [input, setInput] = useState(
-        addressFromParams ? addressFromParams.toLowerCase() : ''
+        /*addressFromParams ? addressFromParams.toLowerCase() : */''
     )
     const [address, setAddress] = useState('')
 
@@ -60,12 +60,15 @@ const AddressInputContainer = () => {
         handleInput()
     }, [input, setAddress, web3])
 
+    /*
     // keep address input field in sync with address from url params
     useEffect(() => {
         if (addressFromParams) {
             setInput(addressFromParams.toLowerCase())
         }
     }, [addressFromParams])
+
+     */
 
     const error = (addressInputState === addressInputStates.ADDRESS_INVALID)
     const loading = (addressInputState === addressInputStates.ADDRESS_RESOLVING)
@@ -74,7 +77,6 @@ const AddressInputContainer = () => {
     const handleSubmit = () => {
         if (success) {
             console.log(`Submit! Address: ${address}`)
-            dispatch(addAddressThunk(address))
             history.push(`/address/${address}`)
         } else {
             console.log(`Submit with invalid address`)

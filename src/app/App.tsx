@@ -8,13 +8,10 @@ import AddressInputContainer from '../features/addressInput/AddressInputContaine
 import pkg from '../../package.json'
 import {useSelector} from 'react-redux'
 import {RootState} from './rootReducer'
+import AddressExtractor from '../components/AddressExtractor'
 
 
 const App: React.FC = () => {
-
-    const {address} = useSelector(
-        (state: RootState) => state.onboard
-    )
 
     const HomepageHeading =
         <Segment
@@ -78,10 +75,12 @@ const App: React.FC = () => {
                     <Route path={['/address/:address', '/address']}>
                         <Container>
                             <OnboardGate>
-                                <Segment basic padded>
-                                    <AddressInputContainer/>
-                                </Segment>
-                                <AllowanceLister/>
+                                <AddressExtractor>
+                                    <Segment basic padded>
+                                        <AddressInputContainer/>
+                                    </Segment>
+                                    <AllowanceLister/>
+                                </AddressExtractor>
                             </OnboardGate>
                         </Container>
                     </Route>
@@ -128,7 +127,7 @@ const App: React.FC = () => {
                         </Segment>
                         <Segment basic textAlign={'center'}>
                             <Button primary
-                                    as={Link} to={`/address/${address}`}
+                                    as={Link} to={`/address/`}
                                     size={'massive'}>
                                 Check Allowances<Icon name='arrow right' />
                             </Button>
