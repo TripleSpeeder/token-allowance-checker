@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
+import { v4 as uuidv4 } from 'uuid';
 import {AppThunk} from '../../app/store'
 import wellKnownContracts from '../../components/wellKnownContracts'
 import ERC20Data from '@openzeppelin/contracts/build/contracts/ERC20Detailed.json'
@@ -6,6 +7,8 @@ import {ERC20DetailedInstance} from '../../contracts'
 import ERC20Detailed from 'contracts'
 import {AddressId, addAddressThunk} from 'features/addressInput/AddressSlice'
 import {AllowanceId, fetchAllowanceValueThunk} from '../allowancesList/AllowancesListSlice'
+import {v4} from 'uuid/interfaces'
+import {addTransaction, TransactionStates, updateTransaction} from 'features/transactionTracker/TransactionTrackerSlice'
 const contract = require('@truffle/contract')
 
 export type ContractAddress = string
@@ -27,7 +30,7 @@ interface tokenContractsState {
     contractsById: Record<AddressId, tokenContract>
 }
 
-let initialState:tokenContractsState = {
+const initialState:tokenContractsState = {
     contractsById: {}
 }
 
@@ -113,14 +116,29 @@ export const setAllowanceThunk = (tokenContractId: AddressId, spender:AddressId,
     console.log(`Setting new allowance ${allowance.toString()} for tokenContractId ${tokenContractId}`)
     const {contractInstance} = getState().tokenContracts.contractsById[tokenContractId]
     const {walletAddressId} = getState().addresses
-    let result
+    const transactionId:string = uuidv4()
+    dispatch(addTransaction({
+        transactionId,
+        allowanceId,
+        transactionState: TransactionStates.SUBMITTED,
+    }))
     try {
-        result = await contractInstance.approve(spender, allowance.toString(), {
+        const result = await contractInstance.approve(spender, allowance.toString(), {
             from: walletAddressId,
         })
         console.log(`transaction confirmed: ${result.tx}. Reloading allowance.`)
+        dispatch(updateTransaction({
+            transactionId,
+            transactionState: TransactionStates.CONFIRMED,
+            transactionHash: result.tx
+        }))
         dispatch(fetchAllowanceValueThunk(allowanceId))
     } catch (e) {
         console.log(`Error while approving: ${e.message}`)
+        dispatch(updateTransaction({
+            transactionId,
+            transactionState: TransactionStates.FAILED,
+            error: e.message
+        }))
     }
 }

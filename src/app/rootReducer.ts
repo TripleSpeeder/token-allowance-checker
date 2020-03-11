@@ -5,6 +5,7 @@ import tokenContractReducer from 'features/tokenContracts/tokenContractsSlice'
 import allowancesReducer from 'features/allowancesList/AllowancesListSlice'
 import balancesReducer from 'features/balances/BalancesSlice'
 import editAllowanceReducer from 'features/editAllowance/EditAllowanceSlice'
+import transactionTrackerReducer from 'features/transactionTracker/TransactionTrackerSlice'
 
 
 const rootReducer = combineReducers({
@@ -13,7 +14,8 @@ const rootReducer = combineReducers({
     tokenContracts: tokenContractReducer,
     allowances: allowancesReducer,
     balances: balancesReducer,
-    editAllowance: editAllowanceReducer
+    editAllowance: editAllowanceReducer,
+    transactions: transactionTrackerReducer
 })
 
 export type RootState = ReturnType<typeof rootReducer>
