@@ -26,7 +26,7 @@ const AddressExtractor = (props: React.PropsWithChildren<any>) => {
             console.log(`AddressExtractor: Clearing checkAddressId`)
             dispatch(clearCheckAddressId())
         }
-    }, [addressFromParams, web3])
+    }, [addressFromParams, addressFromWallet, dispatch, history, web3])
 
     return <React.Fragment>
             {props.children}
