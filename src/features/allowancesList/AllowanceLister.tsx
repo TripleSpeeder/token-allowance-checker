@@ -7,6 +7,7 @@ import {useDispatch, useSelector} from 'react-redux'
 import {RootState} from '../../app/rootReducer'
 import {fetchAllowancesThunk, QueryStates} from './AllowancesListSlice'
 import {CheckboxProps} from 'semantic-ui-react/dist/commonjs/modules/Checkbox/Checkbox'
+import EditAllowanceFormContainer from '../editAllowance/EditAllowanceFormContainer'
 
 
 const AllowanceLister = () => {
@@ -23,6 +24,7 @@ const AllowanceLister = () => {
         else
             return undefined
     })
+    const showEditAllowanceModal = useSelector((state:RootState) => state.editAllowance.showModal)
 
     const [showZeroAllowances, setShowZeroAllowances] = useState(true)
     const [addressFilter, setAddressFilter] = useState('')
@@ -79,6 +81,7 @@ const AllowanceLister = () => {
                 showZeroAllowances={showZeroAllowances}
                 addressFilter={addressFilter}
             />
+            {showEditAllowanceModal && <EditAllowanceFormContainer/>}
         </React.Fragment>
     )
 }

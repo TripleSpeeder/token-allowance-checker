@@ -1,6 +1,6 @@
 import React, {useContext, useState} from 'react'
 import PropTypes from 'prop-types'
-import EditAllowanceFormContainer from '../../toBeMigrated/EditAllowanceFormContainer'
+import EditAllowanceFormContainer from '../editAllowance/EditAllowanceFormContainer'
 import TransactionModal from '../../toBeMigrated/TransactionModal'
 import TokenAllowancesItem from './TokenAllowancesItem'
 import {useSelector} from 'react-redux'

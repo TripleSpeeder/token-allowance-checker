@@ -100,7 +100,6 @@ export default addressSlice.reducer
 export const addAddressThunk = (address: string): AppThunk => async (dispatch: AppDispatch, getState) => {
     // prevent duplicates
     if (Object.keys(getState().addresses.addressesById).includes(address.toLowerCase())) {
-        console.log(`Ignoring known address ${address}`)
         return
     }
     const web3 = getState().onboard.web3

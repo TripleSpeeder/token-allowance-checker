@@ -35,6 +35,7 @@ const TokenAllowancesItem = ({tokenId, ownerId, allowanceIds}:TokenAllowanceItem
     }, [ownerBalance, ownerId, tokenId, tokenContract])
 
     if (!tokenContract) {
+        console.log(`TokenAllowancesItem - waiting for contract!`)
         return null
     }
 
@@ -58,28 +59,26 @@ const TokenAllowancesItem = ({tokenId, ownerId, allowanceIds}:TokenAllowanceItem
     })
 
     return (
-        <React.Fragment>
-            <Segment raised>
-                <Header as={'h3'}>
-                    {headline}
-                    <Header.Subheader>
-                        <AddressDisplay addressId={tokenId}/>
-                    </Header.Subheader>
-                </Header>
-                <Table basic={'very'} celled selectable>
-                    <Table.Header>
-                        <Table.Row>
-                            <Table.HeaderCell>Spender</Table.HeaderCell>
-                            <Table.HeaderCell>Allowance</Table.HeaderCell>
-                            <Table.HeaderCell>Action</Table.HeaderCell>
-                        </Table.Row>
-                    </Table.Header>
-                    <Table.Body>
-                        {rows}
-                    </Table.Body>
-                </Table>
-            </Segment>
-        </React.Fragment>
+        <Segment raised>
+            <Header as={'h3'}>
+                {headline}
+                <Header.Subheader>
+                    <AddressDisplay addressId={tokenId}/>
+                </Header.Subheader>
+            </Header>
+            <Table basic={'very'} celled selectable>
+                <Table.Header>
+                    <Table.Row>
+                        <Table.HeaderCell>Spender</Table.HeaderCell>
+                        <Table.HeaderCell>Allowance</Table.HeaderCell>
+                        <Table.HeaderCell>Action</Table.HeaderCell>
+                    </Table.Row>
+                </Table.Header>
+                <Table.Body>
+                    {rows}
+                </Table.Body>
+            </Table>
+        </Segment>
     )
 /*
     const rows = []

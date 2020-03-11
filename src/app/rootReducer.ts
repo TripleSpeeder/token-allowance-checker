@@ -4,6 +4,7 @@ import addressesReducer from 'features/addressInput/AddressSlice'
 import tokenContractReducer from 'features/tokenContracts/tokenContractsSlice'
 import allowancesReducer from 'features/allowancesList/AllowancesListSlice'
 import balancesReducer from 'features/balances/BalancesSlice'
+import editAllowanceReducer from 'features/editAllowance/EditAllowanceSlice'
 
 
 const rootReducer = combineReducers({
@@ -12,6 +13,7 @@ const rootReducer = combineReducers({
     tokenContracts: tokenContractReducer,
     allowances: allowancesReducer,
     balances: balancesReducer,
+    editAllowance: editAllowanceReducer
 })
 
 export type RootState = ReturnType<typeof rootReducer>

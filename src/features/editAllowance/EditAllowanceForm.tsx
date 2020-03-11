@@ -1,15 +1,28 @@
 import React from 'react'
-import PropTypes from 'prop-types'
 import {Form, Grid, Header, Input, Message, Modal} from 'semantic-ui-react'
 
-const EditAllowanceForm = ({showModal, tokenName, tokenAddress, spenderAddress, currentAllowance, newAllowance, handleClose, handleSubmit, handleChange}) => {
+interface EditAllowanceFormProps {
+    tokenName: string,
+    tokenSymbol: string,
+    tokenAddress: string,
+    spenderAddress: string,
+    spenderENSName: string,
+    currentAllowance: string,
+    newAllowance: string,
+    handleChange: (e:React.FormEvent<EventTarget>) => void,
+    handleClose: () => void,
+    handleSubmit: () => void,
+}
+
+const EditAllowanceForm = ({tokenName, handleChange, tokenAddress, spenderAddress, currentAllowance, newAllowance, handleClose, handleSubmit}: EditAllowanceFormProps) => {
+
     let headline = tokenName
     if (headline === '') {
         headline = `Unnamed ERC20 at ${tokenAddress}`
     }
     return (
         <Modal
-            open={showModal}
+            open={true}
             size={'small'}
             onClose={handleClose}
         >
@@ -25,7 +38,7 @@ const EditAllowanceForm = ({showModal, tokenName, tokenAddress, spenderAddress, 
                 <Form size={'huge'} onSubmit={handleSubmit}>
                     <Form.Field required>
                         <Input
-                            label={{ tag: true, content: 'Set new allowance' }}
+                            label={{tag: true, content: 'Set new allowance'}}
                             labelPosition='right'
                             placeholder='Enter amount'
                             type={'number'}
@@ -37,7 +50,8 @@ const EditAllowanceForm = ({showModal, tokenName, tokenAddress, spenderAddress, 
                     <Grid columns={2}>
                         <Grid.Row>
                             <Grid.Column>
-                                <Form.Button type={'button'} fluid size={'huge'} negative onClick={handleClose}>Cancel</Form.Button>
+                                <Form.Button type={'button'} fluid size={'huge'} negative
+                                             onClick={handleClose}>Cancel</Form.Button>
                             </Grid.Column>
                             <Grid.Column>
                                 <Form.Button type={'submit'} fluid size={'huge'} positive>Okay</Form.Button>
@@ -48,20 +62,6 @@ const EditAllowanceForm = ({showModal, tokenName, tokenAddress, spenderAddress, 
             </Modal.Content>
         </Modal>
     )
-}
-
-EditAllowanceForm.propTypes = {
-    tokenName: PropTypes.string.isRequired,
-    tokenSymbol: PropTypes.string.isRequired,
-    tokenAddress: PropTypes.string.isRequired,
-    spenderAddress: PropTypes.string.isRequired,
-    spenderENSName: PropTypes.string,
-    currentAllowance: PropTypes.string.isRequired,
-    newAllowance: PropTypes.string,
-    showModal: PropTypes.bool.isRequired,
-    handleClose: PropTypes.func.isRequired,
-    handleChange: PropTypes.func.isRequired,
-    handleSubmit: PropTypes.func.isRequired,
 }
 
 export default EditAllowanceForm
