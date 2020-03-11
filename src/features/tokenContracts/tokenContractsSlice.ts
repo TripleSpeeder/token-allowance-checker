@@ -5,6 +5,7 @@ import ERC20Data from '@openzeppelin/contracts/build/contracts/ERC20Detailed.jso
 import {ERC20DetailedInstance} from '../../contracts'
 import ERC20Detailed from 'contracts'
 import {AddressId, addAddressThunk} from 'features/addressInput/AddressSlice'
+import {AllowanceId, fetchAllowanceValueThunk} from '../allowancesList/AllowancesListSlice'
 const contract = require('@truffle/contract')
 
 export type ContractAddress = string
@@ -105,5 +106,21 @@ export const addContractThunk = (contractAddress: string): AppThunk => async (di
         }
         dispatch(addAddressThunk(contractAddress))
         dispatch(addContract(contractAddress, tokenName, tokenSymbol, decimals, totalSupply, contractInstance))
+    }
+}
+
+export const setAllowanceThunk = (tokenContractId: AddressId, spender:AddressId, allowance: BN, allowanceId: AllowanceId): AppThunk => async (dispatch, getState) => {
+    console.log(`Setting new allowance ${allowance.toString()} for tokenContractId ${tokenContractId}`)
+    const {contractInstance} = getState().tokenContracts.contractsById[tokenContractId]
+    const {walletAddressId} = getState().addresses
+    let result
+    try {
+        result = await contractInstance.approve(spender, allowance.toString(), {
+            from: walletAddressId,
+        })
+        console.log(`transaction confirmed: ${result.tx}. Reloading allowance.`)
+        dispatch(fetchAllowanceValueThunk(allowanceId))
+    } catch (e) {
+        console.log(`Error while approving: ${e.message}`)
     }
 }

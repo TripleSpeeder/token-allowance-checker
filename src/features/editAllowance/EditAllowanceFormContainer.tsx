@@ -7,6 +7,7 @@ import {useDispatch, useSelector} from 'react-redux'
 import { RootState } from 'app/rootReducer'
 import BN from 'bn.js'
 import { closeEditAllowanceModal } from './EditAllowanceSlice'
+import {setAllowanceThunk} from '../tokenContracts/tokenContractsSlice'
 
 
 const EditAllowanceFormContainer = () => {
@@ -47,6 +48,10 @@ const EditAllowanceFormContainer = () => {
 
     const handleSubmit = () => {
         console.log(`Submitted new allowance: ${newAllowance}`)
+        // convert 'newAllowance' number to token baseunit
+        const newValue = toBaseUnit(newAllowance, tokenContract.decimals, BN)
+        dispatch(closeEditAllowanceModal())
+        dispatch(setAllowanceThunk(tokenContract.addressId, spender.address, newValue, allowance.id))
     }
 
     return (
@@ -65,64 +70,4 @@ const EditAllowanceFormContainer = () => {
     )
 }
 
-/*
-const EditAllowanceFormContainer2 = ({handleSubmit, handleClose, tokenDecimals, tokenSupply, tokenName, allowance, spender, tokenSymbol, tokenAddress}) => {
-    const web3Context = undefined//useContext(Web3Context)
-    const [newAllowance, setNewAllowance] = useState('0')
-
-    const convertAllowanceToDisplaystring = useCallback(() => {
-        if (allowance.gte(tokenSupply)) {
-            return 'unlimited'
-        } else {
-            const allowanceDisplay = bnToDisplayString({
-                value: allowance,
-                decimals: tokenDecimals,
-                roundToDecimals: web3Context.web3.utils.toBN(2)
-            })
-            return allowanceDisplay.rounded
-        }
-    }, [allowance, tokenDecimals, tokenSupply, web3Context])
-
-    const handleChange = (e: React.FormEvent<EventTarget>) => {
-        let {name, value} = e.target as HTMLInputElement;
-        console.log(`handleChange: ${name} - ${value}`)
-        if (parseFloat(value) < 0) {
-            value = '0'
-        }
-        setNewAllowance(value)
-    }
-    const localHandleSubmit = () => {
-        // convert 'newAllowance' number to token baseunit
-        let amount = toBaseUnit(newAllowance, tokenDecimals, web3Context.web3.utils.BN)
-        handleSubmit(amount)
-    }
-
-    return (
-        <EditAllowanceForm
-            currentAllowance={convertAllowanceToDisplaystring()}
-            handleClose={handleClose}
-            spenderAddress={spender}
-            showModal={true}
-            tokenName={tokenName}
-            handleChange={handleChange}
-            handleSubmit={localHandleSubmit}
-            tokenSymbol={tokenSymbol}
-            tokenAddress={tokenAddress}
-            newAllowance={newAllowance}
-            />
-    )
-}
-
-EditAllowanceFormContainer.propTypes = {
-    tokenDecimals: PropTypes.object.isRequired, // bignumber
-    tokenName: PropTypes.string.isRequired,
-    tokenSymbol: PropTypes.string.isRequired,
-    tokenSupply: PropTypes.object.isRequired,
-    tokenAddress: PropTypes.string.isRequired,
-    allowance: PropTypes.object.isRequired, // bignumber
-    spender: PropTypes.string.isRequired,
-    handleSubmit: PropTypes.func.isRequired,
-    handleClose: PropTypes.func.isRequired,
-}
-*/
 export default EditAllowanceFormContainer
