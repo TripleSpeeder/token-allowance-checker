@@ -20,7 +20,7 @@ const OnboardGate = (props: React.PropsWithChildren<any>) => {
             console.log(`OnboardGate: Dispatching selectWallet`)
             dispatch(selectWallet(history))
         }
-    }, [onboardAPI, walletSelected])
+    }, [onboardAPI, walletSelected, dispatch, history])
 
     if (walletSelected) {
         return <React.Fragment>

@@ -1,4 +1,4 @@
-import React, {useCallback, useContext, useState} from 'react'
+import React, {useCallback, useState} from 'react'
 import bnToDisplayString from '@triplespeeder/bn2string'
 import {toBaseUnit} from '../../toBeMigrated/erc20-decimals-conversion'
 import EditAllowanceForm from './EditAllowanceForm'
@@ -30,7 +30,7 @@ const EditAllowanceFormContainer = () => {
             })
             return allowanceDisplay.rounded
         }
-    }, [allowance, tokenContract])
+    }, [allowanceValue.value, tokenContract.totalSupply, tokenContract.decimals])
 
     const handleAllowanceInputChange = (e: React.FormEvent<EventTarget>) => {
         let {name, value} = e.target as HTMLInputElement;

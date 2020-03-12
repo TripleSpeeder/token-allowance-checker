@@ -98,8 +98,9 @@ export const { addAddress, setResolvingState, setENSName, setCheckAddressId, cle
 export default addressSlice.reducer
 
 export const addAddressThunk = (address: string): AppThunk => async (dispatch: AppDispatch, getState) => {
+    address = address.toLowerCase()
     // prevent duplicates
-    if (Object.keys(getState().addresses.addressesById).includes(address.toLowerCase())) {
+    if (Object.keys(getState().addresses.addressesById).includes(address)) {
         return
     }
     const web3 = getState().onboard.web3
@@ -113,7 +114,7 @@ export const addAddressThunk = (address: string): AppThunk => async (dispatch: A
             resolvingState: ResolvingStates.Resolving
         }))
         try {
-            const reverseENSLookupName = address.toLowerCase().substr(2) + '.addr.reverse'
+            const reverseENSLookupName = address.substr(2) + '.addr.reverse'
             const ResolverContract = await web3.eth.ens.resolver(reverseENSLookupName);
             const reverseENS = await ResolverContract.methods.name(namehash.hash(reverseENSLookupName)).call()
             console.log(`Got reverseENS: ${reverseENS}`)

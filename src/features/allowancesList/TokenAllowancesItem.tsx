@@ -17,8 +17,6 @@ interface TokenAllowanceItemProps {
     allowanceIds: Array<AllowanceId>
 }
 
-const unlimitedAllowance = new BN(2).pow(new BN(256)).subn(1)
-
 const TokenAllowancesItem = ({tokenId, ownerId, allowanceIds}:TokenAllowanceItemProps) => {
     const dispatch = useDispatch()
     const tokenContract = useSelector((state:RootState) => state.tokenContracts.contractsById[tokenId])
@@ -32,7 +30,7 @@ const TokenAllowancesItem = ({tokenId, ownerId, allowanceIds}:TokenAllowanceItem
         if (!ownerBalance && tokenContract?.contractInstance) {
             dispatch(addBalanceThunk(ownerId, tokenId))
         }
-    }, [ownerBalance, ownerId, tokenId, tokenContract])
+    }, [ownerBalance, ownerId, tokenId, tokenContract, dispatch])
 
     if (!tokenContract) {
         console.log(`TokenAllowancesItem - waiting for contract!`)

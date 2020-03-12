@@ -25,7 +25,7 @@ const TokenAllowanceItem = ({allowanceId}:TokenAllowanceItemProps) => {
         if (allowanceValue.state === QueryStates.QUERY_STATE_INITIAL) {
             dispatch(fetchAllowanceValueThunk(allowanceId))
         }
-    }, [allowanceValue, allowanceId])
+    }, [allowanceValue, allowanceId, dispatch])
 
     let allowanceElement, criticalAllowance
     switch(allowanceValue.state) {
@@ -38,7 +38,7 @@ const TokenAllowanceItem = ({allowanceId}:TokenAllowanceItemProps) => {
                 allowanceElement = <em>unlimited</em>
             } else {
                 const roundToDecimals = new BN('2')
-                const {precise, rounded} = bnToDisplayString({
+                const {/*precise,*/ rounded} = bnToDisplayString({
                     value: allowanceValue.value,
                     decimals: tokenContract.decimals,
                     roundToDecimals

@@ -16,11 +16,10 @@ const AddressExtractor = (props: React.PropsWithChildren<any>) => {
         if (addressFromParams) {
             if (web3) {
                 console.log(`AddressExtractor: Setting new address ${addressFromParams}`)
-                dispatch(setCheckAddressThunk(addressFromParams))
+                dispatch(setCheckAddressThunk(addressFromParams.toLowerCase()))
             }
         } else if (addressFromWallet) {
             console.log(`AddressExtractor: no address in params. Falling back to walletAddress ${addressFromWallet}`)
-            // dispatch(setCheckAddressThunk(addressFromWallet))
             history.push(`/address/${addressFromWallet}`)
         } else {
             console.log(`AddressExtractor: Clearing checkAddressId`)

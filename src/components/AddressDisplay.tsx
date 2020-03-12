@@ -1,5 +1,4 @@
 import React from 'react'
-import PropTypes from 'prop-types'
 import {Icon, Popup} from 'semantic-ui-react'
 import { AddressId } from 'features/addressInput/AddressSlice'
 import {useSelector} from 'react-redux'

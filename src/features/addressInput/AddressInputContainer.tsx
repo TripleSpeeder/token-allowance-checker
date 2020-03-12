@@ -1,10 +1,9 @@
 import React, {useState, useEffect} from 'react'
 import AddressInput from './AddressInput'
-import {useHistory, useParams} from 'react-router-dom'
+import {useHistory} from 'react-router-dom'
 import {Form, Grid} from 'semantic-ui-react'
-import {useSelector, useDispatch} from 'react-redux'
+import {useSelector} from 'react-redux'
 import {RootState} from '../../app/rootReducer'
-import {addAddressThunk} from './AddressSlice'
 
 export const addressInputStates = {
     ADDRESS_INITIAL: 'address_initial', // no user interaction

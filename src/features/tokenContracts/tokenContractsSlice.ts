@@ -7,7 +7,6 @@ import {ERC20DetailedInstance} from '../../contracts'
 import ERC20Detailed from 'contracts'
 import {AddressId, addAddressThunk} from 'features/addressInput/AddressSlice'
 import {AllowanceId, fetchAllowanceValueThunk} from '../allowancesList/AllowancesListSlice'
-import {v4} from 'uuid/interfaces'
 import {addTransaction, TransactionStates, updateTransaction} from 'features/transactionTracker/TransactionTrackerSlice'
 const contract = require('@truffle/contract')
 
@@ -70,7 +69,6 @@ export const addContractThunk = (contractAddress: string): AppThunk => async (di
     const {web3, networkId} = getState().onboard
     if (web3) {
         // initialize contract
-        let isCompliant = true
         const erc20Contract = contract(ERC20Data)
         erc20Contract.setProvider(web3.currentProvider)
         const contractInstance:ERC20Detailed.ERC20DetailedInstance = await erc20Contract.at(contractAddress)

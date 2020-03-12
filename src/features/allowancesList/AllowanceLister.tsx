@@ -15,9 +15,6 @@ const AllowanceLister = () => {
     const address = useSelector(
         (state:RootState) => state.addresses.checkAddressId
     )
-    const {web3} = useSelector(
-        (state: RootState) => state.onboard
-    )
     const queryState = useSelector((state:RootState) => {
         if (address)
             return state.allowances.allowanceQueryStateByOwner[address]
@@ -49,9 +46,10 @@ const AllowanceLister = () => {
 
     useEffect(() => {
         if (queryState && (queryState.state === QueryStates.QUERY_STATE_INITIAL)) {
-            loadAllowances()
+            if (address)
+                dispatch(fetchAllowancesThunk(address))
         }
-    }, [queryState])
+    }, [queryState, dispatch, address])
 
     const loadAllowances = () => {
         if (address) {

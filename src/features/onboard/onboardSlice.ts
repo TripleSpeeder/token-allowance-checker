@@ -3,8 +3,8 @@ import Onboard from 'bnc-onboard'
 import Web3 from 'web3'
 import {AppDispatch, AppThunk} from '../../app/store'
 import {API, WalletInitOptions} from 'bnc-onboard/dist/src/interfaces'
-import {addAddressThunk, AddressId, setWalletAddressThunk} from '../addressInput/AddressSlice'
-import check from 'bnc-onboard/dist/src/modules/check'
+import {AddressId, setWalletAddressThunk} from '../addressInput/AddressSlice'
+
 
 const onboardApiKey='f4b71bf0-fe50-4eeb-bc2b-b323527ed9e6'
 const infuraApiKey='7f230a5ca832426796454c28577d93f2'
