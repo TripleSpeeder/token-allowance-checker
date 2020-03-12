@@ -1,12 +1,12 @@
 import React from 'react'
-import AddressDisplay from '../components/AddressDisplay'
+import AddressDisplay from './AddressDisplay'
 import {Container} from 'semantic-ui-react'
 
 export default {
     title: 'AddressDisplay',
     component: AddressDisplay,
     decorators: [
-        story => (
+        (story: () => React.ReactNode) => (
             <Container>
                 {story()}
             </Container>
@@ -21,13 +21,12 @@ const AddressDisplayProps = {
 
 export const noENS = () => (
     <AddressDisplay
-        address={AddressDisplayProps.address}
+        addressId={AddressDisplayProps.address}
     />
 )
 
 export const withENS = () => (
     <AddressDisplay
-        address={AddressDisplayProps.address}
-        ensName={AddressDisplayProps.ensName}
+        addressId={AddressDisplayProps.address}
     />
 )
