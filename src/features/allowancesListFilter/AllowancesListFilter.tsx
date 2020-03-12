@@ -2,7 +2,6 @@ import React from 'react'
 import {Checkbox, Grid, Icon, Input, Button, ButtonProps} from 'semantic-ui-react'
 import {InputOnChangeData} from 'semantic-ui-react/dist/commonjs/elements/Input/Input'
 import {CheckboxProps} from 'semantic-ui-react/dist/commonjs/modules/Checkbox/Checkbox'
-import {createRefreshScheduler} from '@dfuse/client'
 
 interface AllowancesListFilterProps {
     addressFilterValue: string,

@@ -1,5 +1,5 @@
 import React, {useEffect} from 'react'
-import {Header, Segment, Table} from 'semantic-ui-react'
+import {Header, Segment, Table, Placeholder} from 'semantic-ui-react'
 import AddressDisplay from '../../components/AddressDisplay'
 import BN from 'bn.js'
 import {AddressId} from '../addressInput/AddressSlice'
@@ -35,7 +35,21 @@ const TokenAllowancesItem = ({tokenId, ownerId, allowanceIds}:TokenAllowanceItem
 
     if (!tokenContract) {
         console.log(`TokenAllowancesItem - waiting for contract!`)
-        return null
+        return (
+            <Segment raised>
+                <Placeholder>
+                    <Placeholder.Header>
+                        <Placeholder.Line/>
+                        <Placeholder.Line/>
+                    </Placeholder.Header>
+                    <Placeholder.Paragraph>
+                        <Placeholder.Line/>
+                        <Placeholder.Line/>
+                        <Placeholder.Line/>
+                    </Placeholder.Paragraph>
+                </Placeholder>
+            </Segment>
+        )
     }
 
     let tokenDisplayString = tokenContract.name
