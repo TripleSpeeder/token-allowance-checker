@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { v4 as uuidv4 } from 'uuid';
 import {AppThunk} from '../../app/store'
-import wellKnownContracts from '../../components/wellKnownContracts'
+import wellKnownContracts from '../../utils/wellKnownContracts'
 import ERC20Data from '@openzeppelin/contracts/build/contracts/ERC20Detailed.json'
 import {ERC20DetailedInstance} from '../../contracts'
 import ERC20Detailed from 'contracts'

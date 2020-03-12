@@ -1,13 +1,8 @@
-function isString(s) {
-  return (typeof s === 'string' || s instanceof String)
-}
+import BN from 'bn.js'
 
-export function toBaseUnit(value, decimals, BN) {
-  if (!isString(value)) {
-    throw new Error('Pass strings to prevent floating point precision issues.')
-  }
+export function toBaseUnit(value:string, decimals:BN) {
   const ten = new BN(10)
-  const base = ten.pow(new BN(decimals))
+  const base = ten.pow(decimals)
 
   // Is it negative?
   let negative = (value.substring(0, 1) === '-')
@@ -18,28 +13,29 @@ export function toBaseUnit(value, decimals, BN) {
   if (value === '.') { 
     throw new Error(
     `Invalid value ${value} cannot be converted to`
-    + ` base unit with ${decimals} decimals.`) 
+    + ` base unit with ${decimals.toString()} decimals.`)
   }
 
   // Split it into a whole and fractional part
   let comps = value.split('.')
   if (comps.length > 2) { throw new Error('Too many decimal points') }
-
-  let whole = comps[0], fraction = comps[1]
+  let whole = comps[0]
+  let fraction = comps[1]
 
   if (!whole) { whole = '0' }
   if (!fraction) { fraction = '0' }
-  if (fraction.length > decimals) { 
+  const decimalsNumber = decimals.toNumber()
+  if (fraction.length > decimalsNumber) {
     throw new Error('Too many decimal places') 
   }
 
-  while (fraction.length < decimals) {
+  while (fraction.length < decimalsNumber) {
     fraction += '0'
   }
 
-  whole = new BN(whole)
-  fraction = new BN(fraction)
-  let wei = (whole.mul(base)).add(fraction)
+  const wholeBN = new BN(whole)
+  const fractionBN = new BN(fraction)
+  let wei = (wholeBN.mul(base)).add(fractionBN)
 
   if (negative) {
     wei = wei.neg()

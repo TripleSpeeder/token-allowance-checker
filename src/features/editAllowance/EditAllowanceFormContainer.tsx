@@ -1,6 +1,6 @@
 import React, {useCallback, useState} from 'react'
 import bnToDisplayString from '@triplespeeder/bn2string'
-import {toBaseUnit} from '../../toBeMigrated/erc20-decimals-conversion'
+import {toBaseUnit} from '../../utils/erc20-decimals-conversion'
 import EditAllowanceForm from './EditAllowanceForm'
 import {useDispatch, useSelector} from 'react-redux'
 import { RootState } from 'app/rootReducer'
@@ -48,7 +48,7 @@ const EditAllowanceFormContainer = () => {
     const handleSubmit = () => {
         console.log(`Submitted new allowance: ${newAllowance}`)
         // convert 'newAllowance' number to token baseunit
-        const newValue = toBaseUnit(newAllowance, tokenContract.decimals, BN)
+        const newValue = toBaseUnit(newAllowance, tokenContract.decimals)
         dispatch(closeEditAllowanceModal())
         dispatch(setAllowanceThunk(tokenContract.addressId, spender.address, newValue, allowance.id))
     }
