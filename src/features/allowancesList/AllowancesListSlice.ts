@@ -249,9 +249,12 @@ export const fetchAllowancesThunk = (
     try {
         // search page by page until no more results are found
         let numPageResults = 0
-        let allEdges:any[] = []
+        const badContracts:Array<string> = []
+        const knownContracts:Array<string> = []
+        const knownSpenders:Array<string> = []
+
         do {
-            console.log(`Getting page ${currentPage}. Last page result: ${numPageResults}. Total results so far: ${allEdges.length}`)
+            console.log(`Getting page ${currentPage}. Last page result: ${numPageResults}.`)
             const response = await client.graphql(searchTransactions, {
                 variables: {
                     limit: '50',
@@ -259,17 +262,94 @@ export const fetchAllowancesThunk = (
                     cursor: cursor,
                 },
             })
-            // any errors reported?
+            // abort if any errors reported
             if (response.errors) {
                 throw response.errors
             }
-            // get start cursor for next page
-            cursor = response.data.searchTransactions.pageInfo.endCursor
+
             // get actual results
             const edges = response.data.searchTransactions.edges || []
+            for (let edgeIndex=0; edgeIndex < edges.length; edgeIndex++) {
+                const {node} = edges[edgeIndex]
+                for (let index=0; index < node.matchingLogs.length; index++) {
+                    const logEntry = node.matchingLogs[index]
+                    // skip bad contracts
+                    if (badContracts.includes(logEntry.address.toLowerCase())) {
+                        continue
+                    }
+
+                    // Apparently dfuse query results based on topic sometimes return wrong topics. Double-check that the
+                    // logEntry actually is of the expected topic.
+                    if (logEntry.topics[0] !== topicHashApprove) {
+                        console.log(`Skipping log event. Topic is wrong, expected ${topicHashApprove}, got ${logEntry.topics[0]}. Transaction: ${node.hash}`)
+                        continue
+                    }
+
+                    const tokenContractAddress = logEntry.address.toLowerCase()
+
+                    if (logEntry.data === '0x') {
+                        console.log(`Detected bad contract at ${logEntry.address}: LogEntry.data is missing. Transaction: ${node.hash}.`)
+                        badContracts.push(tokenContractAddress)
+                        continue
+                    }
+
+                    let decoded
+                    try {
+                        decoded = web3.eth.abi.decodeLog(eventABI, logEntry.data, logEntry.topics.slice(1))
+                    }catch (e) {
+                        console.log(`Detected bad contract at ${logEntry.address}: Can not decode logEntry from transaction: ${node.hash}:`)
+                        console.log(logEntry)
+                        badContracts.push(tokenContractAddress)
+                        continue
+                    }
+
+                    // check if spender is an actual address. Some contracts emit logs with spender 0x0...
+                    if (!(parseInt(decoded.spender))) {
+                        console.log(`Skipping log event: Invalid spender ${decoded.spender}, contract: ${logEntry.address}`)
+                        continue
+                    }
+                    // double-check owner is correct.
+                    if (decoded.owner.toLowerCase() !== owner.address.toLowerCase()) {
+                        console.log(`Skipping log event due to owner mismatch. Expected ${owner.address}, got ${decoded.owner}. Transaction: ${node.hash}`)
+                        continue
+                    }
+
+                    // Add tokenContract
+                    if (!knownContracts.includes(tokenContractAddress)) {
+                        // Check if the contract really implements the required ERC20 methods.
+                        const erc20Contract = contract(ERC20Data)
+                        erc20Contract.setProvider(web3.currentProvider)
+                        const contractInstance:ERC20Detailed.ERC20DetailedInstance = await erc20Contract.at(tokenContractAddress)
+                        try {
+                            // these are the required calls
+                            await contractInstance.totalSupply()
+                            await contractInstance.balanceOf(tokenContractAddress)
+                            await contractInstance.allowance(tokenContractAddress, tokenContractAddress)
+                            // TODO: Check if approve() method is available!
+                        } catch (error) {
+                            console.log(`Contract at ${tokenContractAddress} is not ERC20. Ignoring.`)
+                            badContracts.push(tokenContractAddress)
+                            continue
+                        }
+                        knownContracts.push(tokenContractAddress)
+                        // console.log(`Adding tokenContract ${tokenContractAddress}`)
+                        dispatch(addContractThunk(contractInstance))
+                    }
+                    // Add spender address and create allowance entry
+                    const spenderAddress = decoded.spender.toLowerCase()
+                    if (!knownSpenders.includes(spenderAddress)) {
+                        knownSpenders.push(spenderAddress)
+                        // console.log(`Adding Spender ${spenderAddress} for ${tokenContractAddress}`)
+                        dispatch(addAddressThunk(spenderAddress))
+                        // Add allowance entry
+                        dispatch(addAllowance(tokenContractAddress, ownerId, spenderAddress))
+                    }
+                }
+            }
             numPageResults = edges.length
-            allEdges = allEdges.concat(edges)
             currentPage++
+            // get start cursor for next page
+            cursor = response.data.searchTransactions.pageInfo.endCursor
             dispatch(setQueryState({
                 ownerId,
                 queryState: {
@@ -279,87 +359,6 @@ export const fetchAllowancesThunk = (
             }))
         } while (numPageResults>0)
 
-        const badContracts:Array<string> = []
-        const knownContracts:Array<string> = []
-        const knownSpenders:Array<string> = []
-        for (let edgeIndex=0; edgeIndex < allEdges.length; edgeIndex++) {
-            const {node} = allEdges[edgeIndex]
-            for (let index=0; index < node.matchingLogs.length; index++) {
-                const logEntry = node.matchingLogs[index]
-                // skip bad contracts
-                if (badContracts.includes(logEntry.address.toLowerCase())) {
-                    continue
-                }
-
-                // Apparently dfuse query results based on topic sometimes return wrong topics. Double-check that the
-                // logEntry actually is of the expected topic.
-                if (logEntry.topics[0] !== topicHashApprove) {
-                    console.log(`Skipping log event. Topic is wrong, expected ${topicHashApprove}, got ${logEntry.topics[0]}. Transaction: ${node.hash}`)
-                    continue
-                }
-
-                const tokenContractAddress = logEntry.address.toLowerCase()
-
-                if (logEntry.data === '0x') {
-                    console.log(`Detected bad contract at ${logEntry.address}: LogEntry.data is missing. Transaction: ${node.hash}.`)
-                    badContracts.push(tokenContractAddress)
-                    continue
-                }
-
-                let decoded
-                try {
-                    decoded = web3.eth.abi.decodeLog(eventABI, logEntry.data, logEntry.topics.slice(1))
-                }catch (e) {
-                    console.log(`Detected bad contract at ${logEntry.address}: Can not decode logEntry from transaction: ${node.hash}:`)
-                    console.log(logEntry)
-                    badContracts.push(tokenContractAddress)
-                    continue
-                }
-
-                // check if spender is an actual address. Some contracts emit logs with spender 0x0...
-                if (!(parseInt(decoded.spender))) {
-                    console.log(`Skipping log event: Invalid spender ${decoded.spender}, contract: ${logEntry.address}`)
-                    continue
-                }
-                // double-check owner is correct.
-                if (decoded.owner.toLowerCase() !== owner.address.toLowerCase()) {
-                    console.log(`Skipping log event due to owner mismatch. Expected ${owner.address}, got ${decoded.owner}. Transaction: ${node.hash}`)
-                    continue
-                }
-
-                // Add tokenContract
-                if (!knownContracts.includes(tokenContractAddress)) {
-                    // Check if the contract really implements the required ERC20 methods.
-                    const erc20Contract = contract(ERC20Data)
-                    erc20Contract.setProvider(web3.currentProvider)
-                    const contractInstance:ERC20Detailed.ERC20DetailedInstance = await erc20Contract.at(tokenContractAddress)
-                    try {
-                        // these are the required calls
-                        await contractInstance.totalSupply()
-                        await contractInstance.balanceOf(tokenContractAddress)
-                        await contractInstance.allowance(tokenContractAddress, tokenContractAddress)
-                        // TODO: Check if approve() method is available!
-                    } catch (error) {
-                        console.log(`Contract at ${tokenContractAddress} is not ERC20. Ignoring.`)
-                        badContracts.push(tokenContractAddress)
-                        continue
-                    }
-                    knownContracts.push(tokenContractAddress)
-                    // console.log(`Adding tokenContract ${tokenContractAddress}`)
-                    dispatch(addContractThunk(contractInstance))
-                }
-                // Add spender address and create allowance entry
-                const spenderAddress = decoded.spender.toLowerCase()
-                if (!knownSpenders.includes(spenderAddress)) {
-                    knownSpenders.push(spenderAddress)
-                    // console.log(`Adding Spender ${spenderAddress} for ${tokenContractAddress}`)
-                    dispatch(addAddressThunk(spenderAddress))
-                    // Add allowance entry
-                    dispatch(addAllowance(tokenContractAddress, ownerId, spenderAddress))
-                }
-            }
-        }
-        // TODO: Only update querystate to COMPLETE when all contracts have been checked above!
         dispatch(setQueryState({
             ownerId,
             queryState: {

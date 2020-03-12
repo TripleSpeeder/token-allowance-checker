@@ -89,7 +89,6 @@ const AllowancesListContainer = ({owner, showZeroAllowances, addressFilter}:Allo
                         <Icon name='circle notched' loading/>
                         <Message.Content>
                             <Message.Header>Loading events</Message.Header>
-                            <AddressDisplay ethAddress={ownerAddress}/>
                             <div>Querying dfuse API for ERC20 Approvals, getting page {queryState.currentPage+1}...</div>
                         </Message.Content>
                     </Message>

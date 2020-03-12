@@ -33,6 +33,7 @@ const TokenAllowancesItem = ({tokenId, ownerId, allowanceIds}:TokenAllowanceItem
         }
     }, [ownerBalance, ownerId, tokenId, tokenContract, dispatch])
 
+    // return placeholder if contract is not yet loaded
     if (!tokenContract) {
         return (
             <Segment raised>
