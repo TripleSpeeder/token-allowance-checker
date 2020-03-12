@@ -39,6 +39,10 @@ const AllowanceLister = () => {
         setAddressFilter(value)
     }
 
+    const handleRefreshClick = (e: React.MouseEvent) => {
+        loadAllowances()
+    }
+
     // TODO: Check this code
     useEffect(() => {
         document.title = `TAC - ${address}`
@@ -72,8 +76,8 @@ const AllowanceLister = () => {
                                   addressFilterValue={addressFilter}
                                   handleAddressFilterChange={handleAddressFilterChange}
                                   clearAddressFilter={clearAddressFilter}
+                                  refresh={handleRefreshClick}
             />
-            <Button onClick={loadAllowances}>refresh allowances</Button>
             <AllowancesListContainer
                 owner={address}
                 showZeroAllowances={showZeroAllowances}

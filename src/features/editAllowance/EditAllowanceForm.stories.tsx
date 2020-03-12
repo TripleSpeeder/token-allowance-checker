@@ -1,6 +1,6 @@
 import React from 'react'
 import { action } from '@storybook/addon-actions'
-import {Button, Container, Modal} from 'semantic-ui-react'
+import {Container} from 'semantic-ui-react'
 import BN from 'bn.js'
 import EditAllowanceForm from './EditAllowanceForm'
 
