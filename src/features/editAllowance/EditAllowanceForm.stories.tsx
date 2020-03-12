@@ -2,13 +2,13 @@ import React from 'react'
 import { action } from '@storybook/addon-actions'
 import {Button, Container, Modal} from 'semantic-ui-react'
 import BN from 'bn.js'
-import EditAllowanceForm from '../features/editAllowance/EditAllowanceForm'
+import EditAllowanceForm from './EditAllowanceForm'
 
 export default {
     title: 'EditAllowanceForm',
     component: EditAllowanceForm,
     decorators: [
-        story => (
+        (story: () => React.ReactNode) => (
             <Container>
                 {story()}
             </Container>
@@ -24,15 +24,13 @@ const currentAllowance = '455.634'
 
 export const normal = () => (
     <EditAllowanceForm
-        showModal={true}
         tokenName={'Dai Stablecoin'}
         tokenSymbol={'Dai'}
         tokenAddress={'0x73FbC940ACcDc620c0D6E27e1511D06Cd406228b'}
-        tokenDecimals={decimals}
-        tokenSupply={supply}
+        currentAllowance={currentAllowance}
+        newAllowance={'100'}
         spenderAddress={spenderAddress}
         spenderENSName={spenderENSName}
-        currentAllowance={currentAllowance}
         handleChange={action('handleChange')}
         handleClose={action('handleClose')}
         handleSubmit={action('handleSubmit')}

@@ -38,7 +38,7 @@ const EditAllowanceForm = ({tokenName, handleChange, tokenAddress, spenderAddres
                 <Form size={'huge'} onSubmit={handleSubmit}>
                     <Form.Field required>
                         <Input
-                            label={{tag: true, content: 'Set new allowance'}}
+                            label={{tag: true, content: 'Enter new allowance'}}
                             labelPosition='right'
                             placeholder='Enter amount'
                             type={'number'}
@@ -54,7 +54,7 @@ const EditAllowanceForm = ({tokenName, handleChange, tokenAddress, spenderAddres
                                              onClick={handleClose}>Cancel</Form.Button>
                             </Grid.Column>
                             <Grid.Column>
-                                <Form.Button type={'submit'} fluid size={'huge'} positive>Okay</Form.Button>
+                                <Form.Button type={'submit'} fluid size={'huge'} positive>Set allowance</Form.Button>
                             </Grid.Column>
                         </Grid.Row>
                     </Grid>
