@@ -34,7 +34,6 @@ const TokenAllowancesItem = ({tokenId, ownerId, allowanceIds}:TokenAllowanceItem
     }, [ownerBalance, ownerId, tokenId, tokenContract, dispatch])
 
     if (!tokenContract) {
-        console.log(`TokenAllowancesItem - waiting for contract!`)
         return (
             <Segment raised>
                 <Placeholder>
