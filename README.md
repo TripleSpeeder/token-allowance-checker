@@ -1,21 +1,10 @@
 # Token Allowance Checker ("TAC")
 
-### TODO on redux/typescript refactor branch after initial implementation
-
- - Verify if contracts are ERC20-conform before adding them
- - Use names & symbols from WellKnownContracts.js if necessary
- - Add TokenBalanceSlice to track token balance of provided addresses
- - Add typechain generation to travis config for building
-
-
 ## Introduction
-This is my entry to the Gitcoin ["Sustain web3"](https://gitcoin.co/hackathon/sustain-web3/) hackathon.
-
-Bounty: https://gitcoin.co/issue/dfuse-io/hackathons/2/3953
 
 __Token Allowance Checker__ is running at __https://tac.dappstar.io__.
 
-There is also a short screencast (no audio): https://drive.google.com/file/d/1hS05o5LhC5lc9JU9nEdihURikU3AimVi/view
+There is also an outdated screencast (no audio): https://drive.google.com/file/d/1hS05o5LhC5lc9JU9nEdihURikU3AimVi/view
 
 ### The _unlimited approval_ problem
 Many DApps have the habit of requiring you to approve effectively unlimited amount of tokens. This helps
@@ -37,9 +26,16 @@ This information is displayed to the user, together with the up-to-date allowanc
 
 For all entries, the user can edit or delete the allowance.
 
+### History
+Originally this project started as a (winning) entry to the Gitcoin ["Sustain web3"](https://gitcoin.co/hackathon/sustain-web3/)
+hackathon for bounty https://gitcoin.co/issue/dfuse-io/hackathons/2/3953. Since then it has evolved
+further, moving from a plain javascript react app to react-redux and typescript. 
+
 ## Technologies used
  - [dfuse](https://www.dfuse.io/) to search for allowances approved in the past.
  - [Onboard.js](https://www.blocknative.com/onboard) for setting up web3 provider and accessing user wallet/accounts
+ - [Redux-Toolkit](https://redux-toolkit.js.org/) for efficient Redux development
+ - [typechain](https://github.com/ethereum-ts/TypeChain) to generate typings for ERC20 contract ABI
 
 ## Release workflow
  - PRs should go against development branch
