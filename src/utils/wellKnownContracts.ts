@@ -32,6 +32,10 @@ export const wellKnownContracts:IWellKnownContracts = {
         '0xbb9bc244d798123fde783fcc1c72d3bb8c189413': {
             name: 'TheDAO Token',
             symbol: 'TheDAO'
+        },
+        '0x86Fa049857E0209aa7D9e616F7eb3b3B78ECfdb0': {
+            name: 'EOS: Old Token',
+            symbol: 'EOS'
         }
     }
 }
