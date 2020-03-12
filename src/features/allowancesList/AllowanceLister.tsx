@@ -13,11 +13,17 @@ import EditAllowanceFormContainer from '../editAllowance/EditAllowanceFormContai
 const AllowanceLister = () => {
     const dispatch = useDispatch()
     const address = useSelector(
-        (state:RootState) => state.addresses.checkAddressId
+        (state:RootState) => {
+            if (state.addresses.checkAddressId) {
+                return state.addresses.addressesById[state.addresses.checkAddressId]
+            } else {
+                return undefined
+            }
+        }
     )
     const queryState = useSelector((state:RootState) => {
         if (address)
-            return state.allowances.allowanceQueryStateByOwner[address]
+            return state.allowances.allowanceQueryStateByOwner[address.address]
         else
             return undefined
     })
@@ -43,22 +49,21 @@ const AllowanceLister = () => {
         loadAllowances()
     }
 
-    // TODO: Check this code
     useEffect(() => {
-        document.title = `TAC - ${address}`
+        document.title = `TAC - ${address?.ensName ?? address?.address}`
     }, [address])
 
     useEffect(() => {
         if (queryState && (queryState.state === QueryStates.QUERY_STATE_INITIAL)) {
             if (address)
-                dispatch(fetchAllowancesThunk(address))
+                dispatch(fetchAllowancesThunk(address.address))
         }
     }, [queryState, dispatch, address])
 
     const loadAllowances = () => {
         if (address) {
-            console.log(`Starting query for "${address}"`)
-            dispatch(fetchAllowancesThunk(address))
+            console.log(`Starting query for "${address?.ensName ?? address?.address}"`)
+            dispatch(fetchAllowancesThunk(address.address))
         }
     }
 
@@ -69,7 +74,7 @@ const AllowanceLister = () => {
     return (
         <React.Fragment>
             <Segment basic>
-                <h2>Allowances of {address}:</h2>
+                <h2>Allowances of {address?.ensName ?? address?.address}:</h2>
             </Segment>
             <AllowancesListFilter showZeroAllowances={showZeroAllowances}
                                   toggleShowZeroAllowances={toggleShowZeroAllowances}
@@ -79,7 +84,7 @@ const AllowanceLister = () => {
                                   refresh={handleRefreshClick}
             />
             <AllowancesListContainer
-                owner={address}
+                ownerId={address.address}
                 showZeroAllowances={showZeroAllowances}
                 addressFilter={addressFilter}
             />

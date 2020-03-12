@@ -5,25 +5,25 @@ import {RootState} from '../../app/rootReducer'
 import TokenAllowancesItem from './TokenAllowancesItem'
 import {QueryStates} from './AllowancesListSlice'
 import { Segment, Message, Icon } from 'semantic-ui-react'
-import AddressDisplay from '../../components/AddressDisplay'
+import {AddressId} from '../addressInput/AddressSlice'
 
 
 interface AllowancesListContainerProps {
-    owner: string,
+    ownerId: AddressId,
     showZeroAllowances: boolean,
     addressFilter: string
 }
 
-const AllowancesListContainer = ({owner, showZeroAllowances, addressFilter}:AllowancesListContainerProps) => {
+const AllowancesListContainer = ({ownerId, showZeroAllowances, addressFilter}:AllowancesListContainerProps) => {
     const allowancesByTokenId = useSelector(
         (state: RootState) => {
             let candidates
             if ((showZeroAllowances) && (addressFilter==='')) {
                 // no filter required, just return all IDs.
-                candidates = state.allowances.allowanceIdsByOwnerId[owner]
+                candidates = state.allowances.allowanceIdsByOwnerId[ownerId]
             } else {
                 // apply filter
-                candidates = state.allowances.allowanceIdsByOwnerId[owner].filter(allowanceId => {
+                candidates = state.allowances.allowanceIdsByOwnerId[ownerId].filter(allowanceId => {
                     const allowance = state.allowances.allowancesById[allowanceId]
                     if (!showZeroAllowances) {
                         const allowanceValue = state.allowances.allowanceValuesById[allowanceId]
@@ -60,12 +60,12 @@ const AllowancesListContainer = ({owner, showZeroAllowances, addressFilter}:Allo
         }
     )
     const queryState = useSelector(
-        (state:RootState) => state.allowances.allowanceQueryStateByOwner[owner]
+        (state:RootState) => state.allowances.allowanceQueryStateByOwner[ownerId]
     )
-    const ownerAddress = useSelector((state:RootState) => state.addresses.addressesById[owner])
+    const ownerAddress = useSelector((state:RootState) => state.addresses.addressesById[ownerId])
 
     if (!queryState) {
-        console.log(`No querystate available for ${owner}`)
+        console.log(`No querystate available for ${ownerId}`)
         return null
     }
 
@@ -77,7 +77,7 @@ const AllowancesListContainer = ({owner, showZeroAllowances, addressFilter}:Allo
         items.push(<TokenAllowancesItem
             key={tokenId}
             tokenId={tokenId}
-            ownerId={owner}
+            ownerId={ownerId}
             allowanceIds={allowanceIds}/>)
     }
 
@@ -116,7 +116,7 @@ const AllowancesListContainer = ({owner, showZeroAllowances, addressFilter}:Allo
                             <Icon name='info'/>
                             <Message.Content>
                                 <Message.Header>No Approvals</Message.Header>
-                                Address {owner} has no Approvals.
+                                {ownerAddress.ensName ?? ownerAddress.address} has no Approvals.
                             </Message.Content>
                         </Message>
                     </Segment>
