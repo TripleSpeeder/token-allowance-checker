@@ -8,8 +8,8 @@ export enum TransactionStates {
     FAILED
 }
 
-type TransactionId = string
-interface editAllowanceTransaction {
+export type TransactionId = string
+export interface editAllowanceTransaction {
     transactionId: TransactionId
     allowanceId: AllowanceId
     transactionState: TransactionStates

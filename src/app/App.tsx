@@ -6,8 +6,6 @@ import OnboardGate from '../features/onboard/OnboardGate'
 import {Button, Container, Divider, Grid, Header, Icon, List, Menu, Popup, Segment} from 'semantic-ui-react'
 import AddressInputContainer from '../features/addressInput/AddressInputContainer'
 import pkg from '../../package.json'
-import {useSelector} from 'react-redux'
-import {RootState} from './rootReducer'
 import AddressExtractor from '../components/AddressExtractor'
 
 

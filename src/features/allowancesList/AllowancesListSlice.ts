@@ -1,9 +1,10 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import {AppDispatch, AppThunk} from '../../app/store'
-import {addContractThunk, ContractAddress} from 'features/tokenContracts/tokenContractsSlice'
+import {addContractThunk} from 'features/tokenContracts/tokenContractsSlice'
 import {addAddressThunk, AddressId, EthAddressPayload, addAddress} from '../addressInput/AddressSlice'
 import BN from 'bn.js'
 import {createDfuseClient} from '@dfuse/client'
+import {TransactionId, addTransaction, editAllowanceTransaction} from '../transactionTracker/TransactionTrackerSlice'
 
 const topicHashApprove = '0x8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925'
 const eventABI = [
@@ -66,6 +67,7 @@ export interface Allowance {
     tokenContractId: AddressId,
     ownerId: AddressId,
     spenderId: AddressId,
+    editTransactionId?: TransactionId
 }
 
 export interface AllowanceValue {
@@ -173,6 +175,10 @@ const allowancesSlice = createSlice({
             }
             state.allowanceIdsByOwnerId[ownerId] = []
             state.allowanceQueryStateByOwner[ownerId] = defaultQueryStateByOwner
+        },
+        [addTransaction.type](state, action:PayloadAction<editAllowanceTransaction>){
+            const {allowanceId, transactionId} = action.payload
+            state.allowancesById[allowanceId].editTransactionId = transactionId
         }
     }
 })
@@ -237,7 +243,6 @@ export const fetchAllowancesThunk = (
 
     // query dfuse API
     let cursor = ''
-    const tokenSpenders = {}
     try {
         // search page by page until no more results are found
         let numPageResults = 0
