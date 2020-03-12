@@ -1,26 +1,14 @@
 import React from 'react'
 import {Icon, Popup} from 'semantic-ui-react'
-import { AddressId } from 'features/addressInput/AddressSlice'
-import {useSelector} from 'react-redux'
-import {RootState} from '../app/rootReducer'
+import {EthAddress} from 'features/addressInput/AddressSlice'
 
 interface AddressDisplayProps {
-    addressId: AddressId
+    ethAddress: EthAddress
 }
 
-const AddressDisplay = ({addressId}:AddressDisplayProps) => {
-    const addressEntry = useSelector((state:RootState) => state.addresses.addressesById[addressId])
-    let address:string
-    let ensName:string|undefined
-    if (!addressEntry) {
-        // No addressEntry in store. Should not happen :-(
-        console.log(`AddressDisplay: Trying to get non-existing address ${addressId}`)
-        address=addressId
-    } else {
-        address = addressEntry.address
-        ensName = addressEntry.ensName
-    }
+const AddressDisplay = ({ethAddress}:AddressDisplayProps) => {
 
+    const {address, ensName} = ethAddress
     const setClipboard = (content: string) => {
         navigator.clipboard.writeText(content).then(function() {
             /* clipboard successfully set */

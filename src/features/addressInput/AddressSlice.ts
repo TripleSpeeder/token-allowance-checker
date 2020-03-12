@@ -2,7 +2,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import namehash from 'eth-ens-namehash'
 import {AppDispatch, AppThunk} from '../../app/store'
 
-enum ResolvingStates {
+export enum ResolvingStates {
     Initial,
     Resolving,
     Resolved
@@ -10,20 +10,15 @@ enum ResolvingStates {
 export type AddressId = string
 
 // the plain address data without internal info like ID or resolving state
-interface EthAddress {
+export interface EthAddress {
     address: string       // the actual address
-    description?: string  // user-defined description
     ensName?: string      // ensName for this address
+    resolvingState: ResolvingStates
 }
-
-// plain address data extended with resolving state
-type EthAddressWithId = {
-    resolvingState?: ResolvingStates
-} & EthAddress
 
 export interface EthAddressPayload {
     id: AddressId,
-    ethAddressWithId: EthAddressWithId
+    ethAddress: EthAddress
 }
 
 interface ResolvingStatePayload {
@@ -38,7 +33,7 @@ interface ENSNamePayload {
 
 // The state contains all known EthAddressess, indexed by the address id
 interface EthAddressesState {
-    addressesById: Record<AddressId, EthAddressWithId>
+    addressesById: Record<AddressId, EthAddress>
     checkAddressId: AddressId | undefined,
     walletAddressId: AddressId | undefined
 }
@@ -56,14 +51,14 @@ const addressSlice = createSlice({
     reducers: {
         addAddress: {
             reducer(state, action: PayloadAction<EthAddressPayload>) {
-                const {id, ethAddressWithId} = action.payload
-                state.addressesById[id] = ethAddressWithId
+                const {id, ethAddress} = action.payload
+                state.addressesById[id] = ethAddress
             },
             prepare(address: string) {
                 return {
                     payload: {
                         id: address,
-                        ethAddressWithId: {
+                        ethAddress: {
                             address: address,
                             resolvingState: ResolvingStates.Initial
                         }

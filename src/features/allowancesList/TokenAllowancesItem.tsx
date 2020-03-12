@@ -20,6 +20,7 @@ interface TokenAllowanceItemProps {
 const TokenAllowancesItem = ({tokenId, ownerId, allowanceIds}:TokenAllowanceItemProps) => {
     const dispatch = useDispatch()
     const tokenContract = useSelector((state:RootState) => state.tokenContracts.contractsById[tokenId])
+    const tokenAddress = useSelector((state:RootState) => state.addresses.addressesById[tokenId])
     const ownerBalance = useSelector((state:RootState) => {
         const balanceId = buildBalanceId(ownerId, tokenId)
         return state.balances.balancesById[balanceId]
@@ -61,7 +62,7 @@ const TokenAllowancesItem = ({tokenId, ownerId, allowanceIds}:TokenAllowanceItem
             <Header as={'h3'}>
                 {headline}
                 <Header.Subheader>
-                    <AddressDisplay addressId={tokenId}/>
+                    <AddressDisplay ethAddress={tokenAddress}/>
                 </Header.Subheader>
             </Header>
             <Table basic={'very'} celled selectable>

@@ -60,6 +60,7 @@ const AllowancesListContainer = ({owner, showZeroAllowances, addressFilter}:Allo
     const queryState = useSelector(
         (state:RootState) => state.allowances.allowanceQueryStateByOwner[owner]
     )
+    const ownerAddress = useSelector((state:RootState) => state.addresses.addressesById[owner])
 
     if (!queryState) {
         console.log(`No querystate available for ${owner}`)
@@ -74,7 +75,7 @@ const AllowancesListContainer = ({owner, showZeroAllowances, addressFilter}:Allo
                         <Icon name='circle notched' loading/>
                         <Message.Content>
                             <Message.Header>Please wait while loading events</Message.Header>
-                            <AddressDisplay addressId={owner}/>
+                            <AddressDisplay ethAddress={ownerAddress}/>
                             <div>Querying dfuse API for ERC20 Approvals, getting page {queryState.currentPage+1}...</div>
                         </Message.Content>
                     </Message>
