@@ -1,15 +1,14 @@
-import React, {useEffect} from 'react'
-import {Header, Segment, Table, Placeholder} from 'semantic-ui-react'
+import React, { useEffect } from 'react'
+import { Header, Segment, Table, Placeholder } from 'semantic-ui-react'
 import AddressDisplay from '../../components/AddressDisplay'
 import BN from 'bn.js'
-import {AddressId} from '../addressInput/AddressSlice'
-import {AllowanceId, QueryStates} from './AllowancesListSlice'
-import {useDispatch, useSelector} from 'react-redux'
-import {RootState} from 'app/rootReducer'
+import { AddressId } from '../addressInput/AddressSlice'
+import { AllowanceId, QueryStates } from './AllowancesListSlice'
+import { useDispatch, useSelector } from 'react-redux'
+import { RootState } from 'app/rootReducer'
 import TokenAllowanceItem from './TokenAllowanceItem'
-import {addBalanceThunk, buildBalanceId} from '../balances/BalancesSlice'
+import { addBalanceThunk, buildBalanceId } from '../balances/BalancesSlice'
 import bn2DisplayString from '@triplespeeder/bn2string'
-
 
 interface TokenAllowanceItemProps {
     tokenId: AddressId
@@ -17,11 +16,19 @@ interface TokenAllowanceItemProps {
     allowanceIds: Array<AllowanceId>
 }
 
-const TokenAllowancesItem = ({tokenId, ownerId, allowanceIds}:TokenAllowanceItemProps) => {
+const TokenAllowancesItem = ({
+    tokenId,
+    ownerId,
+    allowanceIds,
+}: TokenAllowanceItemProps) => {
     const dispatch = useDispatch()
-    const tokenContract = useSelector((state:RootState) => state.tokenContracts.contractsById[tokenId])
-    const tokenAddress = useSelector((state:RootState) => state.addresses.addressesById[tokenId])
-    const ownerBalance = useSelector((state:RootState) => {
+    const tokenContract = useSelector(
+        (state: RootState) => state.tokenContracts.contractsById[tokenId]
+    )
+    const tokenAddress = useSelector(
+        (state: RootState) => state.addresses.addressesById[tokenId]
+    )
+    const ownerBalance = useSelector((state: RootState) => {
         const balanceId = buildBalanceId(ownerId, tokenId)
         return state.balances.balancesById[balanceId]
     })
@@ -39,13 +46,13 @@ const TokenAllowancesItem = ({tokenId, ownerId, allowanceIds}:TokenAllowanceItem
             <Segment raised>
                 <Placeholder>
                     <Placeholder.Header>
-                        <Placeholder.Line/>
-                        <Placeholder.Line/>
+                        <Placeholder.Line />
+                        <Placeholder.Line />
                     </Placeholder.Header>
                     <Placeholder.Paragraph>
-                        <Placeholder.Line/>
-                        <Placeholder.Line/>
-                        <Placeholder.Line/>
+                        <Placeholder.Line />
+                        <Placeholder.Line />
+                        <Placeholder.Line />
                     </Placeholder.Paragraph>
                 </Placeholder>
             </Segment>
@@ -57,18 +64,27 @@ const TokenAllowancesItem = ({tokenId, ownerId, allowanceIds}:TokenAllowanceItem
         tokenDisplayString = `Unnamed ERC20`
     }
     const roundToDecimals = new BN(2)
-    if (!ownerBalance || ownerBalance.queryState === QueryStates.QUERY_STATE_RUNNING) {
+    if (
+        !ownerBalance ||
+        ownerBalance.queryState === QueryStates.QUERY_STATE_RUNNING
+    ) {
         tokenDisplayString += ` (current balance: loading...)`
     } else {
-        const {rounded} = bn2DisplayString({value: ownerBalance.value, decimals: tokenContract.decimals, roundToDecimals})
+        const { rounded } = bn2DisplayString({
+            value: ownerBalance.value,
+            decimals: tokenContract.decimals,
+            roundToDecimals,
+        })
         tokenDisplayString += ` (current balance: ${rounded} ${tokenContract.symbol})`
     }
-    let headline = <div>{tokenDisplayString}</div>
+    const headline = <div>{tokenDisplayString}</div>
 
     // populate rows with one entry per allowance from allowanceIds
-    let rows:any = []
+    const rows: Array<React.ReactNode> = []
     allowanceIds.forEach(allowanceId => {
-        rows.push(<TokenAllowanceItem key={allowanceId} allowanceId={allowanceId}/>)
+        rows.push(
+            <TokenAllowanceItem key={allowanceId} allowanceId={allowanceId} />
+        )
     })
 
     return (
@@ -76,7 +92,7 @@ const TokenAllowancesItem = ({tokenId, ownerId, allowanceIds}:TokenAllowanceItem
             <Header as={'h3'}>
                 {headline}
                 <Header.Subheader>
-                    <AddressDisplay ethAddress={tokenAddress}/>
+                    <AddressDisplay ethAddress={tokenAddress} />
                 </Header.Subheader>
             </Header>
             <Table basic={'very'} celled selectable>
@@ -87,9 +103,7 @@ const TokenAllowancesItem = ({tokenId, ownerId, allowanceIds}:TokenAllowanceItem
                         <Table.HeaderCell>Action</Table.HeaderCell>
                     </Table.Row>
                 </Table.Header>
-                <Table.Body>
-                    {rows}
-                </Table.Body>
+                <Table.Body>{rows}</Table.Body>
             </Table>
         </Segment>
     )

@@ -1,21 +1,20 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import Onboard from 'bnc-onboard'
 import Web3 from 'web3'
-import {AppDispatch, AppThunk} from '../../app/store'
-import {API, WalletInitOptions} from 'bnc-onboard/dist/src/interfaces'
-import {AddressId, setWalletAddressThunk} from '../addressInput/AddressSlice'
+import { AppDispatch, AppThunk } from '../../app/store'
+import { API, WalletInitOptions } from 'bnc-onboard/dist/src/interfaces'
+import { AddressId, setWalletAddressThunk } from '../addressInput/AddressSlice'
 
+const onboardApiKey = 'f4b71bf0-fe50-4eeb-bc2b-b323527ed9e6'
+const infuraApiKey = '7f230a5ca832426796454c28577d93f2'
 
-const onboardApiKey='f4b71bf0-fe50-4eeb-bc2b-b323527ed9e6'
-const infuraApiKey='7f230a5ca832426796454c28577d93f2'
-
-const wallets:Partial<WalletInitOptions>[] = [
+const wallets: Partial<WalletInitOptions>[] = [
     { walletName: 'metamask', preferred: true },
     { walletName: 'coinbase', preferred: true },
     {
         walletName: 'walletConnect',
         infuraKey: infuraApiKey,
-        preferred: true
+        preferred: true,
     },
     { walletName: 'trust', preferred: true },
     { walletName: 'dapper', preferred: true },
@@ -27,29 +26,30 @@ const wallets:Partial<WalletInitOptions>[] = [
     { walletName: 'status' },
     {
         walletName: 'ledger',
-        rpcUrl: `mainnet.infura.io/v3/${infuraApiKey}`
+        rpcUrl: `mainnet.infura.io/v3/${infuraApiKey}`,
     },
     {
         walletName: 'trezor',
         appUrl: 'https://tac.dappstar.io',
         email: 'michael@m-bauer.org',
-        rpcUrl: `mainnet.infura.io/v3/${infuraApiKey}`
-    }]
+        rpcUrl: `mainnet.infura.io/v3/${infuraApiKey}`,
+    },
+]
 
 // Define contents of onboard state
-interface IOnboard {
-    onboardAPI: API | null,
-    web3?: Web3,
-    networkId: number,
-    walletSelected: boolean,
+interface OnboardState {
+    onboardAPI: API | null
+    web3?: Web3
+    networkId: number
+    walletSelected: boolean
     prevWalletAddressId: AddressId | undefined
 }
 
-let initialState:IOnboard = {
+const initialState: OnboardState = {
     networkId: 0,
     onboardAPI: null,
     walletSelected: false,
-    prevWalletAddressId: undefined
+    prevWalletAddressId: undefined,
 }
 
 const onboardSlice = createSlice({
@@ -70,8 +70,8 @@ const onboardSlice = createSlice({
         },
         setWalletSelected(state, action: PayloadAction<boolean>) {
             state.walletSelected = action.payload
-        }
-    }
+        },
+    },
 })
 
 export const {
@@ -79,16 +79,20 @@ export const {
     setNetworkId,
     setWeb3Instance,
     setWalletSelected,
-    setPrevWalletAddressId
+    setPrevWalletAddressId,
 } = onboardSlice.actions
 
 export default onboardSlice.reducer
 
-export const selectWallet = (history: any) : AppThunk => async (dispatch, getState) => {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const selectWallet = (history: any): AppThunk => async (
+    dispatch,
+    getState
+) => {
     console.log(`Selecting wallet...`)
     const onboardAPI = getState().onboard.onboardAPI
     if (onboardAPI) {
-        let result = await onboardAPI.walletSelect()
+        const result = await onboardAPI.walletSelect()
         dispatch(setWalletSelected(result))
         if (!result) {
             // send user back to home page
@@ -99,20 +103,24 @@ export const selectWallet = (history: any) : AppThunk => async (dispatch, getSta
     }
 }
 
-export const checkWallet = () : AppThunk => async (dispatch, getState) => {
+export const checkWallet = (): AppThunk => async (dispatch, getState) => {
     console.log(`checking wallet...`)
     const onboardAPI = getState().onboard.onboardAPI
     if (onboardAPI) {
-        let result = await onboardAPI.walletCheck()
+        const result = await onboardAPI.walletCheck()
         console.log(`walletCheck result: ${result}`)
     } else {
         console.log(`dispatched checkWallet() without initialization...`)
     }
 }
 
-export const initialize = (history: any): AppThunk => async (dispatch:AppDispatch, getState) => {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const initialize = (history: any): AppThunk => async (
+    dispatch: AppDispatch,
+    getState
+) => {
     console.log(`Initializing OnBoard.js...`)
-    const onboard = (Onboard({
+    const onboard = Onboard({
         dappId: onboardApiKey,
         networkId: 1,
         subscriptions: {
@@ -122,10 +130,15 @@ export const initialize = (history: any): AppThunk => async (dispatch:AppDispatc
             address: address => {
                 console.log(`Wallet address changed to ${address}!`)
                 dispatch(setWalletAddressThunk(address))
-                const {prevWalletAddressId} = getState().onboard
+                const { prevWalletAddressId } = getState().onboard
                 //  Only trigger history push when user changed the wallet address
-                if (prevWalletAddressId && (prevWalletAddressId !== address.toLowerCase())) {
-                    console.log(`Pushing ${address}. Prev walletId: ${prevWalletAddressId}`)
+                if (
+                    prevWalletAddressId &&
+                    prevWalletAddressId !== address.toLowerCase()
+                ) {
+                    console.log(
+                        `Pushing ${address}. Prev walletId: ${prevWalletAddressId}`
+                    )
                     history.push(`/address/${address}`)
                 }
                 dispatch(setPrevWalletAddressId(address.toLowerCase()))
@@ -133,14 +146,17 @@ export const initialize = (history: any): AppThunk => async (dispatch:AppDispatc
             network: networkId => {
                 dispatch(setNetworkId(networkId))
             },
-            balance: balance => {}
+            balance: () => {
+                /* do nothing*/
+            },
         },
         walletSelect: {
             heading: 'Select walletName',
             description: 'Select walletName description',
+            // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
             // @ts-ignore
-            wallets: wallets
-        }
-    }))
+            wallets: wallets,
+        },
+    })
     dispatch(setOnboardAPI(onboard))
 }

@@ -1,14 +1,17 @@
-import React, {useEffect} from 'react'
-import {Icon, Message, Segment} from 'semantic-ui-react'
-import {useHistory} from 'react-router-dom'
+import React, { useEffect } from 'react'
+import { Icon, Message, Segment } from 'semantic-ui-react'
+import { useHistory } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
 import { RootState } from '../../app/rootReducer'
-import {initialize, selectWallet} from './onboardSlice'
+import { initialize, selectWallet } from './onboardSlice'
 
-const OnboardGate = (props: React.PropsWithChildren<any>) => {
+interface OnboardGateProps {
+    children?: React.ReactNode
+}
+const OnboardGate = ({ children }: OnboardGateProps) => {
     const history = useHistory()
     const dispatch = useDispatch()
-    const {onboardAPI, walletSelected} = useSelector(
+    const { onboardAPI, walletSelected } = useSelector(
         (state: RootState) => state.onboard
     )
 
@@ -23,9 +26,7 @@ const OnboardGate = (props: React.PropsWithChildren<any>) => {
     }, [onboardAPI, walletSelected, dispatch, history])
 
     if (walletSelected) {
-        return <React.Fragment>
-            {props.children}
-        </React.Fragment>
+        return <React.Fragment>{children}</React.Fragment>
     } else {
         return (
             <Segment basic padded='very' textAlign={'center'}>

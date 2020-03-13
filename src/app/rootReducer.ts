@@ -7,7 +7,6 @@ import balancesReducer from 'features/balances/BalancesSlice'
 import editAllowanceReducer from 'features/editAllowance/EditAllowanceSlice'
 import transactionTrackerReducer from 'features/transactionTracker/TransactionTrackerSlice'
 
-
 const rootReducer = combineReducers({
     onboard: onboardReducer,
     addresses: addressesReducer,
@@ -15,7 +14,7 @@ const rootReducer = combineReducers({
     allowances: allowancesReducer,
     balances: balancesReducer,
     editAllowance: editAllowanceReducer,
-    transactions: transactionTrackerReducer
+    transactions: transactionTrackerReducer,
 })
 
 export type RootState = ReturnType<typeof rootReducer>

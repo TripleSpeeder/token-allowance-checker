@@ -1,19 +1,15 @@
 import React from 'react'
 import { action } from '@storybook/addon-actions'
-import {Container} from 'semantic-ui-react'
+import { Container } from 'semantic-ui-react'
 import AllowancesListFilter from './AllowancesListFilter'
-
 
 export default {
     title: 'AllowancesListFilter',
     component: AllowancesListFilter,
     decorators: [
-        (story: () => React.ReactNode) => (
-            <Container>
-                {story()}
-            </Container>
-        )
-    ]}
+        (story: () => React.ReactNode) => <Container>{story()}</Container>,
+    ],
+}
 
 export const normal = () => (
     <AllowancesListFilter
