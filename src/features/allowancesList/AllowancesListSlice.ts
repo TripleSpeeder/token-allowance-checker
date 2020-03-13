@@ -289,6 +289,10 @@ export const fetchAllowancesThunk = (ownerId: AddressId): AppThunk => async (
         })
     )
 
+    // prepare ERC20 contract
+    const erc20Contract = contract(ERC20Data)
+    erc20Contract.setProvider(web3.currentProvider)
+
     // query dfuse API
     let cursor = ''
     try {
@@ -381,11 +385,18 @@ export const fetchAllowancesThunk = (ownerId: AddressId): AppThunk => async (
                     // Add tokenContract
                     if (!knownContracts.includes(tokenContractAddress)) {
                         // Check if the contract really implements the required ERC20 methods.
-                        const erc20Contract = contract(ERC20Data)
-                        erc20Contract.setProvider(web3.currentProvider)
-                        const contractInstance: ERC20Detailed.ERC20DetailedInstance = await erc20Contract.at(
-                            tokenContractAddress
-                        )
+                        let contractInstance: ERC20Detailed.ERC20DetailedInstance
+                        try {
+                            contractInstance = await erc20Contract.at(
+                                tokenContractAddress
+                            )
+                        } catch (error) {
+                            console.log(
+                                `Error instantiating contract at ${tokenContractAddress}: ${error}`
+                            )
+                            badContracts.push(tokenContractAddress)
+                            continue
+                        }
                         try {
                             // these are the required calls
                             await contractInstance.totalSupply()
