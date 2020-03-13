@@ -113,7 +113,7 @@ export default addressSlice.reducer
 
 export const fetchEtherscanNameThunk = (
     addressId: AddressId
-): AppThunk => async (dispatch: AppDispatch, getState) => {
+): AppThunk => async (dispatch: AppDispatch) => {
     const apiKey = 'THS8KWYM6KZ8WBP3DXKUDR7UKCRB8YIRGH'
     const requestUrl = `https://api.etherscan.io/api?module=contract&action=getsourcecode&address=${addressId}&apikey=${apiKey}`
     const response = await fetch(requestUrl)
