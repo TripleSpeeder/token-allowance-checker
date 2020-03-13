@@ -1,26 +1,45 @@
 module.exports = {
-    extends: [
-        "plugin:react/recommended", // Uses the recommended rules from @eslint-plugin-react
-    ],
-    parserOptions: {
-        ecmaVersion: 2018, // Allows for the parsing of modern ECMAScript features
-        sourceType: "module", // Allows for the use of imports
-        ecmaFeatures: {
-            jsx: true // Allows for the parsing of JSX
-        }
+  env: {
+    browser: true,
+    es6: true,
+  },
+  extends: [
+    'plugin:react/recommended',
+    "plugin:@typescript-eslint/eslint-recommended",
+    "plugin:@typescript-eslint/recommended",
+    'prettier/@typescript-eslint',
+  ],
+  settings: {
+    'react': {
+      'version': 'detect'
     },
-    rules: {
-        // Place to specify ESLint rules. Can be used to overwrite rules specified from the extended configs
-        // e.g. "@typescript-eslint/explicit-function-return-type": "off",
-        "quotes": ["error", "single", { "allowTemplateLiterals": true }],
-        "semi": ["error", "never"],
-        "eqeqeq": "error",
-        "no-multi-spaces": "error",
-        "quote-props": [ "error", "consistent" ]
+    "linkComponents": [
+      // Components used as alternatives to <a> for linking, eg. <Link to={ url } />
+      "Hyperlink",
+      {"name": "Link", "linkAttribute": "to"}
+    ]
+  },
+  globals: {
+    Atomics: 'readonly',
+    SharedArrayBuffer: 'readonly',
+  },
+  parser: '@typescript-eslint/parser',
+  parserOptions: {
+    ecmaFeatures: {
+      jsx: true,
     },
-    settings: {
-        react: {
-            version: "detect" // Tells eslint-plugin-react to automatically detect the version of React to use
-        }
-    }
+    ecmaVersion: 2018,
+    sourceType: 'module',
+    project: './tsconfig.json',
+  },
+  plugins: [
+    'react',
+    '@typescript-eslint',
+  ],
+  rules: {
+    'jsx-quotes': ['error', 'prefer-single'],
+    'react/jsx-indent': [2, 4],
+    'react/jsx-indent-props': [2, 4],
+    "@typescript-eslint/explicit-function-return-type": "off",
+  },
 };

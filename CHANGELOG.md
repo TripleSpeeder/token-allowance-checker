@@ -2,6 +2,40 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.0.1](https://github.com/TripleSpeeder/token-allowance-checker/compare/v2.0.0...v2.0.1) (2020-03-13)
+
+
+### Bug Fixes
+
+* dont crash when there is no code at contract address ([7d24ad0](https://github.com/TripleSpeeder/token-allowance-checker/commit/7d24ad0c71a32f98c275c36cd621308b01e98cfd))
+
+## [2.0.0](https://github.com/TripleSpeeder/token-allowance-checker/compare/v1.3.0...v2.0.0) (2020-03-13)
+
+
+### Features
+
+* add button to reload allowances ([ab2a0fc](https://github.com/TripleSpeeder/token-allowance-checker/commit/ab2a0fc1b6e0ce8a7c9b413a4e45f7f3631c8ec4))
+* add Old EOS token to well-known-contracts ([c51120b](https://github.com/TripleSpeeder/token-allowance-checker/commit/c51120b848ec83981b5396b45e0a0c72d0c80b94))
+* display spender contract name if available ([31dfa9c](https://github.com/TripleSpeeder/token-allowance-checker/commit/31dfa9cb5438cc5018c47b68ab79892f6f88e93d)), closes [#3](https://github.com/TripleSpeeder/token-allowance-checker/issues/3)
+* display transaction state ([a352921](https://github.com/TripleSpeeder/token-allowance-checker/commit/a352921a33f1bcf41a264d51b89c003de0aea19d))
+* further improve loading progress&UI ([7cc5b2a](https://github.com/TripleSpeeder/token-allowance-checker/commit/7cc5b2a42b9f619714ced17548caf38feec96405))
+* improve loading progress ([2a96b73](https://github.com/TripleSpeeder/token-allowance-checker/commit/2a96b73a3224d03abe659fef2c25a861a66eb237))
+* track transaction state ([5850b3a](https://github.com/TripleSpeeder/token-allowance-checker/commit/5850b3ab018614a9db67a1f63e51bdfa585ec8b9))
+* use ENSname in allowance list if available ([9f03962](https://github.com/TripleSpeeder/token-allowance-checker/commit/9f03962e0c5c157ce157d720ad204ec8975b33c1))
+
+
+### Bug Fixes
+
+* dont clear existing allowances for already known addresses ([ca09610](https://github.com/TripleSpeeder/token-allowance-checker/commit/ca0961070d5f1f47733fe90d16983d01ca728f1e))
+* handle failing allowance() calls ([bbf6796](https://github.com/TripleSpeeder/token-allowance-checker/commit/bbf6796697b2bc231144531cae8921cc6afdc3f7))
+* handle logEntries with empty data (0x) ([5ca31e1](https://github.com/TripleSpeeder/token-allowance-checker/commit/5ca31e1b0f0a03cc2d14f218f87e3c58cdba2ba3))
+* handling of addresses from url and wallet ([4e38c4f](https://github.com/TripleSpeeder/token-allowance-checker/commit/4e38c4fb2eee3e89cacaaaf3563b3111e32438be))
+* improve detection of non-ERC20 contracts ([a4d1756](https://github.com/TripleSpeeder/token-allowance-checker/commit/a4d17560993091bac30e120f56ab8d9b5d808040))
+* improve handling non-compliant ERC20 contracts ([66edda1](https://github.com/TripleSpeeder/token-allowance-checker/commit/66edda15dc5f9ff5d1e3deadb2502da4db8d01bd))
+* improve wording in EditAllowance form ([1e0727f](https://github.com/TripleSpeeder/token-allowance-checker/commit/1e0727f6e79b7c768907ee5b726c26fd06196aef))
+* keep addressinput in sync with current address ([34127ba](https://github.com/TripleSpeeder/token-allowance-checker/commit/34127baac001b56925ecc428e9066815735c538a))
+* missing useEffect deps ([a058e55](https://github.com/TripleSpeeder/token-allowance-checker/commit/a058e5557b6287cf8af696f3824f0c6fee56bb26))
+
 ### [1.3.1](https://github.com/TripleSpeeder/token-allowance-checker/compare/v1.3.0...v1.3.1) (2020-03-02)
 
 
@@ -23,7 +57,7 @@ All notable changes to this project will be documented in this file. See [standa
 
 * don't autofocus on tokenFilter ([cc59442](https://github.com/TripleSpeeder/token-allowance-checker/commit/cc594429b86e0fbbd5bffe79c7b968f02dc2f255))
 * reload allowance after editing ([9f576a5](https://github.com/TripleSpeeder/token-allowance-checker/commit/9f576a568467464b4508bdadc94002180c3a1e7a)), closes [#18](https://github.com/TripleSpeeder/token-allowance-checker/issues/18)
-* set initial value '0' in EditAllowanceFormContainer.js ([6b54805](https://github.com/TripleSpeeder/token-allowance-checker/commit/6b5480529434a2f487134ee3fab6c8d3c019918c))
+* set initial value '0' in EditAllowanceFormContainer.tsx ([6b54805](https://github.com/TripleSpeeder/token-allowance-checker/commit/6b5480529434a2f487134ee3fab6c8d3c019918c))
 
 ## [1.2.0](https://github.com/TripleSpeeder/token-allowance-checker/compare/v1.0.0...v1.2.0) (2020-02-24)
 
