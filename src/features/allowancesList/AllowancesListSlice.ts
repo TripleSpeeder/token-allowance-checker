@@ -6,6 +6,7 @@ import {
     AddressId,
     EthAddressPayload,
     addAddress,
+    fetchEtherscanNameThunk,
 } from '../addressInput/AddressSlice'
 import BN from 'bn.js'
 import { createDfuseClient } from '@dfuse/client'
@@ -413,6 +414,8 @@ export const fetchAllowancesThunk = (ownerId: AddressId): AppThunk => async (
                         knownSpenders.push(spenderAddress)
                         // console.log(`Adding Spender ${spenderAddress} for ${tokenContractAddress}`)
                         dispatch(addAddressThunk(spenderAddress))
+                        // look for spender contract name on Etherscan
+                        dispatch(fetchEtherscanNameThunk(spenderAddress))
                         // Add allowance entry
                         dispatch(
                             addAllowance(

@@ -23,6 +23,17 @@ const withEns: EthAddress = {
     ensName: 'cool.stuff.eth',
     resolvingState: ResolvingStates.Resolved,
 }
+const withEsName: EthAddress = {
+    address: '0x0D0707963952f2fBA59dD06f2b425ace40b492Fe',
+    esContractName: 'Payroll',
+    resolvingState: ResolvingStates.Resolved,
+}
+const withAllNames: EthAddress = {
+    address: '0x0D0707963952f2fBA59dD06f2b425ace40b492Fe',
+    ensName: 'cool.stuff.eth',
+    esContractName: 'Payroll',
+    resolvingState: ResolvingStates.Resolved,
+}
 const withoutEns: EthAddress = {
     address: '0x0D0707963952f2fBA59dD06f2b425ace40b492Fe',
     resolvingState: ResolvingStates.Resolved,
@@ -32,6 +43,8 @@ const AddressDisplayProps = {
     resolvedAddress: withEns,
     resolvingAddress: resolvingEns,
     resolvedWithoutEns: withoutEns,
+    resolvedWithEsName: withEsName,
+    resolvedWithAllNames: withAllNames,
 }
 
 export const resolving = () => (
@@ -44,4 +57,12 @@ export const noENS = () => (
 
 export const withENS = () => (
     <AddressDisplay ethAddress={AddressDisplayProps.resolvedAddress} />
+)
+
+export const withEs = () => (
+    <AddressDisplay ethAddress={AddressDisplayProps.resolvedWithEsName} />
+)
+
+export const withAll = () => (
+    <AddressDisplay ethAddress={AddressDisplayProps.resolvedWithAllNames} />
 )
