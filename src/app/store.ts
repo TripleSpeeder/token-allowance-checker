@@ -1,7 +1,10 @@
-import {configureStore, Action, getDefaultMiddleware} from '@reduxjs/toolkit'
+import { configureStore, Action, getDefaultMiddleware } from '@reduxjs/toolkit'
 import { ThunkAction } from 'redux-thunk'
-import rootReducer ,{ RootState } from './rootReducer'
-import { setOnboardAPI, setWeb3Instance } from '../features/onboard/onboardSlice'
+import rootReducer, { RootState } from './rootReducer'
+import {
+    setOnboardAPI,
+    setWeb3Instance,
+} from '../features/onboard/onboardSlice'
 import { addContract } from 'features/tokenContracts/tokenContractsSlice'
 import { setAllowanceValue } from 'features/allowancesList/AllowancesListSlice'
 import { setBalanceValue, addBalance } from 'features/balances/BalancesSlice'
@@ -14,28 +17,28 @@ const customizedMiddleware = getDefaultMiddleware({
             addContract.type,
             setAllowanceValue.type,
             addBalance.type,
-            setBalanceValue.type
+            setBalanceValue.type,
         ],
         ignoredPaths: [
             'onboard.web3',
             'onboard.onboardAPI',
             'tokenContracts.contractsById',
             'allowances.allowanceValuesById',
-            'balances.balancesById'
-        ]
+            'balances.balancesById',
+        ],
     },
     immutableCheck: {
         ignore: [
             'onboard.web3',
             'onboard.onboardAPI',
-            'tokenContracts.contractsById'
+            'tokenContracts.contractsById',
         ],
-    }
+    },
 })
 
 const store = configureStore({
     reducer: rootReducer,
-    middleware: customizedMiddleware
+    middleware: customizedMiddleware,
 })
 
 if (process.env.NODE_ENV === 'development' && module.hot) {

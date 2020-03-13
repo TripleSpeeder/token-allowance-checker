@@ -1,30 +1,32 @@
-import { AllowanceId } from "features/allowancesList/AllowancesListSlice";
-import {createSlice, PayloadAction} from '@reduxjs/toolkit'
-
+import { AllowanceId } from 'features/allowancesList/AllowancesListSlice'
+import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
 interface EditAllowanceState {
     showModal: boolean
     editAllowanceId: AllowanceId
 }
 
-let initialState:EditAllowanceState = {
+const initialState: EditAllowanceState = {
     showModal: false,
-    editAllowanceId: ''
+    editAllowanceId: '',
 }
 
 const editAllowanceSlice = createSlice({
     name: 'editAllowance',
     initialState: initialState,
     reducers: {
-        openEditAllowanceModal(state, action:PayloadAction<AllowanceId>) {
+        openEditAllowanceModal(state, action: PayloadAction<AllowanceId>) {
             const allowanceId = action.payload
             state.showModal = true
             state.editAllowanceId = allowanceId
         },
         closeEditAllowanceModal(state) {
             state.showModal = false
-        }
-    }
+        },
+    },
 })
-export const {openEditAllowanceModal, closeEditAllowanceModal} = editAllowanceSlice.actions
+export const {
+    openEditAllowanceModal,
+    closeEditAllowanceModal,
+} = editAllowanceSlice.actions
 export default editAllowanceSlice.reducer

@@ -1,22 +1,32 @@
-import {AllowanceId} from './AllowancesListSlice'
+import { AllowanceId } from './AllowancesListSlice'
 import React from 'react'
-import {Button, ButtonProps, Icon, Popup} from 'semantic-ui-react'
-import {openEditAllowanceModal} from '../editAllowance/EditAllowanceSlice'
-import {TransactionStates} from '../transactionTracker/TransactionTrackerSlice'
-import {useDispatch, useSelector} from 'react-redux'
-import {RootState} from '../../app/rootReducer'
+import { Button, Icon, Popup } from 'semantic-ui-react'
+import { openEditAllowanceModal } from '../editAllowance/EditAllowanceSlice'
+import { TransactionStates } from '../transactionTracker/TransactionTrackerSlice'
+import { useDispatch, useSelector } from 'react-redux'
+import { RootState } from '../../app/rootReducer'
 
 interface TokenAllowanceItemActionsProps {
     allowanceId: AllowanceId
 }
-const TokenAllowanceItemActions = ({allowanceId}:TokenAllowanceItemActionsProps) => {
+const TokenAllowanceItemActions = ({
+    allowanceId,
+}: TokenAllowanceItemActionsProps) => {
     const dispatch = useDispatch()
-    const allowance  = useSelector((state:RootState) => state.allowances.allowancesById[allowanceId])
-    const transaction = useSelector((state:RootState) => allowance.editTransactionId ? state.transactions.transactionsById[allowance.editTransactionId] : undefined)
-    const walletAddressId = useSelector((state:RootState) => state.addresses.walletAddressId)
+    const allowance = useSelector(
+        (state: RootState) => state.allowances.allowancesById[allowanceId]
+    )
+    const transaction = useSelector((state: RootState) =>
+        allowance.editTransactionId
+            ? state.transactions.transactionsById[allowance.editTransactionId]
+            : undefined
+    )
+    const walletAddressId = useSelector(
+        (state: RootState) => state.addresses.walletAddressId
+    )
 
-    const handleClick = (event: React.MouseEvent<HTMLButtonElement>, data: ButtonProps) => {
-        event.preventDefault();
+    const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+        event.preventDefault()
         dispatch(openEditAllowanceModal(allowanceId))
     }
 
@@ -25,50 +35,62 @@ const TokenAllowanceItemActions = ({allowanceId}:TokenAllowanceItemActionsProps)
         let icon
         let msg
         let header
-        switch(transaction.transactionState){
+        switch (transaction.transactionState) {
             case TransactionStates.CONFIRMED:
-                icon = <Icon name={'check'} size={'large'}/>
+                icon = <Icon name={'check'} size={'large'} />
                 header = 'Transaction confirmed'
                 msg = `Transaction hash: ${transaction.transactionHash}`
                 break
             case TransactionStates.FAILED:
-                icon = <Icon name={'exclamation triangle'} color={'red'} size={'large'}/>
+                icon = (
+                    <Icon
+                        name={'exclamation triangle'}
+                        color={'red'}
+                        size={'large'}
+                    />
+                )
                 header = 'Transaction failed'
                 msg = `${transaction.error}`
                 break
             case TransactionStates.SUBMITTED:
-                icon = <Icon name={'spinner'} loading size={'large'}/>
+                icon = <Icon name={'spinner'} loading size={'large'} />
                 header = 'Transaction created'
                 msg = `Waiting for confirmation...`
                 break
             case TransactionStates.INITIAL:
             default:
-                icon = <Icon name={'question'} size={'large'}/>
+                icon = <Icon name={'question'} size={'large'} />
                 header = 'Transaction unknown'
                 msg = 'Tx state INITIAL'
         }
-        transactionContent = <Popup
-            header={header}
-            content={msg}
-            trigger={icon}
-        />
+        transactionContent = (
+            <Popup header={header} content={msg} trigger={icon} />
+        )
     }
     let actionContent
     if (transaction?.transactionState !== TransactionStates.SUBMITTED) {
         const editEnabled = allowance.ownerId === walletAddressId
-        actionContent = <Popup
-            content={editEnabled ? 'edit allowance' : 'Only address owner can edit allowance'}
-            trigger={<span>
-                <Button
-                    icon={'edit'}
-                    size={'small'}
-                    compact
-                    primary
-                    disabled={!editEnabled}
-                    onClick={handleClick}
-                />
-            </span>}
-        />
+        actionContent = (
+            <Popup
+                content={
+                    editEnabled
+                        ? 'edit allowance'
+                        : 'Only address owner can edit allowance'
+                }
+                trigger={
+                    <span>
+                        <Button
+                            icon={'edit'}
+                            size={'small'}
+                            compact
+                            primary
+                            disabled={!editEnabled}
+                            onClick={handleClick}
+                        />
+                    </span>
+                }
+            />
+        )
     }
 
     return (

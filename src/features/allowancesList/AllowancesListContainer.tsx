@@ -1,68 +1,96 @@
 import React from 'react'
-import {useSelector} from 'react-redux'
+import { useSelector } from 'react-redux'
 import _ from 'lodash'
-import {RootState} from '../../app/rootReducer'
+import { RootState } from '../../app/rootReducer'
 import TokenAllowancesItem from './TokenAllowancesItem'
-import {QueryStates} from './AllowancesListSlice'
+import { QueryStates } from './AllowancesListSlice'
 import { Segment, Message, Icon } from 'semantic-ui-react'
-import {AddressId} from '../addressInput/AddressSlice'
-
+import { AddressId } from '../addressInput/AddressSlice'
 
 interface AllowancesListContainerProps {
-    ownerId: AddressId,
-    showZeroAllowances: boolean,
+    ownerId: AddressId
+    showZeroAllowances: boolean
     addressFilter: string
 }
 
-const AllowancesListContainer = ({ownerId, showZeroAllowances, addressFilter}:AllowancesListContainerProps) => {
-    const allowancesByTokenId = useSelector(
-        (state: RootState) => {
-            let candidates
-            if ((showZeroAllowances) && (addressFilter==='')) {
-                // no filter required, just return all IDs.
-                candidates = state.allowances.allowanceIdsByOwnerId[ownerId]
-            } else {
-                // apply filter
-                candidates = state.allowances.allowanceIdsByOwnerId[ownerId].filter(allowanceId => {
-                    const allowance = state.allowances.allowancesById[allowanceId]
+const AllowancesListContainer = ({
+    ownerId,
+    showZeroAllowances,
+    addressFilter,
+}: AllowancesListContainerProps) => {
+    const allowancesByTokenId = useSelector((state: RootState) => {
+        let candidates
+        if (showZeroAllowances && addressFilter === '') {
+            // no filter required, just return all IDs.
+            candidates = state.allowances.allowanceIdsByOwnerId[ownerId]
+        } else {
+            // apply filter
+            candidates = state.allowances.allowanceIdsByOwnerId[ownerId].filter(
+                allowanceId => {
+                    const allowance =
+                        state.allowances.allowancesById[allowanceId]
                     if (!showZeroAllowances) {
-                        const allowanceValue = state.allowances.allowanceValuesById[allowanceId]
-                        const isZeroAllowance = ((allowanceValue.state === QueryStates.QUERY_STATE_COMPLETE) && (allowanceValue.value.isZero()))
+                        const allowanceValue =
+                            state.allowances.allowanceValuesById[allowanceId]
+                        const isZeroAllowance =
+                            allowanceValue.state ===
+                                QueryStates.QUERY_STATE_COMPLETE &&
+                            allowanceValue.value.isZero()
                         if (isZeroAllowance) {
                             return false
                         }
                     }
                     if (addressFilter) {
                         const filterString = addressFilter.toLowerCase()
-                        const tokenContract = state.tokenContracts.contractsById[allowance.tokenContractId]
-                        if(tokenContract) {
-                            const tokenContractAddress = state.addresses.addressesById[tokenContract.addressId]
-                            const matchedFilter = (
-                                tokenContract.name.toLowerCase().includes(filterString) ||
-                                tokenContract.symbol.toLowerCase().includes(filterString) ||
-                                tokenContractAddress.address.toLowerCase().includes(filterString) ||
-                                tokenContractAddress.ensName?.toLowerCase().includes(filterString)
-                            )
+                        const tokenContract =
+                            state.tokenContracts.contractsById[
+                                allowance.tokenContractId
+                            ]
+                        if (tokenContract) {
+                            const tokenContractAddress =
+                                state.addresses.addressesById[
+                                    tokenContract.addressId
+                                ]
+                            const matchedFilter =
+                                tokenContract.name
+                                    .toLowerCase()
+                                    .includes(filterString) ||
+                                tokenContract.symbol
+                                    .toLowerCase()
+                                    .includes(filterString) ||
+                                tokenContractAddress.address
+                                    .toLowerCase()
+                                    .includes(filterString) ||
+                                tokenContractAddress.ensName
+                                    ?.toLowerCase()
+                                    .includes(filterString)
                             if (!matchedFilter) {
                                 return false
                             }
                         } else {
-                            console.warn(`No tokencontract for ${allowance.tokenContractId}`)
+                            console.warn(
+                                `No tokencontract for ${allowance.tokenContractId}`
+                            )
                         }
                     }
                     return true
-                })
-            }
-            // get all allowances of owner
-            const allowances = candidates.map((allowanceId) => (state.allowances.allowancesById[allowanceId]))
-            // group allowances by tokenID
-            return _.groupBy(allowances, 'tokenContractId')
+                }
+            )
         }
-    )
+        // get all allowances of owner
+        const allowances = candidates.map(
+            allowanceId => state.allowances.allowancesById[allowanceId]
+        )
+        // group allowances by tokenID
+        return _.groupBy(allowances, 'tokenContractId')
+    })
     const queryState = useSelector(
-        (state:RootState) => state.allowances.allowanceQueryStateByOwner[ownerId]
+        (state: RootState) =>
+            state.allowances.allowanceQueryStateByOwner[ownerId]
     )
-    const ownerAddress = useSelector((state:RootState) => state.addresses.addressesById[ownerId])
+    const ownerAddress = useSelector(
+        (state: RootState) => state.addresses.addressesById[ownerId]
+    )
 
     if (!queryState) {
         console.log(`No querystate available for ${ownerId}`)
@@ -70,26 +98,32 @@ const AllowancesListContainer = ({ownerId, showZeroAllowances, addressFilter}:Al
     }
 
     let message
-    const items:Array<any> = []
-    for (let entry of Object.entries(allowancesByTokenId)) {
+    const items: Array<React.ReactNode> = []
+    for (const entry of Object.entries(allowancesByTokenId)) {
         const tokenId = entry[0]
-        const allowanceIds = entry[1].map(allowance => (allowance.id))
-        items.push(<TokenAllowancesItem
-            key={tokenId}
-            tokenId={tokenId}
-            ownerId={ownerId}
-            allowanceIds={allowanceIds}/>)
+        const allowanceIds = entry[1].map(allowance => allowance.id)
+        items.push(
+            <TokenAllowancesItem
+                key={tokenId}
+                tokenId={tokenId}
+                ownerId={ownerId}
+                allowanceIds={allowanceIds}
+            />
+        )
     }
 
-    switch(queryState.state) {
+    switch (queryState.state) {
         case QueryStates.QUERY_STATE_RUNNING:
             message = (
                 <Segment basic padded='very' textAlign={'center'}>
                     <Message icon warning size={'huge'}>
-                        <Icon name='circle notched' loading/>
+                        <Icon name='circle notched' loading />
                         <Message.Content>
                             <Message.Header>Loading events</Message.Header>
-                            <div>Querying dfuse API for ERC20 Approvals, getting page {queryState.currentPage+1}...</div>
+                            <div>
+                                Querying dfuse API for ERC20 Approvals, getting
+                                page {queryState.currentPage + 1}...
+                            </div>
                         </Message.Content>
                     </Message>
                 </Segment>
@@ -99,7 +133,7 @@ const AllowancesListContainer = ({ownerId, showZeroAllowances, addressFilter}:Al
             message = (
                 <Segment basic padded='very' textAlign={'center'}>
                     <Message error icon size={'huge'}>
-                        <Icon name='exclamation triangle'/>
+                        <Icon name='exclamation triangle' />
                         <Message.Content>
                             <Message.Header>Error</Message.Header>
                             {queryState.error}
@@ -113,10 +147,12 @@ const AllowancesListContainer = ({ownerId, showZeroAllowances, addressFilter}:Al
                 message = (
                     <Segment basic padded='very' textAlign={'center'}>
                         <Message success icon size={'huge'}>
-                            <Icon name='info'/>
+                            <Icon name='info' />
                             <Message.Content>
                                 <Message.Header>No Approvals</Message.Header>
-                                {ownerAddress.ensName ?? ownerAddress.address} has no Approvals.
+                                {ownerAddress.ensName ??
+                                    ownerAddress.address}{' '}
+                                has no Approvals.
                             </Message.Content>
                         </Message>
                     </Segment>
@@ -125,14 +161,15 @@ const AllowancesListContainer = ({ownerId, showZeroAllowances, addressFilter}:Al
             break
         case QueryStates.QUERY_STATE_INITIAL:
         default:
-            return (<div>Unhandled state!</div>)
+            return <div>Unhandled state!</div>
     }
 
-    return (<>
-        {message}
-        {items}
-    </>)
-
+    return (
+        <>
+            {message}
+            {items}
+        </>
+    )
 }
 
 export default AllowancesListContainer

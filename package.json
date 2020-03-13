@@ -6,8 +6,15 @@
   "repository": "github:TripleSpeeder/token-allowance-checker",
   "husky": {
     "hooks": {
+      "pre-commit": "lint-staged",
       "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
     }
+  },
+  "lint-staged": {
+    "src/**/*.{ts,tsx}": [
+      "./node_modules/.bin/eslint --fix",
+      "./node_modules/.bin/prettier --write"
+    ]
   },
   "scripts": {
     "start": "react-scripts start",
@@ -18,32 +25,27 @@
     "eject": "react-scripts eject",
     "storybook": "start-storybook -p 9009 -s public",
     "build-storybook": "build-storybook -s public",
-    "release": "standard-version"
+    "release": "standard-version",
+    "lint": "./node_modules/.bin/eslint . --ext .ts,.tsx",
+    "lint:fix": "./node_modules/.bin/eslint . --ext .ts,.tsx --fix",
+    "prettier": "./node_modules/.bin/prettier --check \"src/**/*.ts{,x}\"",
+    "prettier:write": "./node_modules/.bin/prettier --write \"src/**/*.ts{,x}\""
   },
-  "dependencies": {},
-  "devDependencies": {
-    "@dfuse/client": "^0.3.8",
-    "@openzeppelin/contracts": "^2.5.0",
-    "@reduxjs/toolkit": "^1.2.5",
-    "@testing-library/jest-dom": "^4.2.4",
-    "@testing-library/react": "^9.4.0",
-    "@testing-library/user-event": "^7.2.1",
-    "@triplespeeder/bn2string": "^1.0.0",
-    "@truffle/contract": "^4.1.8",
-    "@types/react-redux": "^7.1.7",
-    "bnc-onboard": "^1.3",
-    "eth-ens-namehash": "^2.0.8",
+  "dependencies": {
+    "@types/react-router": "^5.1.4",
     "react": "^16.12.0",
     "react-dom": "^16.12.0",
     "react-redux": "^7.2.0",
     "react-router-dom": "^5.1.2",
-    "react-scripts": "3.4.0",
     "semantic-ui-css": "^2.4.1",
-    "semantic-ui-react": "^0.88.2",
-    "typescript": "^3.8.2",
-    "web3": "^1.2.6",
+    "semantic-ui-react": "^0.88.2"
+  },
+  "devDependencies": {
     "@commitlint/cli": "^8.3.5",
     "@commitlint/config-conventional": "^8.3.4",
+    "@dfuse/client": "^0.3.8",
+    "@openzeppelin/contracts": "^2.5.0",
+    "@reduxjs/toolkit": "^1.2.5",
     "@semantic-release/changelog": "^5.0.0",
     "@semantic-release/git": "^9.0.0",
     "@storybook/addon-actions": "^5.3.12",
@@ -51,6 +53,11 @@
     "@storybook/addons": "^5.3.12",
     "@storybook/preset-create-react-app": "^1.5.2",
     "@storybook/react": "^5.3.12",
+    "@testing-library/jest-dom": "^4.2.4",
+    "@testing-library/react": "^9.4.0",
+    "@testing-library/user-event": "^7.2.1",
+    "@triplespeeder/bn2string": "^1.0.0",
+    "@truffle/contract": "^4.1.8",
     "@typechain/truffle-v5": "^0.9.0",
     "@types/bn.js": "^4.11.6",
     "@types/jest": "^25.1.3",
@@ -58,18 +65,37 @@
     "@types/node": "^13.7.6",
     "@types/react": "^16.9.23",
     "@types/react-dom": "^16.9.5",
+    "@types/react-redux": "^7.1.7",
     "@types/react-router-dom": "^5.1.3",
     "@types/uuid": "^7.0.0",
+    "@typescript-eslint/eslint-plugin": "^2.23.0",
+    "@typescript-eslint/parser": "^2.23.0",
     "bn.js": "^5.1.1",
+    "bnc-onboard": "^1.3",
+    "eslint": "^6.8.0",
+    "eslint-config-airbnb": "^18.1.0",
+    "eslint-config-airbnb-typescript": "^7.0.0",
+    "eslint-config-prettier": "^6.10.0",
+    "eslint-plugin-import": "^2.20.1",
+    "eslint-plugin-jsx-a11y": "^6.2.3",
+    "eslint-plugin-prettier": "^3.1.2",
+    "eslint-plugin-react": "^7.19.0",
+    "eslint-plugin-react-hooks": "^1.7.0",
+    "eth-ens-namehash": "^2.0.8",
     "human-standard-token-abi": "^2.0.0",
     "husky": "^4.2.3",
+    "lint-staged": "^10.0.8",
     "lodash": "^4.17.15",
+    "prettier": "^1.19.1",
+    "react-scripts": "3.4.0",
     "semantic-release": "^17.0.4",
     "standard-version": "^7.1.0",
     "truffle-typings": "^1.0.8",
     "typechain": "^1.0.5",
     "typechain-target-truffle": "^1.0.2",
-    "uuid": "^7.0.2"
+    "typescript": "^3.8.2",
+    "uuid": "^7.0.2",
+    "web3": "^1.2.6"
   },
   "browserslist": {
     "production": [
