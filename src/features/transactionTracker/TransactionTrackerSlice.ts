@@ -9,7 +9,7 @@ export enum TransactionStates {
 }
 
 export type TransactionId = string
-export interface editAllowanceTransaction {
+export interface EditAllowanceTransaction {
     transactionId: TransactionId
     allowanceId: AllowanceId
     transactionState: TransactionStates
@@ -17,18 +17,18 @@ export interface editAllowanceTransaction {
     error?: string
 }
 
-interface transactionTrackerState {
-    transactionsById: Record<TransactionId, editAllowanceTransaction>
+interface TransactionTrackerState {
+    transactionsById: Record<TransactionId, EditAllowanceTransaction>
 }
 
-interface updateTransactionPayload {
+interface UpdateTransactionPayload {
     transactionId: TransactionId
     transactionState?: TransactionStates
     transactionHash?: string
     error?: string
 }
 
-const initialState: transactionTrackerState = {
+const initialState: TransactionTrackerState = {
     transactionsById: {},
 }
 
@@ -36,7 +36,7 @@ const TransactionTrackerSlice = createSlice({
     name: 'transactionTracker',
     initialState: initialState,
     reducers: {
-        addTransaction(state, action: PayloadAction<editAllowanceTransaction>) {
+        addTransaction(state, action: PayloadAction<EditAllowanceTransaction>) {
             const editAllowanceTransaction = action.payload
             state.transactionsById[
                 editAllowanceTransaction.transactionId
@@ -44,7 +44,7 @@ const TransactionTrackerSlice = createSlice({
         },
         updateTransaction(
             state,
-            action: PayloadAction<updateTransactionPayload>
+            action: PayloadAction<UpdateTransactionPayload>
         ) {
             const {
                 transactionId,

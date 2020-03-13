@@ -1,16 +1,16 @@
-interface contractMetadata {
-    name: string,
+interface ContractMetadata {
+    name: string
     symbol: string
 }
-interface contractInfo {
-    [key:string]: contractMetadata
+interface ContractInfo {
+    [key: string]: ContractMetadata
 }
 
-export interface IWellKnownContracts {
-    [key: number]: contractInfo
+export interface WellKnownContracts {
+    [key: number]: ContractInfo
 }
 
-export const wellKnownContracts:IWellKnownContracts = {
+export const wellKnownContracts: WellKnownContracts = {
     // main network
     1: {
         '0x89d24a6b4ccb1b6faa2625fe562bdd9a23260359': {
@@ -23,21 +23,21 @@ export const wellKnownContracts:IWellKnownContracts = {
         },
         '0xecf8f87f810ecf450940c9f60066b4a7a501d6a7': {
             name: 'Old Wrapped Ether',
-            symbol: 'WETH'
+            symbol: 'WETH',
         },
         '0xc66ea802717bfb9833400264dd12c2bceaa34a6d': {
             name: 'Old Maker Token',
-            symbol: 'MKR'
+            symbol: 'MKR',
         },
         '0xbb9bc244d798123fde783fcc1c72d3bb8c189413': {
             name: 'TheDAO Token',
-            symbol: 'TheDAO'
+            symbol: 'TheDAO',
         },
         '0x86Fa049857E0209aa7D9e616F7eb3b3B78ECfdb0': {
             name: 'EOS: Old Token',
-            symbol: 'EOS'
-        }
-    }
+            symbol: 'EOS',
+        },
+    },
 }
 
 export default wellKnownContracts

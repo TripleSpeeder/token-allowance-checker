@@ -5,12 +5,20 @@ module.exports = {
   },
   extends: [
     'plugin:react/recommended',
-    // 'airbnb-typescript',
-    // "plugin:prettier/recommended",
     "plugin:@typescript-eslint/eslint-recommended",
     "plugin:@typescript-eslint/recommended",
     'prettier/@typescript-eslint',
   ],
+  settings: {
+    'react': {
+      'version': 'detect'
+    },
+    "linkComponents": [
+      // Components used as alternatives to <a> for linking, eg. <Link to={ url } />
+      "Hyperlink",
+      {"name": "Link", "linkAttribute": "to"}
+    ]
+  },
   globals: {
     Atomics: 'readonly',
     SharedArrayBuffer: 'readonly',
@@ -32,8 +40,6 @@ module.exports = {
     'jsx-quotes': ['error', 'prefer-single'],
     'react/jsx-indent': [2, 4],
     'react/jsx-indent-props': [2, 4],
-    // "prettier/prettier": "error",
-    // "@typescript-eslint/explicit-function-return-type": "off",
-    // "@typescript-eslint/no-unused-vars": "off"
+    "@typescript-eslint/explicit-function-return-type": "off",
   },
 };

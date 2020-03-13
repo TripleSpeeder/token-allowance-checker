@@ -1,9 +1,9 @@
-import React, {useState, useEffect} from 'react'
+import React, { useState, useEffect } from 'react'
 import AddressInput from './AddressInput'
-import {useHistory} from 'react-router-dom'
-import {Form, Grid} from 'semantic-ui-react'
-import {useSelector} from 'react-redux'
-import {RootState} from '../../app/rootReducer'
+import { useHistory } from 'react-router-dom'
+import { Form, Grid } from 'semantic-ui-react'
+import { useSelector } from 'react-redux'
+import { RootState } from '../../app/rootReducer'
 
 export const addressInputStates = {
     ADDRESS_INITIAL: 'address_initial', // no user interaction
@@ -13,30 +13,34 @@ export const addressInputStates = {
 }
 
 const AddressInputContainer = () => {
-    const {web3} = useSelector(
-        (state: RootState) => state.onboard
+    const { web3 } = useSelector((state: RootState) => state.onboard)
+    const { checkAddressId } = useSelector(
+        (state: RootState) => state.addresses
     )
-    const {checkAddressId} = useSelector((state:RootState) => state.addresses)
 
     const history = useHistory()
-    const [addressInputState, setAddressInputState] = useState(addressInputStates.ADDRESS_INITIAL)
+    const [addressInputState, setAddressInputState] = useState(
+        addressInputStates.ADDRESS_INITIAL
+    )
     const [input, setInput] = useState('')
     const [address, setAddress] = useState('')
 
     // verify address input
     useEffect(() => {
-        const handleInput = async() => {
+        const handleInput = async () => {
             if (input.length === 0) {
                 setAddressInputState(addressInputStates.ADDRESS_INITIAL)
             } else {
                 // check for valid input (raw address and ENS name)
-                const validAddress = (/^(0x)?[0-9a-f]{40}$/i.test(input))
-                const validENSName = (/.*\.eth$/i.test(input))
+                const validAddress = /^(0x)?[0-9a-f]{40}$/i.test(input)
+                const validENSName = /.*\.eth$/i.test(input)
                 if (validENSName && web3) {
                     // resolve entered ENS name
                     setAddressInputState(addressInputStates.ADDRESS_RESOLVING)
                     try {
-                        const resolvedAddress = await web3.eth.ens.getAddress(input)
+                        const resolvedAddress = await web3.eth.ens.getAddress(
+                            input
+                        )
                         console.log(`Resolved ${input} to ${resolvedAddress}`)
                         setAddressInputState(addressInputStates.ADDRESS_VALID)
                         setAddress(resolvedAddress)
@@ -44,12 +48,10 @@ const AddressInputContainer = () => {
                         console.log('Could not resolve ' + input)
                         setAddressInputState(addressInputStates.ADDRESS_INVALID)
                     }
-                }
-                else if(validAddress) {
+                } else if (validAddress) {
                     setAddress(input)
                     setAddressInputState(addressInputStates.ADDRESS_VALID)
-                }
-                else {
+                } else {
                     setAddressInputState(addressInputStates.ADDRESS_INVALID)
                 }
             }
@@ -64,9 +66,9 @@ const AddressInputContainer = () => {
         }
     }, [checkAddressId])
 
-    const error = (addressInputState === addressInputStates.ADDRESS_INVALID)
-    const loading = (addressInputState === addressInputStates.ADDRESS_RESOLVING)
-    const success = (addressInputState === addressInputStates.ADDRESS_VALID)
+    const error = addressInputState === addressInputStates.ADDRESS_INVALID
+    const loading = addressInputState === addressInputStates.ADDRESS_RESOLVING
+    const success = addressInputState === addressInputStates.ADDRESS_VALID
 
     const handleSubmit = () => {
         if (success) {
@@ -81,16 +83,17 @@ const AddressInputContainer = () => {
                     <Form
                         size={'huge'}
                         onSubmit={handleSubmit}
-                        error = {error}
-                        success= {success}
+                        error={error}
+                        success={success}
                         widths={'equal'}
                     >
                         <Form.Group>
-                            <AddressInput handleInput={setInput}
-                                          value={input}
-                                          error={error}
-                                          success={success}
-                                          loading={loading}
+                            <AddressInput
+                                handleInput={setInput}
+                                value={input}
+                                error={error}
+                                success={success}
+                                loading={loading}
                             />
                         </Form.Group>
                     </Form>
