@@ -12,7 +12,7 @@
   },
   "lint-staged": {
     "src/**/*.{ts,tsx}": [
-      "./node_modules/.bin/eslint --fix",
+      "./node_modules/.bin/eslint --max-warnings 0 --fix",
       "./node_modules/.bin/prettier --write"
     ]
   },
@@ -26,8 +26,8 @@
     "storybook": "start-storybook -p 9009 -s public",
     "build-storybook": "build-storybook -s public",
     "release": "standard-version",
-    "lint": "./node_modules/.bin/eslint . --ext .ts,.tsx",
-    "lint:fix": "./node_modules/.bin/eslint . --ext .ts,.tsx --fix",
+    "lint": "./node_modules/.bin/eslint --max-warnings 0 . --ext .ts,.tsx",
+    "lint:fix": "./node_modules/.bin/eslint --max-warnings 0 . --ext .ts,.tsx --fix",
     "prettier": "./node_modules/.bin/prettier --check \"src/**/*.ts{,x}\"",
     "prettier:write": "./node_modules/.bin/prettier --write \"src/**/*.ts{,x}\""
   },
