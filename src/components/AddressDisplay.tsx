@@ -7,7 +7,7 @@ interface AddressDisplayProps {
 }
 
 const AddressDisplay = ({ ethAddress }: AddressDisplayProps) => {
-    const { address, ensName } = ethAddress
+    const { address, ensName, esContractName } = ethAddress
     const setClipboard = (content: string) => {
         navigator.clipboard.writeText(content).then(
             function() {
@@ -19,10 +19,19 @@ const AddressDisplay = ({ ethAddress }: AddressDisplayProps) => {
         )
     }
 
+    let contractName
     if (ensName) {
+        contractName = `Reverse ENS: ${ensName}`
+    } else if (esContractName) {
+        contractName = `Contract: ${esContractName}`
+    }
+
+    if (contractName) {
         return (
             <>
-                <div>{ensName}</div>
+                <div>
+                    <strong>{contractName}</strong>
+                </div>
                 <div>
                     <small>
                         {address}&nbsp;

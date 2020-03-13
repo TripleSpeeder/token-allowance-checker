@@ -14,11 +14,17 @@ export interface EthAddress {
     address: string // the actual address
     ensName?: string // ensName for this address
     resolvingState: ResolvingStates
+    esContractName?: string
 }
 
 export interface EthAddressPayload {
     id: AddressId
     ethAddress: EthAddress
+}
+
+interface EtherscanContractNamePayload {
+    id: AddressId
+    esContractName: string
 }
 
 interface ResolvingStatePayload {
@@ -83,6 +89,13 @@ const addressSlice = createSlice({
         setWalletAddressId(state, action: PayloadAction<AddressId>) {
             state.walletAddressId = action.payload
         },
+        setEtherscanContractName(
+            state,
+            action: PayloadAction<EtherscanContractNamePayload>
+        ) {
+            const { id, esContractName } = action.payload
+            state.addressesById[id].esContractName = esContractName
+        },
     },
 })
 
@@ -93,9 +106,34 @@ export const {
     setCheckAddressId,
     clearCheckAddressId,
     setWalletAddressId,
+    setEtherscanContractName,
 } = addressSlice.actions
 
 export default addressSlice.reducer
+
+export const fetchEtherscanNameThunk = (
+    addressId: AddressId
+): AppThunk => async (dispatch: AppDispatch) => {
+    const apiKey = 'THS8KWYM6KZ8WBP3DXKUDR7UKCRB8YIRGH'
+    const requestUrl = `https://api.etherscan.io/api?module=contract&action=getsourcecode&address=${addressId}&apikey=${apiKey}`
+    const response = await fetch(requestUrl)
+    const data = await response.json()
+    if (data.message === 'OK') {
+        const contractName: string = data?.result[0]?.ContractName
+        if (contractName?.length) {
+            dispatch(
+                setEtherscanContractName({
+                    id: addressId,
+                    esContractName: contractName,
+                })
+            )
+        }
+    } else {
+        console.log(
+            `Got message ${data.message} fetching contract data from Etherscan API.`
+        )
+    }
+}
 
 export const addAddressThunk = (address: string): AppThunk => async (
     dispatch: AppDispatch,
@@ -118,6 +156,8 @@ export const addAddressThunk = (address: string): AppThunk => async (
                 resolvingState: ResolvingStates.Resolving,
             })
         )
+
+        // look for reverse ENS name
         try {
             const reverseENSLookupName = address.substr(2) + '.addr.reverse'
             const ResolverContract = await web3.eth.ens.resolver(
@@ -136,6 +176,7 @@ export const addAddressThunk = (address: string): AppThunk => async (
         } catch (error) {
             // console.log(`Error getting reverse ENS: ${error}`)
         }
+
         dispatch(
             setResolvingState({
                 id: address,

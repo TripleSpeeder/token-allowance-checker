@@ -85,15 +85,9 @@ export const addContractThunk = (
     let tokenSymbol = ''
     // Some contracts like MKR and SAI do not implement the correct ERC20 name and symbol.
     // Get their data from hardocded fallback
-    if (
-        Object.keys(wellKnownContracts[networkId]).includes(
-            contractAddress.toLowerCase()
-        )
-    ) {
-        tokenName =
-            wellKnownContracts[networkId][contractAddress.toLowerCase()].name
-        tokenSymbol =
-            wellKnownContracts[networkId][contractAddress.toLowerCase()].symbol
+    if (Object.keys(wellKnownContracts[networkId]).includes(contractAddress)) {
+        tokenName = wellKnownContracts[networkId][contractAddress].name
+        tokenSymbol = wellKnownContracts[networkId][contractAddress].symbol
     } else {
         try {
             tokenName = await contractInstance.name()
