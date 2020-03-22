@@ -3,7 +3,11 @@ import Onboard from 'bnc-onboard'
 import Web3 from 'web3'
 import { AppDispatch, AppThunk } from '../../app/store'
 import { API, WalletInitOptions } from 'bnc-onboard/dist/src/interfaces'
-import { AddressId, setWalletAddressThunk } from '../addressInput/AddressSlice'
+import {
+    AddressId,
+    redirectToAddress,
+    setWalletAddressThunk,
+} from '../addressInput/AddressSlice'
 
 const onboardApiKey = 'f4b71bf0-fe50-4eeb-bc2b-b323527ed9e6'
 const infuraApiKey = '7f230a5ca832426796454c28577d93f2'
@@ -156,21 +160,21 @@ export const initialize = (history: any): AppThunk => async (
             wallet: wallet => {
                 dispatch(setWeb3Instance(new Web3(wallet.provider)))
             },
-            address: address => {
-                console.log(`Wallet address changed to ${address}!`)
-                dispatch(setWalletAddressThunk(address))
+            address: addressId => {
+                console.log(`Wallet address changed to ${addressId}!`)
+                dispatch(setWalletAddressThunk(addressId))
                 const { prevWalletAddressId } = getState().onboard
                 //  Only trigger history push when user changed the wallet address
                 if (
                     prevWalletAddressId &&
-                    prevWalletAddressId !== address.toLowerCase()
+                    prevWalletAddressId !== addressId.toLowerCase()
                 ) {
                     console.log(
-                        `Pushing ${address}. Prev walletId: ${prevWalletAddressId}`
+                        `Pushing ${addressId}. Prev walletId: ${prevWalletAddressId}`
                     )
-                    history.push(`/address/${address}`)
+                    dispatch(redirectToAddress(addressId, history))
                 }
-                dispatch(setPrevWalletAddressId(address.toLowerCase()))
+                dispatch(setPrevWalletAddressId(addressId.toLowerCase()))
             },
             network: networkId => {
                 const prevNetworkId = getState().onboard.networkId

@@ -1,12 +1,24 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import namehash from 'eth-ens-namehash'
 import { AppDispatch, AppThunk } from '../../app/store'
+import * as H from 'history'
+
+export const zeroAddress = '0x0000000000000000000000000000000000000000'
 
 export enum ResolvingStates {
     Initial,
-    Resolving,
+    ResolvingForward,
+    ResolvingReverse,
     Resolved,
 }
+
+export enum CheckAddressStates {
+    Initial,
+    Resolving,
+    Valid,
+    Invalid,
+}
+
 export type AddressId = string
 
 // the plain address data without internal info like ID or resolving state
@@ -41,6 +53,7 @@ interface ENSNamePayload {
 interface EthAddressesState {
     addressesById: Record<AddressId, EthAddress>
     checkAddressId: AddressId | undefined
+    checkAddressState: CheckAddressStates
     walletAddressId: AddressId | undefined
 }
 
@@ -49,6 +62,7 @@ const initialState: EthAddressesState = {
     addressesById: {},
     walletAddressId: undefined,
     checkAddressId: undefined,
+    checkAddressState: CheckAddressStates.Initial,
 }
 
 const addressSlice = createSlice({
@@ -60,13 +74,15 @@ const addressSlice = createSlice({
                 const { id, ethAddress } = action.payload
                 state.addressesById[id] = ethAddress
             },
-            prepare(address: string) {
+            prepare(address: string, ensName?: string) {
+                address = address.toLowerCase()
                 return {
                     payload: {
                         id: address,
                         ethAddress: {
                             address: address,
                             resolvingState: ResolvingStates.Initial,
+                            ensName,
                         },
                     },
                 }
@@ -86,6 +102,9 @@ const addressSlice = createSlice({
         clearCheckAddressId(state) {
             state.checkAddressId = undefined
         },
+        setCheckAddressState(state, action: PayloadAction<CheckAddressStates>) {
+            state.checkAddressState = action.payload
+        },
         setWalletAddressId(state, action: PayloadAction<AddressId>) {
             state.walletAddressId = action.payload
         },
@@ -104,6 +123,7 @@ export const {
     setResolvingState,
     setENSName,
     setCheckAddressId,
+    setCheckAddressState,
     clearCheckAddressId,
     setWalletAddressId,
     setEtherscanContractName,
@@ -149,29 +169,49 @@ export const fetchEtherscanNameThunk = (
     }
 }
 
-export const addAddressThunk = (address: string): AppThunk => async (
+const resolveAndAddENSName = (
+    ensName: string,
     dispatch: AppDispatch,
-    getState
+    web3: Web3
 ) => {
-    address = address.toLowerCase()
-    // prevent duplicates
-    if (Object.keys(getState().addresses.addressesById).includes(address)) {
-        return
-    }
-    const web3 = getState().onboard.web3
-    if (web3) {
-        // first add address
+    return new Promise<AddressId>(async (resolve, reject) => {
+        console.log(`Start resolveAndAddENSName for ${ensName}`)
+        let resolvedAddress
+        try {
+            resolvedAddress = (
+                await web3.eth.ens.getAddress(ensName)
+            ).toLowerCase()
+            console.log(`Resolved ${ensName} to ${resolvedAddress}`)
+            dispatch(addAddress(resolvedAddress, ensName))
+        } catch (e) {
+            console.log('Could not resolve ' + ensName)
+            reject('Could not resolve ' + ensName)
+        }
+        console.log(`End resolveAndAddENSName for ${ensName}`)
+        resolve(resolvedAddress)
+    })
+}
+
+/*
+ * Add address and do reverse ENS lookup in background
+ */
+const resolveAndAddAddress = (
+    address: string,
+    dispatch: AppDispatch,
+    web3: Web3
+) => {
+    return new Promise<AddressId>(async resolve => {
+        console.log(`Start resolveAndAddAddress for ${address}`)
+        // first add plain address
         dispatch(addAddress(address))
 
-        // indicate starting resolving process
+        // look for reverse ENS name
         dispatch(
             setResolvingState({
                 id: address,
-                resolvingState: ResolvingStates.Resolving,
+                resolvingState: ResolvingStates.ResolvingReverse,
             })
         )
-
-        // look for reverse ENS name
         try {
             const reverseENSLookupName = address.substr(2) + '.addr.reverse'
             const ResolverContract = await web3.eth.ens.resolver(
@@ -181,6 +221,7 @@ export const addAddressThunk = (address: string): AppThunk => async (
                 .name(namehash.hash(reverseENSLookupName))
                 .call()
             console.log(`Got reverseENS: ${reverseENS}`)
+            // add ENS name to plain address
             dispatch(
                 setENSName({
                     id: address,
@@ -190,34 +231,98 @@ export const addAddressThunk = (address: string): AppThunk => async (
         } catch (error) {
             // console.log(`Error getting reverse ENS: ${error}`)
         }
-
         dispatch(
             setResolvingState({
                 id: address,
                 resolvingState: ResolvingStates.Resolved,
             })
         )
+        console.log(`End resolveAndAddPromise for ${address}`)
+        resolve(address)
+    })
+}
+
+export const redirectToAddress = (
+    addressId: AddressId,
+    history: H.History
+): AppThunk => async (dispatch: AppDispatch, getState) => {
+    addressId = addressId.toLowerCase()
+    const checkAddress = getState().addresses.addressesById[addressId]
+    // history.push(`/address/${checkAddress.ensName ?? checkAddress.address}`)
+    if (checkAddress.ensName) {
+        console.log(`Routing to /address/${checkAddress.ensName}`)
+        history.push(`/address/${checkAddress.ensName}`)
     } else {
-        console.log(`AddressSlice: Can not add ${address} - web3 still missing`)
+        console.log(`Routing to /address/${checkAddress.address}`)
+        history.push(`/address/${checkAddress.address}`)
     }
+}
+
+export const addAddressThunk = (
+    address: string,
+    history: H.History | undefined = undefined
+): AppThunk => async (dispatch: AppDispatch, getState) => {
+    address = address.toLowerCase()
+    // prevent duplicates
+    if (!Object.keys(getState().addresses.addressesById).includes(address)) {
+        const web3 = getState().onboard.web3
+        if (web3) {
+            await resolveAndAddAddress(address, dispatch, web3)
+        } else {
+            console.log(
+                `AddressSlice: Can not add ${address} - web3 still missing`
+            )
+            return
+        }
+    }
+    // redirect to address
+    history && dispatch(redirectToAddress(address, history))
 }
 
 export const setCheckAddressThunk = (checkAddress: string): AppThunk => async (
-    dispatch: AppDispatch
+    dispatch: AppDispatch,
+    getState
 ) => {
+    const web3 = getState().onboard.web3
+    if (!web3) return
+
     if (checkAddress.endsWith('.eth')) {
-        // TODO: handle ENS names
-        console.log(`ENS name not yet handled: ${checkAddress}`)
-        return
+        // checkAddress is ENS name
+        // TODO: dispatch(setCheckAddressENSName(checkAddress)
+        dispatch(setCheckAddressState(CheckAddressStates.Resolving))
+        try {
+            const addressId = await resolveAndAddENSName(
+                checkAddress,
+                dispatch,
+                web3
+            )
+            if (addressId === zeroAddress) {
+                throw 'zeroAddress'
+            } else {
+                dispatch(setCheckAddressId(addressId))
+                dispatch(setCheckAddressState(CheckAddressStates.Valid))
+            }
+        } catch (e) {
+            dispatch(setCheckAddressState(CheckAddressStates.Invalid))
+        }
+    } else {
+        // checkAddress is plain eth address.
+        checkAddress = checkAddress.toLowerCase()
+        const validAddress = /^(0x)?[0-9a-f]{40}$/i.test(checkAddress)
+        if (validAddress) {
+            dispatch(setCheckAddressState(CheckAddressStates.Valid))
+            resolveAndAddAddress(checkAddress, dispatch, web3)
+            dispatch(setCheckAddressId(checkAddress))
+        } else {
+            dispatch(setCheckAddressState(CheckAddressStates.Invalid))
+        }
     }
-    dispatch(addAddressThunk(checkAddress))
-    dispatch(setCheckAddressId(checkAddress))
 }
 
 export const setWalletAddressThunk = (
-    walletAddress: string
+    walletAddressId: string
 ): AppThunk => async (dispatch: AppDispatch) => {
-    console.log(`Got new address from wallet: ${walletAddress}`)
-    dispatch(addAddressThunk(walletAddress))
-    dispatch(setWalletAddressId(walletAddress))
+    console.log(`Got new address from wallet: ${walletAddressId}`)
+    dispatch(addAddressThunk(walletAddressId))
+    dispatch(setWalletAddressId(walletAddressId))
 }

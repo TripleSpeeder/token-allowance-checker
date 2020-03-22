@@ -1,7 +1,7 @@
 import React, { FunctionComponent, useEffect } from 'react'
-import { useHistory, useParams } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import {
-    clearCheckAddressId,
+    CheckAddressStates,
     setCheckAddressThunk,
 } from '../features/addressInput/AddressSlice'
 import { useDispatch, useSelector } from 'react-redux'
@@ -15,31 +15,31 @@ const AddressExtractor: FunctionComponent = ({
     children,
 }: AddressExtractorProps) => {
     const dispatch = useDispatch()
-    const history = useHistory()
     const { address: addressFromParams } = useParams()
-    const { walletAddressId: addressFromWallet } = useSelector(
+    const { checkAddressState } = useSelector(
         (state: RootState) => state.addresses
     )
-    const { web3 } = useSelector((state: RootState) => state.onboard)
+    const { checkAddressId } = useSelector(
+        (state: RootState) => state.addresses
+    )
 
+    // watch url params address change
     useEffect(() => {
         if (addressFromParams) {
-            if (web3) {
-                console.log(
-                    `AddressExtractor: Setting new address ${addressFromParams}`
-                )
-                dispatch(setCheckAddressThunk(addressFromParams.toLowerCase()))
-            }
-        } else if (addressFromWallet) {
             console.log(
-                `AddressExtractor: no address in params. Falling back to walletAddress ${addressFromWallet}`
+                `AddressExtractor: Setting new address ${addressFromParams}`
             )
-            history.push(`/address/${addressFromWallet}`)
-        } else {
-            console.log(`AddressExtractor: Clearing checkAddressId`)
-            dispatch(clearCheckAddressId())
+            dispatch(setCheckAddressThunk(addressFromParams))
         }
-    }, [addressFromParams, addressFromWallet, dispatch, history, web3])
+    }, [addressFromParams, dispatch])
+
+    if (checkAddressState === CheckAddressStates.Invalid) {
+        return <div>Address {checkAddressId} is invalid</div>
+    }
+
+    if (checkAddressState === CheckAddressStates.Resolving) {
+        return <div>Resolving...</div>
+    }
 
     return <React.Fragment>{children}</React.Fragment>
 }

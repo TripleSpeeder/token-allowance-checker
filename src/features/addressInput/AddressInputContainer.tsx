@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import AddressInput from './AddressInput'
 import { useHistory } from 'react-router-dom'
 import { Form, Grid } from 'semantic-ui-react'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { RootState } from '../../app/rootReducer'
+import { addAddress, addAddressThunk, redirectToAddress } from './AddressSlice'
 
 export const addressInputStates = {
     ADDRESS_INITIAL: 'address_initial', // no user interaction
@@ -13,66 +14,72 @@ export const addressInputStates = {
 }
 
 const AddressInputContainer = () => {
-    const { web3 } = useSelector((state: RootState) => state.onboard)
-    const { checkAddressId } = useSelector(
-        (state: RootState) => state.addresses
-    )
-
+    const dispatch = useDispatch()
     const history = useHistory()
+    const { web3 } = useSelector((state: RootState) => state.onboard)
     const [addressInputState, setAddressInputState] = useState(
         addressInputStates.ADDRESS_INITIAL
     )
     const [input, setInput] = useState('')
-    const [address, setAddress] = useState('')
+    const [addressId, setAddressId] = useState('')
+    const [ensName, setEnsName] = useState<string | undefined>(undefined)
 
-    // verify address input
-    useEffect(() => {
-        const handleInput = async () => {
-            if (input.length === 0) {
-                setAddressInputState(addressInputStates.ADDRESS_INITIAL)
-            } else {
-                // check for valid input (raw address and ENS name)
-                const validAddress = /^(0x)?[0-9a-f]{40}$/i.test(input)
-                const validENSName = /.*\.eth$/i.test(input)
-                if (validENSName && web3) {
-                    // resolve entered ENS name
-                    setAddressInputState(addressInputStates.ADDRESS_RESOLVING)
-                    try {
-                        const resolvedAddress = await web3.eth.ens.getAddress(
-                            input
-                        )
-                        console.log(`Resolved ${input} to ${resolvedAddress}`)
-                        setAddressInputState(addressInputStates.ADDRESS_VALID)
-                        setAddress(resolvedAddress)
-                    } catch (e) {
-                        console.log('Could not resolve ' + input)
-                        setAddressInputState(addressInputStates.ADDRESS_INVALID)
-                    }
-                } else if (validAddress) {
-                    setAddress(input)
+    const handleInput = async (input: string) => {
+        setInput(input)
+        setEnsName(undefined)
+        if (input.length === 0) {
+            setAddressInputState(addressInputStates.ADDRESS_INITIAL)
+        } else {
+            // check for valid input (raw address and ENS name)
+            const validAddress = /^(0x)?[0-9a-f]{40}$/i.test(input)
+            const validENSName = /.*\.eth$/i.test(input)
+            if (validENSName && web3) {
+                // resolve entered ENS name
+                setAddressInputState(addressInputStates.ADDRESS_RESOLVING)
+                try {
+                    const resolvedAddress = await web3.eth.ens.getAddress(input)
+                    console.log(`Resolved ${input} to ${resolvedAddress}`)
                     setAddressInputState(addressInputStates.ADDRESS_VALID)
-                } else {
+                    setAddressId(resolvedAddress)
+                    setEnsName(input)
+                } catch (e) {
+                    console.log('Could not resolve ' + input)
                     setAddressInputState(addressInputStates.ADDRESS_INVALID)
                 }
+            } else if (validAddress) {
+                // use entered ethereum address
+                const addressId = input.toLowerCase()
+                setAddressId(addressId)
+                setAddressInputState(addressInputStates.ADDRESS_VALID)
+            } else {
+                setAddressInputState(addressInputStates.ADDRESS_INVALID)
             }
         }
-        handleInput()
-    }, [input, setAddress, web3])
-
+    }
+    /*
     // keep address input field in sync with address provided by wallet or url
     useEffect(() => {
-        if (checkAddressId) {
-            setInput(checkAddressId)
+        if (checkAddress) {
+            console.log(`Updating input field with ${checkAddress.address} (${checkAddress.ensName})`)
+            setInput(checkAddress.ensName ?? checkAddress.address)
         }
-    }, [checkAddressId])
-
+    }, [checkAddress])
+ */
     const error = addressInputState === addressInputStates.ADDRESS_INVALID
     const loading = addressInputState === addressInputStates.ADDRESS_RESOLVING
-    const success = addressInputState === addressInputStates.ADDRESS_VALID
+    const validInput = addressInputState === addressInputStates.ADDRESS_VALID
 
     const handleSubmit = () => {
-        if (success) {
-            history.push(`/address/${address}`)
+        if (validInput) {
+            if (ensName) {
+                dispatch(addAddress(addressId, ensName))
+                dispatch(redirectToAddress(addressId, history))
+            } else {
+                // dispatch thunk to add address, check reverse ENS name and redirect
+                dispatch(addAddressThunk(addressId, history))
+            }
+            setInput('')
+            setEnsName(undefined)
         }
     }
 
@@ -84,15 +91,15 @@ const AddressInputContainer = () => {
                         size={'huge'}
                         onSubmit={handleSubmit}
                         error={error}
-                        success={success}
+                        success={validInput}
                         widths={'equal'}
                     >
                         <Form.Group>
                             <AddressInput
-                                handleInput={setInput}
+                                handleInput={handleInput}
                                 value={input}
                                 error={error}
-                                success={success}
+                                success={validInput}
                                 loading={loading}
                             />
                         </Form.Group>
