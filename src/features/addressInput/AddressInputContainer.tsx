@@ -4,7 +4,7 @@ import { useHistory } from 'react-router-dom'
 import { Form, Grid } from 'semantic-ui-react'
 import { useDispatch, useSelector } from 'react-redux'
 import { RootState } from '../../app/rootReducer'
-import { addAddress, addAddressThunk, redirectToAddress } from './AddressSlice'
+import { addAddressThunk } from './AddressSlice'
 
 export const addressInputStates = {
     ADDRESS_INITIAL: 'address_initial', // no user interaction
@@ -56,15 +56,7 @@ const AddressInputContainer = () => {
             }
         }
     }
-    /*
-    // keep address input field in sync with address provided by wallet or url
-    useEffect(() => {
-        if (checkAddress) {
-            console.log(`Updating input field with ${checkAddress.address} (${checkAddress.ensName})`)
-            setInput(checkAddress.ensName ?? checkAddress.address)
-        }
-    }, [checkAddress])
- */
+
     const error = addressInputState === addressInputStates.ADDRESS_INVALID
     const loading = addressInputState === addressInputStates.ADDRESS_RESOLVING
     const validInput = addressInputState === addressInputStates.ADDRESS_VALID
@@ -72,10 +64,8 @@ const AddressInputContainer = () => {
     const handleSubmit = () => {
         if (validInput) {
             if (ensName) {
-                dispatch(addAddress(addressId, ensName))
-                dispatch(redirectToAddress(addressId, history))
+                dispatch(addAddressThunk(ensName, history))
             } else {
-                // dispatch thunk to add address, check reverse ENS name and redirect
                 dispatch(addAddressThunk(addressId, history))
             }
             setInput('')

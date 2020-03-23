@@ -55,12 +55,14 @@ interface EthAddressesState {
     checkAddressId: AddressId | undefined
     checkAddressState: CheckAddressStates
     walletAddressId: AddressId | undefined
+    prevWalletAddressId: AddressId | undefined
 }
 
-// initial state: contains 3 test entries
+// initial state
 const initialState: EthAddressesState = {
     addressesById: {},
     walletAddressId: undefined,
+    prevWalletAddressId: undefined,
     checkAddressId: undefined,
     checkAddressState: CheckAddressStates.Initial,
 }
@@ -99,13 +101,11 @@ const addressSlice = createSlice({
         setCheckAddressId(state, action: PayloadAction<AddressId>) {
             state.checkAddressId = action.payload
         },
-        clearCheckAddressId(state) {
-            state.checkAddressId = undefined
-        },
         setCheckAddressState(state, action: PayloadAction<CheckAddressStates>) {
             state.checkAddressState = action.payload
         },
         setWalletAddressId(state, action: PayloadAction<AddressId>) {
+            state.prevWalletAddressId = state.walletAddressId
             state.walletAddressId = action.payload
         },
         setEtherscanContractName(
@@ -124,7 +124,6 @@ export const {
     setENSName,
     setCheckAddressId,
     setCheckAddressState,
-    clearCheckAddressId,
     setWalletAddressId,
     setEtherscanContractName,
 } = addressSlice.actions
@@ -169,6 +168,9 @@ export const fetchEtherscanNameThunk = (
     }
 }
 
+/*
+ *  Lookup ENS name and add resolved address if successfull
+ */
 const resolveAndAddENSName = (
     ensName: string,
     dispatch: AppDispatch,
@@ -201,7 +203,6 @@ const resolveAndAddAddress = (
     web3: Web3
 ) => {
     return new Promise<AddressId>(async resolve => {
-        console.log(`Start resolveAndAddAddress for ${address}`)
         // first add plain address
         dispatch(addAddress(address))
 
@@ -237,7 +238,6 @@ const resolveAndAddAddress = (
                 resolvingState: ResolvingStates.Resolved,
             })
         )
-        console.log(`End resolveAndAddPromise for ${address}`)
         resolve(address)
     })
 }
@@ -245,7 +245,7 @@ const resolveAndAddAddress = (
 export const redirectToAddress = (
     addressId: AddressId,
     history: H.History
-): AppThunk => async (dispatch: AppDispatch, getState) => {
+): AppThunk => (dispatch: AppDispatch, getState) => {
     addressId = addressId.toLowerCase()
     const checkAddress = getState().addresses.addressesById[addressId]
     // history.push(`/address/${checkAddress.ensName ?? checkAddress.address}`)
@@ -262,27 +262,42 @@ export const addAddressThunk = (
     address: string,
     history: H.History | undefined = undefined
 ): AppThunk => async (dispatch: AppDispatch, getState) => {
+    const web3 = getState().onboard.web3
     address = address.toLowerCase()
-    // prevent duplicates
-    if (!Object.keys(getState().addresses.addressesById).includes(address)) {
-        const web3 = getState().onboard.web3
-        if (web3) {
-            await resolveAndAddAddress(address, dispatch, web3)
-        } else {
-            console.log(
-                `AddressSlice: Can not add ${address} - web3 still missing`
-            )
-            return
+    let addressId
+    if (address.endsWith('.eth')) {
+        // is ENS name already known?
+        const known = Object.values(getState().addresses.addressesById).filter(
+            addressEntry => addressEntry?.ensName?.toLowerCase() === address
+        )
+        addressId = known.length ? known[0].address : undefined
+        if (!addressId) {
+            // not known, try to resolve it
+            try {
+                addressId = await resolveAndAddENSName(address, dispatch, web3)
+            } catch (e) {
+                // provided name can not be resolved
+                return
+            }
+        }
+    } else {
+        // address is plain eth address
+        addressId = address
+        // is address already known?
+        if (
+            !Object.keys(getState().addresses.addressesById).includes(address)
+        ) {
+            // add address and look for reverse ENS in background
+            addressId = await resolveAndAddAddress(address, dispatch, web3)
         }
     }
-    // redirect to address
-    history && dispatch(redirectToAddress(address, history))
+    // redirect to address if requested
+    history && dispatch(redirectToAddress(addressId, history))
 }
 
-export const setCheckAddressThunk = (checkAddress: string): AppThunk => async (
-    dispatch: AppDispatch,
-    getState
-) => {
+export const setAddressFromParamsThunk = (
+    checkAddress: string
+): AppThunk => async (dispatch: AppDispatch, getState) => {
     const web3 = getState().onboard.web3
     if (!web3) return
 
@@ -297,7 +312,7 @@ export const setCheckAddressThunk = (checkAddress: string): AppThunk => async (
                 web3
             )
             if (addressId === zeroAddress) {
-                throw 'zeroAddress'
+                throw Error(`${checkAddress} resolved to ${zeroAddress}`)
             } else {
                 dispatch(setCheckAddressId(addressId))
                 dispatch(setCheckAddressState(CheckAddressStates.Valid))
@@ -310,8 +325,8 @@ export const setCheckAddressThunk = (checkAddress: string): AppThunk => async (
         checkAddress = checkAddress.toLowerCase()
         const validAddress = /^(0x)?[0-9a-f]{40}$/i.test(checkAddress)
         if (validAddress) {
-            dispatch(setCheckAddressState(CheckAddressStates.Valid))
             resolveAndAddAddress(checkAddress, dispatch, web3)
+            dispatch(setCheckAddressState(CheckAddressStates.Valid))
             dispatch(setCheckAddressId(checkAddress))
         } else {
             dispatch(setCheckAddressState(CheckAddressStates.Invalid))
@@ -320,9 +335,28 @@ export const setCheckAddressThunk = (checkAddress: string): AppThunk => async (
 }
 
 export const setWalletAddressThunk = (
-    walletAddressId: string
-): AppThunk => async (dispatch: AppDispatch) => {
-    console.log(`Got new address from wallet: ${walletAddressId}`)
-    dispatch(addAddressThunk(walletAddressId))
+    walletAddressId: string,
+    history: H.History
+): AppThunk => async (dispatch: AppDispatch, getState) => {
+    if (
+        !Object.keys(getState().addresses.addressesById).includes(
+            walletAddressId
+        )
+    ) {
+        console.log(`Got new address from wallet: ${walletAddressId}`)
+        const web3 = getState().onboard.web3
+        await resolveAndAddAddress(walletAddressId, dispatch, web3)
+    } else {
+        console.log(`Got known address from wallet: ${walletAddressId}`)
+    }
     dispatch(setWalletAddressId(walletAddressId))
+
+    // When user changes the wallet address, assume that he wants to check the selected address
+    const prevWalletAddressId = getState().addresses.prevWalletAddressId
+    if (prevWalletAddressId && prevWalletAddressId !== walletAddressId) {
+        console.log(
+            `setWalletAddressThunk: redirecting to new wallet address ${walletAddressId}`
+        )
+        dispatch(redirectToAddress(walletAddressId, history))
+    }
 }

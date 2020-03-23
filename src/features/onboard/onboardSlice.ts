@@ -1,6 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import Onboard from 'bnc-onboard'
 import Web3 from 'web3'
+import * as H from 'history'
 import { AppDispatch, AppThunk } from '../../app/store'
 import { API, WalletInitOptions } from 'bnc-onboard/dist/src/interfaces'
 import {
@@ -108,8 +109,7 @@ export const checkWallet = (): AppThunk => async (
     }
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const selectWallet = (history: any): AppThunk => async (
+export const selectWallet = (history: H.History): AppThunk => async (
     dispatch: AppDispatch,
     getState
 ) => {
@@ -146,8 +146,7 @@ export const setRequiredNetworkIdThunk = (networkId: number): AppThunk => (
     }
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const initialize = (history: any): AppThunk => async (
+export const initialize = (history: H.History): AppThunk => async (
     dispatch: AppDispatch,
     getState
 ) => {
