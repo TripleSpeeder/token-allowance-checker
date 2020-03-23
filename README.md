@@ -32,7 +32,7 @@ hackathon, for bounty https://gitcoin.co/issue/dfuse-io/hackathons/2/3953. Since
 further, moving from a plain javascript react app to react-redux and typescript. 
 
 ## Funding and development support
-If you want to support further development of TAC, please consider contribution to the gitcoin grant at https://gitcoin.co/grants/480/token-allowance-checker
+If you want to support further development of TAC, please consider contributing to the gitcoin grant at https://gitcoin.co/grants/480/token-allowance-checker.
 
 ## Technologies used
  - [dfuse](https://www.dfuse.io/) to search for allowances approved in the past.
