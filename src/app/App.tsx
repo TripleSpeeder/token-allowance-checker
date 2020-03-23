@@ -12,6 +12,7 @@ import {
     Menu,
     Popup,
     Segment,
+    Message,
 } from 'semantic-ui-react'
 import AllowanceLister from '../features/allowancesList/AllowanceLister'
 import OnboardGate from '../features/onboard/OnboardGate'
@@ -20,6 +21,42 @@ import pkg from '../../package.json'
 import AddressExtractor from '../components/AddressExtractor'
 
 const App: React.FC = () => {
+    const GrantMessage = (
+        <Message color={'yellow'} size={'big'} icon>
+            <Icon name={'hand point right'} />
+            <Message.Content>
+                <Message.Header>
+                    Gitcoins <em>$250k Matching Round</em> is now live until
+                    2020-04-07!
+                </Message.Header>
+                <div>
+                    Do you like this project? Contribute to the{' '}
+                    <strong>gitcoin grant</strong> to support the ongoing
+                    development of Token Allowance Checker!
+                </div>
+                <div>
+                    <strong>
+                        -&gt;{' '}
+                        <a
+                            target={'_blank'}
+                            rel={'noopener noreferrer'}
+                            href={
+                                'https://gitcoin.co/grants/480/token-allowance-checker?tab=description'
+                            }
+                        >
+                            Gitcoin Grant Page
+                        </a>{' '}
+                        &lt;-
+                    </strong>
+                </div>
+                <div>
+                    Direct donations are also welcome! Please use address{' '}
+                    <strong>tac.dappstar.eth</strong>.
+                </div>
+            </Message.Content>
+        </Message>
+    )
+
     const HomepageHeading = (
         <Segment inverted={false} textAlign='center' vertical>
             <Menu fixed='top' inverted size='huge'>
@@ -72,6 +109,7 @@ const App: React.FC = () => {
                     </Header.Subheader>
                 </Header>
             </Container>
+            <Container textAlign={'center'}>{GrantMessage}</Container>
         </Segment>
     )
 

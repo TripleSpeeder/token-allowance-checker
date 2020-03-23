@@ -17,7 +17,7 @@ all of your tokens, without requiring any further approval.
 In addition, there is no concept of expiring approvals. Once approved, the approval will remain forever.
 If you do not trust a DApp or its operators anymore, there is usually no easy way to remove the approval.
 
-## Empowering the user
+### Empowering the user
 Token Allowance Checker scans the complete Ethereum transaction history for ERC20-Approvals made by the
 provided address. It collects all ERC20 token contracts and any `spender` addresses that have been 
 approved by the user in the past.
@@ -27,9 +27,12 @@ This information is displayed to the user, together with the up-to-date allowanc
 For all entries, the user can edit or delete the allowance.
 
 ### History
-Originally this project started as a (winning) entry to the Gitcoin ["Sustain web3"](https://gitcoin.co/hackathon/sustain-web3/)
-hackathon for bounty https://gitcoin.co/issue/dfuse-io/hackathons/2/3953. Since then it has evolved
+Originally this project started as an entry to the Gitcoin ["Sustain web3"](https://gitcoin.co/hackathon/sustain-web3/)
+hackathon, for bounty https://gitcoin.co/issue/dfuse-io/hackathons/2/3953. Since then it has evolved
 further, moving from a plain javascript react app to react-redux and typescript. 
+
+## Funding and development support
+If you want to support further development of TAC, please consider contributing to the gitcoin grant at https://gitcoin.co/grants/480/token-allowance-checker.
 
 ## Technologies used
  - [dfuse](https://www.dfuse.io/) to search for allowances approved in the past.

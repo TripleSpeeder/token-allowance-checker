@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.1.0](https://github.com/TripleSpeeder/token-allowance-checker/compare/v2.0.1...v2.1.0) (2020-03-23)
+
+
+### Features
+
+* integrate support/funding info ([2be3c31](https://github.com/TripleSpeeder/token-allowance-checker/commit/2be3c31ad27a2acabc10da4643aabfeb7492a370)), closes [#52](https://github.com/TripleSpeeder/token-allowance-checker/issues/52)
+
+
+### Bug Fixes
+
+* wellKnownContracts.ts contained mixed case address ([a931e02](https://github.com/TripleSpeeder/token-allowance-checker/commit/a931e021ad802b6bfb4ea92a35526ca532617f26)), closes [#45](https://github.com/TripleSpeeder/token-allowance-checker/issues/45)
+
 ### [2.0.1](https://github.com/TripleSpeeder/token-allowance-checker/compare/v2.0.0...v2.0.1) (2020-03-13)
 
 
