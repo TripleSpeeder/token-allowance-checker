@@ -84,6 +84,17 @@ export const {
 
 export default onboardSlice.reducer
 
+export const checkWallet = (): AppThunk => async (dispatch, getState) => {
+    console.log(`checking wallet...`)
+    const onboardAPI = getState().onboard.onboardAPI
+    if (onboardAPI) {
+        const result = await onboardAPI.walletCheck()
+        console.log(`walletCheck result: ${result}`)
+    } else {
+        console.log(`dispatched checkWallet() without initialization...`)
+    }
+}
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const selectWallet = (history: any): AppThunk => async (
     dispatch,
@@ -97,20 +108,12 @@ export const selectWallet = (history: any): AppThunk => async (
         if (!result) {
             // send user back to home page
             history.push('/')
+        } else {
+            // to get access to account
+            dispatch(checkWallet())
         }
     } else {
         console.log(`dispatched selectWallet() without initialization...`)
-    }
-}
-
-export const checkWallet = (): AppThunk => async (dispatch, getState) => {
-    console.log(`checking wallet...`)
-    const onboardAPI = getState().onboard.onboardAPI
-    if (onboardAPI) {
-        const result = await onboardAPI.walletCheck()
-        console.log(`walletCheck result: ${result}`)
-    } else {
-        console.log(`dispatched checkWallet() without initialization...`)
     }
 }
 
