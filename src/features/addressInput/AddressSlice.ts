@@ -113,9 +113,23 @@ export default addressSlice.reducer
 
 export const fetchEtherscanNameThunk = (
     addressId: AddressId
-): AppThunk => async (dispatch: AppDispatch) => {
+): AppThunk => async (dispatch: AppDispatch, getState) => {
+    const { networkId } = getState().onboard
     const apiKey = 'THS8KWYM6KZ8WBP3DXKUDR7UKCRB8YIRGH'
-    const requestUrl = `https://api.etherscan.io/api?module=contract&action=getsourcecode&address=${addressId}&apikey=${apiKey}`
+    let apiHost
+    switch (networkId) {
+        case 1:
+            // mainnet
+            apiHost = 'api.etherscan.io'
+            break
+        case 3:
+            // Ropsten
+            apiHost = 'api-ropsten.etherscan.io'
+            break
+        default:
+            throw Error(`Network ${networkId} not supported`)
+    }
+    const requestUrl = `https://${apiHost}/api?module=contract&action=getsourcecode&address=${addressId}&apikey=${apiKey}`
     const response = await fetch(requestUrl)
     const data = await response.json()
     if (data.message === 'OK') {
