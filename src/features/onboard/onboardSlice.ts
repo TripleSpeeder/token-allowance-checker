@@ -147,6 +147,14 @@ export const initialize = (history: any): AppThunk => async (
                 dispatch(setPrevWalletAddressId(address.toLowerCase()))
             },
             network: networkId => {
+                const prevNetworkId = getState().onboard.networkId
+                if (prevNetworkId !== 0 && prevNetworkId !== networkId) {
+                    console.log(
+                        `Switching network from ${prevNetworkId} to ${networkId}`
+                    )
+                    // user changed network after initial loading
+                    window.location.reload()
+                }
                 dispatch(setNetworkId(networkId))
             },
             balance: () => {
