@@ -286,10 +286,6 @@ export const fetchAllowancesThunk = (ownerId: AddressId): AppThunk => async (
         })
     )
 
-    // prepare ERC20 contract
-    const erc20Contract = contract(ERC20Data)
-    erc20Contract.setProvider(web3.currentProvider)
-
     // create client
     let network
     switch (networkId) {
@@ -302,12 +298,27 @@ export const fetchAllowancesThunk = (ownerId: AddressId): AppThunk => async (
             network = 'mainnet.eth.dfuse.io'
             break
         default:
-            throw Error(`Network ${networkId} not supported by dfuse.io`)
+            console.log(`Network ${networkId} not supported by dfuse.io`)
+            dispatch(
+                setQueryState({
+                    ownerId,
+                    queryState: {
+                        state: QueryStates.QUERY_STATE_ERROR,
+                        currentPage,
+                        error: `Network ${networkId} not supported by dfuse.io`,
+                    },
+                })
+            )
+            return
     }
     const client = createDfuseClient({
         apiKey: 'web_085aeaac9c520204b1a9dcaa357e5460',
         network: network,
     })
+
+    // prepare ERC20 contract
+    const erc20Contract = contract(ERC20Data)
+    erc20Contract.setProvider(web3.currentProvider)
 
     // query dfuse API
     let cursor = ''
