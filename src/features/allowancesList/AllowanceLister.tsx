@@ -43,7 +43,7 @@ const AllowanceLister = () => {
     }
 
     useEffect(() => {
-        document.title = `TAC - ${address?.ensName ?? address?.address}`
+        document.title = `TAC - ${address?.ensName ?? address?.address ?? ''}`
     }, [address])
 
     useEffect(() => {
