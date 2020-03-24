@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.1.1](https://github.com/TripleSpeeder/token-allowance-checker/compare/v2.1.0...v2.1.1) (2020-03-24)
+
+
+### Bug Fixes
+
+* always connect with wallet account ([11a2cf7](https://github.com/TripleSpeeder/token-allowance-checker/commit/11a2cf796d6603655afee6979054cb0f8d2afa15))
+
 ## [2.1.0](https://github.com/TripleSpeeder/token-allowance-checker/compare/v2.0.1...v2.1.0) (2020-03-23)
 
 
