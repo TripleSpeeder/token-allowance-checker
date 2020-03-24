@@ -41,12 +41,14 @@ interface OnboardState {
     onboardAPI: API | null
     web3?: Web3
     networkId: number
+    requiredNetworkId: number
     walletSelected: boolean
     prevWalletAddressId: AddressId | undefined
 }
 
 const initialState: OnboardState = {
     networkId: 0,
+    requiredNetworkId: 1,
     onboardAPI: null,
     walletSelected: false,
     prevWalletAddressId: undefined,
@@ -71,6 +73,9 @@ const onboardSlice = createSlice({
         setWalletSelected(state, action: PayloadAction<boolean>) {
             state.walletSelected = action.payload
         },
+        setRequiredNetworkId(state, action: PayloadAction<number>) {
+            state.requiredNetworkId = action.payload
+        },
     },
 })
 
@@ -80,11 +85,15 @@ export const {
     setWeb3Instance,
     setWalletSelected,
     setPrevWalletAddressId,
+    setRequiredNetworkId,
 } = onboardSlice.actions
 
 export default onboardSlice.reducer
 
-export const checkWallet = (): AppThunk => async (dispatch, getState) => {
+export const checkWallet = (): AppThunk => async (
+    dispatch: AppDispatch,
+    getState
+) => {
     console.log(`checking wallet...`)
     const onboardAPI = getState().onboard.onboardAPI
     if (onboardAPI) {
@@ -97,7 +106,7 @@ export const checkWallet = (): AppThunk => async (dispatch, getState) => {
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const selectWallet = (history: any): AppThunk => async (
-    dispatch,
+    dispatch: AppDispatch,
     getState
 ) => {
     console.log(`Selecting wallet...`)
@@ -117,15 +126,32 @@ export const selectWallet = (history: any): AppThunk => async (
     }
 }
 
+export const setRequiredNetworkIdThunk = (networkId: number): AppThunk => (
+    dispatch: AppDispatch,
+    getState
+) => {
+    dispatch(setRequiredNetworkId(networkId))
+    const onboardAPI = getState().onboard.onboardAPI
+    if (onboardAPI) {
+        // update existing onboardAPI object
+        onboardAPI.config({ networkId: networkId })
+        // issue checkWallet to make sure user has selected expected network in e.g. Metamask
+        dispatch(checkWallet())
+    } else {
+        // onboardAPI not yet initialized
+    }
+}
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const initialize = (history: any): AppThunk => async (
     dispatch: AppDispatch,
     getState
 ) => {
-    console.log(`Initializing OnBoard.js...`)
+    const requiredNetworkId = getState().onboard.requiredNetworkId
+    console.log(`Initializing OnBoard.js for networkId ${requiredNetworkId}...`)
     const onboard = Onboard({
         dappId: onboardApiKey,
-        networkId: 1,
+        networkId: requiredNetworkId,
         subscriptions: {
             wallet: wallet => {
                 dispatch(setWeb3Instance(new Web3(wallet.provider)))
@@ -152,9 +178,10 @@ export const initialize = (history: any): AppThunk => async (
                     console.log(
                         `Switching network from ${prevNetworkId} to ${networkId}`
                     )
-                    // user changed network after initial loading
-                    window.location.reload()
+                    // trigger checkWallet to make sure user stays on required network
+                    // dispatch(checkWallet())
                 }
+                dispatch(setRequiredNetworkIdThunk(networkId))
                 dispatch(setNetworkId(networkId))
             },
             balance: () => {
@@ -162,8 +189,8 @@ export const initialize = (history: any): AppThunk => async (
             },
         },
         walletSelect: {
-            heading: 'Select walletName',
-            description: 'Select walletName description',
+            heading: '',
+            description: '',
             // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
             // @ts-ignore
             wallets: wallets,

@@ -78,7 +78,7 @@ const AllowancesListContainer = ({
             )
         }
         // get all allowances of owner
-        const allowances = candidates.map(
+        const allowances = candidates?.map(
             allowanceId => state.allowances.allowancesById[allowanceId]
         )
         // group allowances by tokenID

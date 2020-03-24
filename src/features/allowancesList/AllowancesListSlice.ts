@@ -17,6 +17,7 @@ import {
 } from '../transactionTracker/TransactionTrackerSlice'
 import ERC20Data from '@openzeppelin/contracts/build/contracts/ERC20Detailed.json'
 import ERC20Detailed from '../../contracts'
+import { setNetworkId } from '../onboard/onboardSlice'
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const contract = require('@truffle/contract')
 
@@ -205,6 +206,22 @@ const allowancesSlice = createSlice({
             const { allowanceId, transactionId } = action.payload
             state.allowancesById[allowanceId].editTransactionId = transactionId
         },
+        [setNetworkId.type](state, action: PayloadAction<number>) {
+            const networkId = action.payload
+            console.log(
+                `Resetting allowances due to network change to ${networkId}`
+            )
+            Object.keys(state.allowanceQueryStateByOwner).forEach(ownerId => {
+                state.allowanceQueryStateByOwner[
+                    ownerId
+                ] = defaultQueryStateByOwner
+            })
+            Object.keys(state.allowanceIdsByOwnerId).forEach(ownerId => {
+                state.allowanceIdsByOwnerId[ownerId] = []
+            })
+            state.allowanceValuesById = {}
+            state.allowancesById = {}
+        },
     },
 })
 
@@ -305,7 +322,7 @@ export const fetchAllowancesThunk = (ownerId: AddressId): AppThunk => async (
                     queryState: {
                         state: QueryStates.QUERY_STATE_ERROR,
                         currentPage,
-                        error: `Network ${networkId} not supported by dfuse.io`,
+                        error: `Network ${networkId} not supported.`,
                     },
                 })
             )

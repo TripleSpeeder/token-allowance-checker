@@ -15,6 +15,7 @@ import {
     updateTransaction,
 } from 'features/transactionTracker/TransactionTrackerSlice'
 import BN from 'bn.js'
+import { setNetworkId } from '../onboard/onboardSlice'
 
 interface TokenContract {
     addressId: AddressId
@@ -68,6 +69,15 @@ const tokenContractSlice = createSlice({
                     },
                 }
             },
+        },
+    },
+    extraReducers: {
+        [setNetworkId.type](state, action: PayloadAction<number>) {
+            const networkId = action.payload
+            console.log(
+                `Clearing token contracts due to network change to ${networkId}`
+            )
+            state.contractsById = {}
         },
     },
 })
