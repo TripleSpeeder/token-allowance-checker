@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.2.0](https://github.com/TripleSpeeder/token-allowance-checker/compare/v2.1.1...v2.2.0) (2020-03-25)
+
+
+### Features
+
+* add network selector ([41cc258](https://github.com/TripleSpeeder/token-allowance-checker/commit/41cc258560b05ca02f3604991555fac369d92d5f))
+* support Ropsten network ([52eac06](https://github.com/TripleSpeeder/token-allowance-checker/commit/52eac06d57c3428799cb26e7a3157042c3d0b2df))
+
+
+### Bug Fixes
+
+* disable NetworkSelector until wallet is available ([68ac7be](https://github.com/TripleSpeeder/token-allowance-checker/commit/68ac7be8a7a7e14fd60e06dc020c982b9251e43a))
+* dont display 'undefined' in title ([1080688](https://github.com/TripleSpeeder/token-allowance-checker/commit/1080688f334a21346a95b6b60ebf9725f4b308d2))
+* etherscan links now are network-aware ([62be8be](https://github.com/TripleSpeeder/token-allowance-checker/commit/62be8bed43b8c1653b9be5b18075e2b3a0aad6aa))
+* reload page on network change ([0aad392](https://github.com/TripleSpeeder/token-allowance-checker/commit/0aad3926cc9a0bafc5e93af4b87c61b0007a5dd6))
+* show error message on unsupported networks ([16fd3ab](https://github.com/TripleSpeeder/token-allowance-checker/commit/16fd3abd92abdaec237ccbb34fbedf9e20a6087b))
+
 ### [2.1.1](https://github.com/TripleSpeeder/token-allowance-checker/compare/v2.1.0...v2.1.1) (2020-03-24)
 
 

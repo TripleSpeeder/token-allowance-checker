@@ -17,6 +17,7 @@ import {
 } from '../transactionTracker/TransactionTrackerSlice'
 import ERC20Data from '@openzeppelin/contracts/build/contracts/ERC20Detailed.json'
 import ERC20Detailed from '../../contracts'
+import { setNetworkId } from '../onboard/onboardSlice'
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const contract = require('@truffle/contract')
 
@@ -43,10 +44,6 @@ const eventABI = [
     },
 ]
 
-const client = createDfuseClient({
-    apiKey: 'web_085aeaac9c520204b1a9dcaa357e5460',
-    network: 'mainnet.eth.dfuse.io',
-})
 const searchTransactions = `query ($query: String! $limit: Int64! $cursor: String) {
       searchTransactions(
         indexName: LOGS, 
@@ -209,6 +206,22 @@ const allowancesSlice = createSlice({
             const { allowanceId, transactionId } = action.payload
             state.allowancesById[allowanceId].editTransactionId = transactionId
         },
+        [setNetworkId.type](state, action: PayloadAction<number>) {
+            const networkId = action.payload
+            console.log(
+                `Resetting allowances due to network change to ${networkId}`
+            )
+            Object.keys(state.allowanceQueryStateByOwner).forEach(ownerId => {
+                state.allowanceQueryStateByOwner[
+                    ownerId
+                ] = defaultQueryStateByOwner
+            })
+            Object.keys(state.allowanceIdsByOwnerId).forEach(ownerId => {
+                state.allowanceIdsByOwnerId[ownerId] = []
+            })
+            state.allowanceValuesById = {}
+            state.allowancesById = {}
+        },
     },
 })
 
@@ -269,12 +282,13 @@ export const fetchAllowancesThunk = (ownerId: AddressId): AppThunk => async (
     dispatch,
     getState
 ) => {
-    const owner = getState().addresses.addressesById[ownerId]
     const web3 = getState().onboard.web3
     if (!web3) {
         console.log(`Missing web3!`)
         return
     }
+    const owner = getState().addresses.addressesById[ownerId]
+    const { networkId } = getState().onboard
 
     let currentPage = 0
 
@@ -288,6 +302,36 @@ export const fetchAllowancesThunk = (ownerId: AddressId): AppThunk => async (
             },
         })
     )
+
+    // create client
+    let network
+    switch (networkId) {
+        case 3:
+            // Ropsten
+            network = 'ropsten.eth.dfuse.io'
+            break
+        case 1:
+            // main network
+            network = 'mainnet.eth.dfuse.io'
+            break
+        default:
+            console.log(`Network ${networkId} not supported by dfuse.io`)
+            dispatch(
+                setQueryState({
+                    ownerId,
+                    queryState: {
+                        state: QueryStates.QUERY_STATE_ERROR,
+                        currentPage,
+                        error: `Network ${networkId} not supported.`,
+                    },
+                })
+            )
+            return
+    }
+    const client = createDfuseClient({
+        apiKey: 'web_085aeaac9c520204b1a9dcaa357e5460',
+        network: network,
+    })
 
     // prepare ERC20 contract
     const erc20Contract = contract(ERC20Data)
