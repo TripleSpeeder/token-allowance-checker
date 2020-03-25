@@ -1,12 +1,15 @@
 import React from 'react'
 import { Icon, Popup } from 'semantic-ui-react'
 import { EthAddress } from 'features/addressInput/AddressSlice'
+import { useSelector } from 'react-redux'
+import { RootState } from '../app/rootReducer'
 
 interface AddressDisplayProps {
     ethAddress: EthAddress
 }
 
 const AddressDisplay = ({ ethAddress }: AddressDisplayProps) => {
+    const networkId = useSelector((state: RootState) => state.onboard.networkId)
     const { address, ensName, esContractName } = ethAddress
     const setClipboard = (content: string) => {
         navigator.clipboard.writeText(content).then(
@@ -24,6 +27,15 @@ const AddressDisplay = ({ ethAddress }: AddressDisplayProps) => {
         contractName = `Reverse ENS: ${ensName}`
     } else if (esContractName) {
         contractName = `Contract: ${esContractName}`
+    }
+
+    let etherscanUrl: string
+    switch (networkId) {
+        case 3: // Ropsten
+            etherscanUrl = `https://ropsten.etherscan.io/address/${address}`
+        case 1:
+        default:
+            etherscanUrl = `https://etherscan.io/address/${address}`
     }
 
     if (contractName) {
@@ -58,10 +70,7 @@ const AddressDisplay = ({ ethAddress }: AddressDisplayProps) => {
                                     name={'external square'}
                                     size={'small'}
                                     onClick={() => {
-                                        window.open(
-                                            `https://etherscan.io/address/${address}`,
-                                            '_blank'
-                                        )
+                                        window.open(etherscanUrl, '_blank')
                                     }}
                                 />
                             }
@@ -97,10 +106,7 @@ const AddressDisplay = ({ ethAddress }: AddressDisplayProps) => {
                             name={'external square'}
                             size={'small'}
                             onClick={() => {
-                                window.open(
-                                    `https://etherscan.io/address/${address}`,
-                                    '_blank'
-                                )
+                                window.open(etherscanUrl, '_blank')
                             }}
                         />
                     }
