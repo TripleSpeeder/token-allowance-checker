@@ -19,6 +19,7 @@ import OnboardGate from '../features/onboard/OnboardGate'
 import AddressInputContainer from '../features/addressInput/AddressInputContainer'
 import pkg from '../../package.json'
 import AddressExtractor from '../components/AddressExtractor'
+import NetworkSelector from 'components/NetworkSelector'
 
 const App: React.FC = () => {
     const GrantMessage = (
@@ -68,6 +69,9 @@ const App: React.FC = () => {
                         <Icon name='search' size='big' /> Check Allowances
                     </Menu.Item>
                     <Menu.Menu position='right'>
+                        <Menu.Item>
+                            <NetworkSelector />
+                        </Menu.Item>
                         <Menu.Item>
                             <a
                                 href='https://github.com/TripleSpeeder/token-allowance-checker'

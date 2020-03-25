@@ -38,6 +38,8 @@ export const wellKnownContracts: WellKnownContracts = {
             symbol: 'EOS',
         },
     },
+    // Ropsten
+    3: {},
 }
 
 export default wellKnownContracts
