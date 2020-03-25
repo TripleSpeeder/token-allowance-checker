@@ -9,7 +9,9 @@ interface AddressDisplayProps {
 }
 
 const AddressDisplay = ({ ethAddress }: AddressDisplayProps) => {
-    const networkId = useSelector((state: RootState) => state.onboard.networkId)
+    const networkId: number = useSelector(
+        (state: RootState) => state.onboard.networkId
+    )
     const { address, ensName, esContractName } = ethAddress
     const setClipboard = (content: string) => {
         navigator.clipboard.writeText(content).then(
@@ -33,7 +35,10 @@ const AddressDisplay = ({ ethAddress }: AddressDisplayProps) => {
     switch (networkId) {
         case 3: // Ropsten
             etherscanUrl = `https://ropsten.etherscan.io/address/${address}`
+            break
         case 1:
+            etherscanUrl = `https://etherscan.io/address/${address}`
+            break
         default:
             etherscanUrl = `https://etherscan.io/address/${address}`
     }
