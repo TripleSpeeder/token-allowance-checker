@@ -11,7 +11,7 @@ const NetworkSelector = () => {
     ]
 
     const dispatch = useDispatch()
-    const { requiredNetworkId } = useSelector(
+    const { requiredNetworkId, walletSelected } = useSelector(
         (state: RootState) => state.onboard
     )
 
@@ -31,6 +31,7 @@ const NetworkSelector = () => {
 
     return (
         <Dropdown
+            disabled={!walletSelected}
             text={text}
             options={options}
             onChange={handleChange}
