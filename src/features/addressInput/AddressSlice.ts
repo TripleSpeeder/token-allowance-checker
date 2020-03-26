@@ -299,7 +299,10 @@ export const setAddressFromParamsThunk = (
     checkAddress: string
 ): AppThunk => async (dispatch: AppDispatch, getState) => {
     const web3 = getState().onboard.web3
-    if (!web3) return
+    if (!web3) {
+        console.log(`Cant set address ${checkAddress} - web3 missing!`)
+        return
+    }
 
     if (checkAddress.endsWith('.eth')) {
         // checkAddress is ENS name

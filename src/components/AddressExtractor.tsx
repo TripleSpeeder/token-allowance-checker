@@ -1,4 +1,4 @@
-import React, { FunctionComponent, useEffect } from 'react'
+import React, { FunctionComponent, useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import {
     CheckAddressStates,
@@ -26,19 +26,34 @@ const AddressExtractor: FunctionComponent = ({
     const walletAddressId = useSelector(
         (state: RootState) => state.addresses.walletAddressId
     )
+    const [prevAddressFromParams, setPrevAddressFromParams] = useState('')
 
     // watch url params address change
     useEffect(() => {
         if (addressFromParams) {
-            console.log(
-                `AddressExtractor: Setting new address ${addressFromParams}`
-            )
-            dispatch(setAddressFromParamsThunk(addressFromParams))
+            if (prevAddressFromParams !== addressFromParams) {
+                console.log(
+                    `AddressExtractor: Setting new address ${addressFromParams}`
+                )
+                dispatch(setAddressFromParamsThunk(addressFromParams))
+                setPrevAddressFromParams(addressFromParams)
+            } else {
+                console.log(
+                    `AddressExtractor: ${addressFromParams} already dispatched.`
+                )
+            }
         } else if (walletAddressId) {
+            console.log(`No address in params. Trying fallback to wallet.`)
             // no address provided via url. Fall back to wallet address.
             dispatch(redirectToAddress(walletAddressId, history))
         }
-    }, [addressFromParams, walletAddressId, dispatch, history])
+    }, [
+        addressFromParams,
+        prevAddressFromParams,
+        walletAddressId,
+        history,
+        dispatch,
+    ])
 
     if (checkAddressState === CheckAddressStates.Invalid) {
         return (

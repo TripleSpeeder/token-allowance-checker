@@ -4,11 +4,7 @@ import Web3 from 'web3'
 import * as H from 'history'
 import { AppDispatch, AppThunk } from '../../app/store'
 import { API, WalletInitOptions } from 'bnc-onboard/dist/src/interfaces'
-import {
-    AddressId,
-    redirectToAddress,
-    setWalletAddressThunk,
-} from '../addressInput/AddressSlice'
+import { AddressId, setWalletAddressThunk } from '../addressInput/AddressSlice'
 
 const onboardApiKey = 'f4b71bf0-fe50-4eeb-bc2b-b323527ed9e6'
 const infuraApiKey = '7f230a5ca832426796454c28577d93f2'
@@ -161,19 +157,7 @@ export const initialize = (history: H.History): AppThunk => async (
             },
             address: addressId => {
                 console.log(`Wallet address changed to ${addressId}!`)
-                dispatch(setWalletAddressThunk(addressId))
-                const { prevWalletAddressId } = getState().onboard
-                //  Only trigger history push when user changed the wallet address
-                if (
-                    prevWalletAddressId &&
-                    prevWalletAddressId !== addressId.toLowerCase()
-                ) {
-                    console.log(
-                        `Pushing ${addressId}. Prev walletId: ${prevWalletAddressId}`
-                    )
-                    dispatch(redirectToAddress(addressId, history))
-                }
-                dispatch(setPrevWalletAddressId(addressId.toLowerCase()))
+                dispatch(setWalletAddressThunk(addressId, history))
             },
             network: networkId => {
                 const prevNetworkId = getState().onboard.networkId
