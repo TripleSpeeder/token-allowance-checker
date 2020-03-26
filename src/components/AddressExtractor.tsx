@@ -1,11 +1,14 @@
-import React, { FunctionComponent, useEffect } from 'react'
-import { useHistory, useParams } from 'react-router-dom'
+import React, { FunctionComponent, useEffect, useState } from 'react'
+import { useParams } from 'react-router-dom'
 import {
-    clearCheckAddressId,
-    setCheckAddressThunk,
+    CheckAddressStates,
+    redirectToAddress,
+    setAddressFromParamsThunk,
 } from '../features/addressInput/AddressSlice'
 import { useDispatch, useSelector } from 'react-redux'
 import { RootState } from '../app/rootReducer'
+import { Icon, Message, Segment } from 'semantic-ui-react'
+import { useHistory } from 'react-router'
 
 interface AddressExtractorProps {
     children?: React.ReactNode
@@ -17,29 +20,68 @@ const AddressExtractor: FunctionComponent = ({
     const dispatch = useDispatch()
     const history = useHistory()
     const { address: addressFromParams } = useParams()
-    const { walletAddressId: addressFromWallet } = useSelector(
+    const { checkAddressState } = useSelector(
         (state: RootState) => state.addresses
     )
-    const { web3 } = useSelector((state: RootState) => state.onboard)
+    const walletAddressId = useSelector(
+        (state: RootState) => state.addresses.walletAddressId
+    )
+    const [prevAddressFromParams, setPrevAddressFromParams] = useState('')
 
+    // watch url params address change
     useEffect(() => {
         if (addressFromParams) {
-            if (web3) {
+            if (prevAddressFromParams !== addressFromParams) {
                 console.log(
                     `AddressExtractor: Setting new address ${addressFromParams}`
                 )
-                dispatch(setCheckAddressThunk(addressFromParams.toLowerCase()))
+                dispatch(setAddressFromParamsThunk(addressFromParams))
+                setPrevAddressFromParams(addressFromParams)
+            } else {
+                console.log(
+                    `AddressExtractor: ${addressFromParams} already dispatched.`
+                )
             }
-        } else if (addressFromWallet) {
-            console.log(
-                `AddressExtractor: no address in params. Falling back to walletAddress ${addressFromWallet}`
-            )
-            history.push(`/address/${addressFromWallet}`)
-        } else {
-            console.log(`AddressExtractor: Clearing checkAddressId`)
-            dispatch(clearCheckAddressId())
+        } else if (walletAddressId) {
+            console.log(`No address in params. Trying fallback to wallet.`)
+            // no address provided via url. Fall back to wallet address.
+            dispatch(redirectToAddress(walletAddressId, history))
         }
-    }, [addressFromParams, addressFromWallet, dispatch, history, web3])
+    }, [
+        addressFromParams,
+        prevAddressFromParams,
+        walletAddressId,
+        history,
+        dispatch,
+    ])
+
+    if (checkAddressState === CheckAddressStates.Invalid) {
+        return (
+            <Segment basic padded='very' textAlign={'center'}>
+                <Message error icon size={'huge'}>
+                    <Icon name='exclamation triangle' />
+                    <Message.Content>
+                        <Message.Header>Invalid address</Message.Header>
+                        {`Address ${addressFromParams} is invalid`}
+                    </Message.Content>
+                </Message>
+            </Segment>
+        )
+    }
+
+    if (checkAddressState === CheckAddressStates.Resolving) {
+        return (
+            <Segment basic padded='very' textAlign={'center'}>
+                <Message icon warning size={'huge'}>
+                    <Icon name='circle notched' loading />
+                    <Message.Content>
+                        <Message.Header>Checking address</Message.Header>
+                        <div>{`Checking address ${addressFromParams}`}</div>
+                    </Message.Content>
+                </Message>
+            </Segment>
+        )
+    }
 
     return <React.Fragment>{children}</React.Fragment>
 }

@@ -25,7 +25,9 @@ const OnboardGate = ({ children }: OnboardGateProps) => {
         }
     }, [onboardAPI, walletSelected, dispatch, history])
 
-    if (walletSelected) {
+    const onboardstate = onboardAPI?.getState()
+
+    if (walletSelected && onboardstate?.wallet) {
         return <React.Fragment>{children}</React.Fragment>
     } else {
         return (
