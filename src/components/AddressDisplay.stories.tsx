@@ -16,7 +16,7 @@ export default {
 
 const resolvingEns: EthAddress = {
     address: '0x0D0707963952f2fBA59dD06f2b425ace40b492Fe',
-    resolvingState: ResolvingStates.Resolving,
+    resolvingState: ResolvingStates.ResolvingForward,
 }
 const withEns: EthAddress = {
     address: '0x0D0707963952f2fBA59dD06f2b425ace40b492Fe',
