@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.2.2](https://github.com/TripleSpeeder/token-allowance-checker/compare/v2.2.1...v2.2.2) (2020-03-26)
+
+
+### Bug Fixes
+
+* always use correct checkAddress ([f819620](https://github.com/TripleSpeeder/token-allowance-checker/commit/f8196207d1edefb97dffca5d5f6d59fba8d13527))
+* tone down Gitcoin Grant funding message ([56751e3](https://github.com/TripleSpeeder/token-allowance-checker/commit/56751e356aed3a8861fa005e5dcdb6083f58257f)), closes [#69](https://github.com/TripleSpeeder/token-allowance-checker/issues/69)
+
 ### [2.2.1](https://github.com/TripleSpeeder/token-allowance-checker/compare/v2.2.0...v2.2.1) (2020-03-25)
 
 
