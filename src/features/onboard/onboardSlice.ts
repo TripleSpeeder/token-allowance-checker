@@ -5,6 +5,7 @@ import * as H from 'history'
 import { AppDispatch, AppThunk } from '../../app/store'
 import { API, WalletInitOptions } from 'bnc-onboard/dist/src/interfaces'
 import { AddressId, setWalletAddressThunk } from '../addressInput/AddressSlice'
+import imToken from './wallets/imToken'
 
 const onboardApiKey = 'f4b71bf0-fe50-4eeb-bc2b-b323527ed9e6'
 const infuraApiKey = '7f230a5ca832426796454c28577d93f2'
@@ -21,7 +22,6 @@ const wallets: Partial<WalletInitOptions>[] = [
     { walletName: 'dapper', preferred: true },
     { walletName: 'authereum', preferred: true },
     { walletName: 'opera' },
-    { walletName: 'status' },
     { walletName: 'operaTouch' },
     { walletName: 'torus' },
     { walletName: 'status' },
@@ -35,6 +35,7 @@ const wallets: Partial<WalletInitOptions>[] = [
         email: 'michael@m-bauer.org',
         rpcUrl: `mainnet.infura.io/v3/${infuraApiKey}`,
     },
+    imToken,
 ]
 
 // Define contents of onboard state
