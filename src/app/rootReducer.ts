@@ -6,6 +6,7 @@ import allowancesReducer from 'features/allowancesList/AllowancesListSlice'
 import balancesReducer from 'features/balances/BalancesSlice'
 import editAllowanceReducer from 'features/editAllowance/EditAllowanceSlice'
 import transactionTrackerReducer from 'features/transactionTracker/TransactionTrackerSlice'
+import responsiveLayoutReducer from 'features/responsiveLayout/responsiveSlice'
 
 const rootReducer = combineReducers({
     onboard: onboardReducer,
@@ -15,6 +16,7 @@ const rootReducer = combineReducers({
     balances: balancesReducer,
     editAllowance: editAllowanceReducer,
     transactions: transactionTrackerReducer,
+    respsonsive: responsiveLayoutReducer,
 })
 
 export type RootState = ReturnType<typeof rootReducer>

@@ -45,7 +45,7 @@ const AddressExtractor: FunctionComponent = ({
         } else if (walletAddressId) {
             console.log(`No address in params. Trying fallback to wallet.`)
             // no address provided via url. Fall back to wallet address.
-            dispatch(redirectToAddress(walletAddressId, history))
+            dispatch(redirectToAddress(walletAddressId, history, true))
         }
     }, [
         addressFromParams,

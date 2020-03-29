@@ -244,17 +244,19 @@ const resolveAndAddAddress = (
 
 export const redirectToAddress = (
     addressId: AddressId,
-    history: H.History
+    history: H.History,
+    replace = false
 ): AppThunk => (dispatch: AppDispatch, getState) => {
     addressId = addressId.toLowerCase()
     const checkAddress = getState().addresses.addressesById[addressId]
     // history.push(`/address/${checkAddress.ensName ?? checkAddress.address}`)
+    const func = replace ? history.replace : history.push
     if (checkAddress.ensName) {
         console.log(`Routing to /address/${checkAddress.ensName}`)
-        history.push(`/address/${checkAddress.ensName}`)
+        func(`/address/${checkAddress.ensName}`)
     } else {
         console.log(`Routing to /address/${checkAddress.address}`)
-        history.push(`/address/${checkAddress.address}`)
+        func(`/address/${checkAddress.address}`)
     }
 }
 

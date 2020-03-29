@@ -1,12 +1,15 @@
 import { Container, Icon, Message } from 'semantic-ui-react'
 import React, { useEffect, useState } from 'react'
 import { useHistory } from 'react-router-dom'
+import { useSelector } from 'react-redux'
+import { RootState } from '../app/rootReducer'
 
 /*
  * Display message about gitcoin grant. Message can be dismissed, but will
  * re-appear when user goes back to home page
  */
 const GrantMessage = () => {
+    const mobile = useSelector((state: RootState) => state.respsonsive.mobile)
     const [showGrantMessage, setShowGrantMessage] = useState(true)
     const history = useHistory()
 
@@ -26,25 +29,26 @@ const GrantMessage = () => {
         setShowGrantMessage(false)
     }
 
+    const size = mobile ? 'small' : 'big'
+
     if (showGrantMessage) {
         return (
             <Container textAlign={'center'}>
                 <Message
                     color={'yellow'}
-                    size={'big'}
+                    size={size}
                     icon
                     onDismiss={onDismiss}
                 >
                     <Icon name={'hand point right'} />
                     <Message.Content>
                         <Message.Header>
-                            Gitcoin Grants <em>$250k Matching Round</em> is live
-                            until 2020-04-07!
+                            Gitcoin Grants <em>$250k Donation Matching</em> is
+                            live until 2020-04-07!
                         </Message.Header>
                         <div>
-                            Do you like this project? Contribute to the{' '}
-                            <strong>gitcoin grant</strong> to support further
-                            development!
+                            Contribute via <strong>gitcoin grant</strong> to
+                            support further development!
                         </div>
                         <p>
                             <strong>
