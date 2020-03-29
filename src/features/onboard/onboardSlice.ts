@@ -157,8 +157,12 @@ export const initialize = (history: H.History): AppThunk => async (
                 dispatch(setWeb3Instance(new Web3(wallet.provider)))
             },
             address: addressId => {
-                console.log(`Wallet address changed to ${addressId}!`)
-                dispatch(setWalletAddressThunk(addressId, history))
+                if (addressId) {
+                    console.log(`Wallet address changed to ${addressId}!`)
+                    dispatch(setWalletAddressThunk(addressId, history))
+                } else {
+                    console.log(`No access to wallet address`)
+                }
             },
             network: networkId => {
                 const prevNetworkId = getState().onboard.networkId
