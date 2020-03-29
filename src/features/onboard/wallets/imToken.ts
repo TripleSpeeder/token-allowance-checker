@@ -102,7 +102,7 @@ const imToken = {
     },
     link: 'https://token.im/',
     mobile: true,
-    desktop: true,
+    desktop: false,
 }
 
 export default imToken
