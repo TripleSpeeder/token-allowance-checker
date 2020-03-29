@@ -94,15 +94,19 @@ const imToken = {
     wallet: async (helpers: Helpers) => {
         const { createModernProviderInterface } = helpers
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const provider = (window as any).ethereum
+        const windowAny = window as any
+        const provider = windowAny.ethereum
+        const correctWallet = windowAny.web3?.currentProvider?.isImToken
         return {
             provider,
-            interface: createModernProviderInterface(provider),
+            interface: correctWallet
+                ? createModernProviderInterface(provider)
+                : null,
         }
     },
     link: 'https://token.im/',
     mobile: true,
-    desktop: false,
+    desktop: true,
 }
 
 export default imToken
