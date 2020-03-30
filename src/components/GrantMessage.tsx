@@ -29,7 +29,7 @@ const GrantMessage = () => {
         setShowGrantMessage(false)
     }
 
-    const size = mobile ? 'small' : 'big'
+    const size = mobile ? 'tiny' : 'big'
 
     if (showGrantMessage) {
         return (
