@@ -84,7 +84,9 @@ const AllowanceLister = () => {
                     handleAddressFilterChange={handleAddressFilterChange}
                     clearAddressFilter={clearAddressFilter}
                     refresh={handleRefreshClick}
+                    mobile={mobile}
                 />
+                <Divider />
                 <AllowancesListContainer
                     ownerId={address.address}
                     showZeroAllowances={showZeroAllowances}
@@ -108,6 +110,7 @@ const AllowanceLister = () => {
                     handleAddressFilterChange={handleAddressFilterChange}
                     clearAddressFilter={clearAddressFilter}
                     refresh={handleRefreshClick}
+                    mobile={mobile}
                 />
                 <AllowancesListContainer
                     ownerId={address.address}
