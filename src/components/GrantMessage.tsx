@@ -33,7 +33,7 @@ const GrantMessage = () => {
 
     if (showGrantMessage) {
         return (
-            <Container textAlign={'center'}>
+            <Container textAlign={'center'} style={{ marginBottom: '1em' }}>
                 <Message
                     color={'yellow'}
                     size={size}
