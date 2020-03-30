@@ -1,5 +1,5 @@
-import React, { useEffect } from 'react'
-import { Header, Segment, Table, Placeholder } from 'semantic-ui-react'
+import React, { useEffect, useState } from 'react'
+import { Header, Segment, Table, Placeholder, Icon } from 'semantic-ui-react'
 import AddressDisplay from '../../components/AddressDisplay'
 import BN from 'bn.js'
 import { AddressId } from '../addressInput/AddressSlice'
@@ -22,6 +22,8 @@ const TokenAllowancesItem = ({
     allowanceIds,
 }: TokenAllowanceItemProps) => {
     const dispatch = useDispatch()
+    const { mobile } = useSelector((state: RootState) => state.respsonsive)
+    const { networkId } = useSelector((state: RootState) => state.onboard)
     const tokenContract = useSelector(
         (state: RootState) => state.tokenContracts.contractsById[tokenId]
     )
@@ -32,6 +34,7 @@ const TokenAllowancesItem = ({
         const balanceId = buildBalanceId(ownerId, tokenId)
         return state.balances.balancesById[balanceId]
     })
+    const [collapsed, setCollapsed] = useState(true)
 
     // lazy-load owner balance when contract instance is available
     useEffect(() => {
@@ -40,6 +43,10 @@ const TokenAllowancesItem = ({
         }
     }, [ownerBalance, ownerId, tokenId, tokenContract, dispatch])
 
+    const toggleCollapse = () => {
+        setCollapsed(!collapsed)
+    }
+
     // return placeholder if contract is not yet loaded
     if (!tokenContract) {
         return (
@@ -47,10 +54,8 @@ const TokenAllowancesItem = ({
                 <Placeholder>
                     <Placeholder.Header>
                         <Placeholder.Line />
-                        <Placeholder.Line />
                     </Placeholder.Header>
                     <Placeholder.Paragraph>
-                        <Placeholder.Line />
                         <Placeholder.Line />
                         <Placeholder.Line />
                     </Placeholder.Paragraph>
@@ -68,14 +73,14 @@ const TokenAllowancesItem = ({
         !ownerBalance ||
         ownerBalance.queryState === QueryStates.QUERY_STATE_RUNNING
     ) {
-        tokenDisplayString += ` (current balance: loading...)`
+        tokenDisplayString += ` (loading...)`
     } else {
         const { rounded } = bn2DisplayString({
             value: ownerBalance.value,
             decimals: tokenContract.decimals,
             roundToDecimals,
         })
-        tokenDisplayString += ` (current balance: ${rounded} ${tokenContract.symbol})`
+        tokenDisplayString += ` (${rounded} ${tokenContract.symbol})`
     }
     const headline = <div>{tokenDisplayString}</div>
 
@@ -87,26 +92,72 @@ const TokenAllowancesItem = ({
         )
     })
 
-    return (
-        <Segment raised>
-            <Header as={'h3'}>
-                {headline}
-                <Header.Subheader>
-                    <AddressDisplay ethAddress={tokenAddress} />
-                </Header.Subheader>
-            </Header>
-            <Table basic={'very'} celled selectable>
-                <Table.Header>
-                    <Table.Row>
-                        <Table.HeaderCell>Spender</Table.HeaderCell>
-                        <Table.HeaderCell>Allowance</Table.HeaderCell>
-                        <Table.HeaderCell>Action</Table.HeaderCell>
-                    </Table.Row>
-                </Table.Header>
-                <Table.Body>{rows}</Table.Body>
-            </Table>
-        </Segment>
-    )
+    if (mobile) {
+        let table
+        if (!collapsed) {
+            table = (
+                <Table basic={'very'} celled unstackable compact>
+                    <Table.Header>
+                        <Table.Row>
+                            <Table.HeaderCell>Spender</Table.HeaderCell>
+                            <Table.HeaderCell>Allowance</Table.HeaderCell>
+                            <Table.HeaderCell>Action</Table.HeaderCell>
+                        </Table.Row>
+                    </Table.Header>
+                    <Table.Body>{rows}</Table.Body>
+                </Table>
+            )
+        }
+        const toggleButton = (
+            <Icon
+                style={{ float: 'right' }}
+                name={collapsed ? 'chevron down' : 'chevron up'}
+                size={'mini'}
+                onClick={toggleCollapse}
+            />
+        )
+        return (
+            <Segment raised>
+                <Header size={'small'}>
+                    {toggleButton}
+                    {headline}
+                    <Header.Subheader>
+                        <AddressDisplay
+                            ethAddress={tokenAddress}
+                            mobile={mobile}
+                            networkId={networkId}
+                        />
+                    </Header.Subheader>
+                </Header>
+                {table}
+            </Segment>
+        )
+    } else {
+        return (
+            <Segment raised>
+                <Header size={'medium'}>
+                    {headline}
+                    <Header.Subheader>
+                        <AddressDisplay
+                            ethAddress={tokenAddress}
+                            mobile={mobile}
+                            networkId={networkId}
+                        />
+                    </Header.Subheader>
+                </Header>
+                <Table basic={'very'} celled selectable>
+                    <Table.Header>
+                        <Table.Row>
+                            <Table.HeaderCell>Spender</Table.HeaderCell>
+                            <Table.HeaderCell>Allowance</Table.HeaderCell>
+                            <Table.HeaderCell>Action</Table.HeaderCell>
+                        </Table.Row>
+                    </Table.Header>
+                    <Table.Body>{rows}</Table.Body>
+                </Table>
+            </Segment>
+        )
+    }
 }
 
 export default TokenAllowancesItem
