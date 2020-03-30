@@ -1,17 +1,18 @@
 import React from 'react'
-import { Icon, Popup } from 'semantic-ui-react'
+import { Icon, Popup, Item } from 'semantic-ui-react'
 import { EthAddress } from 'features/addressInput/AddressSlice'
-import { useSelector } from 'react-redux'
-import { RootState } from '../app/rootReducer'
 
 interface AddressDisplayProps {
     ethAddress: EthAddress
+    mobile: boolean
+    networkId: number
 }
 
-const AddressDisplay = ({ ethAddress }: AddressDisplayProps) => {
-    const networkId: number = useSelector(
-        (state: RootState) => state.onboard.networkId
-    )
+const AddressDisplay = ({
+    ethAddress,
+    mobile,
+    networkId,
+}: AddressDisplayProps) => {
     const { address, ensName, esContractName } = ethAddress
     const setClipboard = (content: string) => {
         navigator.clipboard.writeText(content).then(
@@ -26,9 +27,9 @@ const AddressDisplay = ({ ethAddress }: AddressDisplayProps) => {
 
     let contractName
     if (ensName) {
-        contractName = `Reverse ENS: ${ensName}`
+        contractName = `${ensName}`
     } else if (esContractName) {
-        contractName = `Contract: ${esContractName}`
+        contractName = `${esContractName}`
     }
 
     let etherscanUrl: string
@@ -41,6 +42,61 @@ const AddressDisplay = ({ ethAddress }: AddressDisplayProps) => {
             break
         default:
             etherscanUrl = `https://etherscan.io/address/${address}`
+    }
+
+    if (mobile) {
+        const shortAddress =
+            address.substr(0, 6) + '...' + address.substr(-6, 6)
+        const contractNameString = esContractName && (
+            <div>
+                Contract name: <strong>{esContractName}</strong>
+            </div>
+        )
+        const ensNameString = ensName && (
+            <div>
+                ENS name: <strong>{ensName}</strong>
+            </div>
+        )
+        const popupContent = (
+            <Item>
+                <Item.Content>
+                    <Item.Header>{address}</Item.Header>
+                    <Item.Content>
+                        {contractNameString}
+                        {ensNameString}
+                    </Item.Content>
+                    <Item.Extra>
+                        <Icon
+                            link
+                            circular
+                            name={'copy outline'}
+                            onClick={() => {
+                                setClipboard(address)
+                            }}
+                        />
+                        <Icon
+                            link
+                            circular
+                            name={'external square'}
+                            onClick={() => {
+                                window.open(etherscanUrl, '_blank')
+                            }}
+                        />
+                    </Item.Extra>
+                </Item.Content>
+            </Item>
+        )
+        return (
+            <Popup
+                on={'click'}
+                content={popupContent}
+                trigger={
+                    <div>
+                        <strong>{contractName ?? shortAddress}</strong>
+                    </div>
+                }
+            ></Popup>
+        )
     }
 
     if (contractName) {
