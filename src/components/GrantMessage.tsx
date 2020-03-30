@@ -54,8 +54,8 @@ const GrantMessage = () => {
                             <strong>
                                 -&gt;{' '}
                                 <a
-                                    target={'_blank'}
-                                    rel={'noopener noreferrer'}
+                                    target='_blank'
+                                    rel='noopener noreferrer'
                                     href={
                                         'https://gitcoin.co/grants/480/token-allowance-checker?tab=description'
                                     }
