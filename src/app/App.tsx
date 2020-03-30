@@ -233,9 +233,7 @@ const App: React.FC = () => {
                     <Container>
                         <OnboardGate>
                             <AddressExtractor>
-                                <Segment basic padded>
-                                    <AddressInputContainer />
-                                </Segment>
+                                <AddressInputContainer />
                                 <AllowanceLister />
                             </AddressExtractor>
                         </OnboardGate>
