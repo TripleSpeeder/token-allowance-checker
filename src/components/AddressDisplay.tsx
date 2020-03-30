@@ -6,12 +6,14 @@ interface AddressDisplayProps {
     ethAddress: EthAddress
     mobile: boolean
     networkId: number
+    inline?: boolean
 }
 
 const AddressDisplay = ({
     ethAddress,
     mobile,
     networkId,
+    inline,
 }: AddressDisplayProps) => {
     const { address, ensName, esContractName } = ethAddress
     const setClipboard = (content: string) => {
@@ -86,15 +88,21 @@ const AddressDisplay = ({
                 </Item.Content>
             </Item>
         )
+        let popupTrigger
+        if (inline) {
+            popupTrigger = <strong>{contractName ?? shortAddress}</strong>
+        } else {
+            popupTrigger = (
+                <div>
+                    <strong>{contractName ?? shortAddress}</strong>
+                </div>
+            )
+        }
         return (
             <Popup
                 on={'click'}
                 content={popupContent}
-                trigger={
-                    <div>
-                        <strong>{contractName ?? shortAddress}</strong>
-                    </div>
-                }
+                trigger={popupTrigger}
             ></Popup>
         )
     }
