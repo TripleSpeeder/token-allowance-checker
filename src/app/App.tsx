@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import './App.css'
 import { HashRouter as Router, Link, Route, Switch } from 'react-router-dom'
 import {
@@ -11,6 +11,7 @@ import {
     List,
     Menu,
     Popup,
+    Responsive,
     Segment,
 } from 'semantic-ui-react'
 import AllowanceLister from '../features/allowancesList/AllowanceLister'
@@ -20,10 +21,30 @@ import pkg from '../../package.json'
 import AddressExtractor from '../components/AddressExtractor'
 import NetworkSelector from 'components/NetworkSelector'
 import GrantMessage from '../components/GrantMessage'
+import { ResponsiveOnUpdateData } from 'semantic-ui-react/dist/commonjs/addons/Responsive/Responsive'
+import { useDispatch } from 'react-redux'
+import { setMobile } from 'features/responsiveLayout/responsiveSlice'
 
 const App: React.FC = () => {
-    const HomepageHeading = (
-        <Segment inverted={false} textAlign='center' vertical>
+    const [prevMobile, setPrevMobile] = useState<boolean | undefined>(undefined)
+    const dispatch = useDispatch()
+
+    const onResponsiveUpdate = (
+        event: React.SyntheticEvent<HTMLElement>,
+        data: ResponsiveOnUpdateData
+    ) => {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+        // @ts-ignore
+        const isMobile = data.width <= Responsive.onlyMobile.maxWidth
+        console.log(`${isMobile} - ${data.width}`)
+        if (isMobile !== prevMobile) {
+            dispatch(setMobile(isMobile))
+            setPrevMobile(isMobile)
+        }
+    }
+
+    const DesktopHeading = (
+        <Segment textAlign='center' vertical>
             <Menu fixed='top' inverted size='huge'>
                 <Container>
                     <Menu.Item header as={Link} to='/'>
@@ -81,52 +102,164 @@ const App: React.FC = () => {
         </Segment>
     )
 
+    const MobileHeading = (
+        <>
+            <Container
+                text
+                style={{
+                    marginBottom: '1em',
+                }}
+            >
+                <Header
+                    as='h1'
+                    inverted={false}
+                    style={{
+                        marginTop: '0.2em',
+                    }}
+                >
+                    <Link to={'/'}>Token Allowance Checker</Link>
+                    <Header.Subheader>
+                        <p>Keep track of your token approvals</p>
+                    </Header.Subheader>
+                </Header>
+            </Container>
+            <GrantMessage />
+        </>
+    )
+
+    const startButton = (
+        <Segment basic textAlign='center'>
+            <Button primary as={Link} to='/address/' size='massive'>
+                Check Allowances
+                <Icon name='arrow right' />
+            </Button>
+        </Segment>
+    )
+
+    const footer = (
+        <Container textAlign='center'>
+            <Divider />
+            <Segment basic>
+                <List horizontal size={'small'}>
+                    <List.Item
+                        as='a'
+                        href='https://twitter.com/TripleSpeeder'
+                        target='_blank'
+                        rel='noopener noreferrer'
+                    >
+                        <Popup
+                            content='@triplespeeder'
+                            trigger={<Icon size='big' name='twitter' />}
+                        />
+                    </List.Item>
+                    <List.Item
+                        as='a'
+                        href='https://t.me/triplespeeder'
+                        target='_blank'
+                        rel='noopener noreferrer'
+                    >
+                        <Popup
+                            content='@triplespeeder'
+                            trigger={<Icon size='big' name='telegram' />}
+                        />
+                    </List.Item>
+                    <List.Item as='a' href='mailto:michael@m-bauer.org'>
+                        <Popup
+                            content='michael@m-bauer.org'
+                            trigger={<Icon size='big' name='mail outline' />}
+                        />
+                    </List.Item>
+                    <List.Item
+                        as='a'
+                        href='https://github.com/TripleSpeeder/token-allowance-checker'
+                        title='github.com/TripleSpeeder/token-allowance-checker'
+                        target='_blank'
+                        rel='noopener noreferrer'
+                    >
+                        <Popup
+                            content='github.com/TripleSpeeder/token-allowance-checker'
+                            trigger={<Icon size='big' name='github' />}
+                        />
+                    </List.Item>
+                    <List.Item
+                        as='a'
+                        href='https://www.reddit.com/u/TripleSpeeder'
+                        target='_blank'
+                        rel='noopener noreferrer'
+                    >
+                        <Popup
+                            content='u/TripleSpeeder'
+                            trigger={<Icon size='big' name='reddit' />}
+                        />
+                    </List.Item>
+                    <List.Item>
+                        <Popup
+                            content='Donate to tac.dappstar.eth'
+                            trigger={<Icon size='big' name={'ethereum'} />}
+                        />
+                    </List.Item>
+                </List>
+                <Header size={'small'}>
+                    powered by{' '}
+                    <a
+                        href='https://www.dfuse.io/'
+                        rel='noopener noreferrer'
+                        target='_blank'
+                    >
+                        dfuse
+                    </a>{' '}
+                    technology
+                </Header>
+                <Header size={'tiny'}>
+                    (c) Michael Bauer
+                    <Header.Subheader>v{pkg.version}</Header.Subheader>
+                </Header>
+            </Segment>
+        </Container>
+    )
+
     return (
-        <Router>
-            {HomepageHeading}
+        <Responsive
+            as={Router}
+            fireOnMount={true}
+            onUpdate={onResponsiveUpdate}
+        >
+            <Responsive {...Responsive.onlyMobile}>{MobileHeading}</Responsive>
+            <Responsive minWidth={Responsive.onlyTablet.minWidth}>
+                {DesktopHeading}
+            </Responsive>
             <Switch>
                 <Route path={['/address/:address', '/address']}>
                     <Container>
                         <OnboardGate>
                             <AddressExtractor>
-                                <Segment basic padded>
-                                    <AddressInputContainer />
-                                </Segment>
+                                <AddressInputContainer />
                                 <AllowanceLister />
                             </AddressExtractor>
                         </OnboardGate>
                     </Container>
                 </Route>
                 <Route path='/'>
-                    <Segment basic vertical style={{ paddingTop: '4em' }}>
+                    {startButton}
+                    <Segment basic vertical>
                         <Grid container stackable verticalAlign='top'>
                             <Grid.Row>
                                 <Grid.Column width={8}>
-                                    <Header as='h3' style={{ fontSize: '2em' }}>
-                                        Do you actually know who can spend your
-                                        tokens?
-                                    </Header>
-                                    <p style={{ fontSize: '1.33em' }}>
-                                        <em>Token Allowance Checker</em> helps
-                                        you keep track of which contracts you
-                                        have approved to spend your tokens.
-                                    </p>
-                                    <Header as='h3' style={{ fontSize: '2em' }}>
+                                    <Header as='h3'>
                                         Control your approvals
                                     </Header>
-                                    <p style={{ fontSize: '1.33em' }}>
-                                        <em>Token Allowance Checker</em> will
-                                        show you all approvals for
-                                        ERC20-compliant tokens, and the option
-                                        to change the approved amount - or
-                                        completely zero it.
+                                    <p>
+                                        <em>Token Allowance Checker</em> shows
+                                        all approvals for your ERC20-compliant
+                                        tokens, and the option to change the
+                                        approved amount - or completely zero it.
                                     </p>
                                 </Grid.Column>
-                                <Grid.Column floated='right' width={7}>
-                                    <Header as='h3' style={{ fontSize: '2em' }}>
+                                <Grid.Column width={8}>
+                                    <Header as='h3'>
                                         The unlimited approval problem
                                     </Header>
-                                    <p style={{ fontSize: '1.33em' }}>
+                                    <p>
                                         Many DApps have the habit of requiring
                                         you to approve effectively unlimited
                                         amount of tokens. This helps improving
@@ -134,14 +267,14 @@ const App: React.FC = () => {
                                         sign off an approval once and it will be
                                         enough for all future transactions.
                                     </p>
-                                    <p style={{ fontSize: '1.33em' }}>
+                                    <p>
                                         However this also means that the DApp
                                         (or the person/entity controlling it)
                                         can at any time transfer{' '}
                                         <em>all of your tokens</em>, without
                                         requiring any further approval.
                                     </p>
-                                    <p style={{ fontSize: '1.33em' }}>
+                                    <p>
                                         In addition, there is no concept of
                                         expiring approvals. Once approved, the
                                         approval will remain forever. If you do
@@ -153,85 +286,10 @@ const App: React.FC = () => {
                             </Grid.Row>
                         </Grid>
                     </Segment>
-                    <Segment basic textAlign='center'>
-                        <Button primary as={Link} to='/address/' size='massive'>
-                            Check Allowances
-                            <Icon name='arrow right' />
-                        </Button>
-                    </Segment>
                 </Route>
             </Switch>
-            <Segment basic>
-                <Divider />
-                <Container textAlign='center'>
-                    <List horizontal>
-                        <List.Item
-                            as='a'
-                            href='https://twitter.com/TripleSpeeder'
-                            target='_blank'
-                        >
-                            <Popup
-                                content='@triplespeeder'
-                                trigger={<Icon size='big' name='twitter' />}
-                            />
-                        </List.Item>
-                        <List.Item
-                            as='a'
-                            href='https://t.me/triplespeeder'
-                            target='_blank'
-                        >
-                            <Popup
-                                content='@triplespeeder'
-                                trigger={<Icon size='big' name='telegram' />}
-                            />
-                        </List.Item>
-                        <List.Item as='a' href='mailto:michael@m-bauer.org'>
-                            <Popup
-                                content='michael@m-bauer.org'
-                                trigger={
-                                    <Icon size='big' name='mail outline' />
-                                }
-                            />
-                        </List.Item>
-                        <List.Item
-                            as='a'
-                            href='https://github.com/TripleSpeeder'
-                            target='_blank'
-                        >
-                            <Popup
-                                content='github.com/TripleSpeeder'
-                                trigger={<Icon size='big' name='github' />}
-                            />
-                        </List.Item>
-                        <List.Item
-                            as='a'
-                            href='https://www.reddit.com/u/TripleSpeeder'
-                            target='_blank'
-                        >
-                            <Popup
-                                content='u/TripleSpeeder'
-                                trigger={<Icon size='big' name='reddit' />}
-                            />
-                        </List.Item>
-                    </List>
-                    <span style={{ fontSize: '1em', float: 'left' }}>
-                        v{pkg.version} <Icon name='copyright outline' /> Michael
-                        Bauer
-                    </span>
-                    <Popup
-                        content={
-                            'Want to support this project? Please donate to tac.dappstar.eth'
-                        }
-                        trigger={
-                            <span style={{ fontSize: '1em', float: 'right' }}>
-                                <Icon name={'ethereum'} />{' '}
-                                <strong>tac.dappstar.eth</strong>
-                            </span>
-                        }
-                    />
-                </Container>
-            </Segment>
-        </Router>
+            {footer}
+        </Responsive>
     )
 }
 

@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import AddressInput from './AddressInput'
 import { useHistory } from 'react-router-dom'
 import { Form, Grid } from 'semantic-ui-react'
@@ -17,12 +17,46 @@ const AddressInputContainer = () => {
     const dispatch = useDispatch()
     const history = useHistory()
     const { web3 } = useSelector((state: RootState) => state.onboard)
+    const { mobile } = useSelector((state: RootState) => state.respsonsive)
+    const checkAddress = useSelector((state: RootState) => {
+        if (state.addresses.checkAddressId)
+            return state.addresses.addressesById[state.addresses.checkAddressId]
+        else return undefined
+    })
     const [addressInputState, setAddressInputState] = useState(
         addressInputStates.ADDRESS_INITIAL
     )
     const [input, setInput] = useState('')
     const [addressId, setAddressId] = useState('')
     const [ensName, setEnsName] = useState<string | undefined>(undefined)
+
+    // keep address input field in sync with address from url params
+    useEffect(() => {
+        if (checkAddress) {
+            console.log(
+                `CheckAddress: ${checkAddress.ensName ?? checkAddress.address}`
+            )
+            setInput(checkAddress.ensName ?? checkAddress.address)
+        } else {
+            console.log(`CheckAddress undefined`)
+        }
+    }, [checkAddress, setInput])
+
+    const error = addressInputState === addressInputStates.ADDRESS_INVALID
+    const loading = addressInputState === addressInputStates.ADDRESS_RESOLVING
+    const validInput = addressInputState === addressInputStates.ADDRESS_VALID
+
+    const handleSubmit = () => {
+        if (validInput) {
+            if (ensName) {
+                dispatch(addAddressThunk(ensName, history))
+            } else {
+                dispatch(addAddressThunk(addressId, history))
+            }
+            setInput('')
+            setEnsName(undefined)
+        }
+    }
 
     const handleInput = async (input: string) => {
         setInput(input)
@@ -42,6 +76,9 @@ const AddressInputContainer = () => {
                     setAddressInputState(addressInputStates.ADDRESS_VALID)
                     setAddressId(resolvedAddress)
                     setEnsName(input)
+                    if (mobile) {
+                        dispatch(addAddressThunk(input, history))
+                    }
                 } catch (e) {
                     console.log('Could not resolve ' + input)
                     setAddressInputState(addressInputStates.ADDRESS_INVALID)
@@ -51,26 +88,33 @@ const AddressInputContainer = () => {
                 const addressId = input.toLowerCase()
                 setAddressId(addressId)
                 setAddressInputState(addressInputStates.ADDRESS_VALID)
+                if (mobile) {
+                    dispatch(addAddressThunk(addressId, history))
+                }
             } else {
                 setAddressInputState(addressInputStates.ADDRESS_INVALID)
             }
         }
     }
 
-    const error = addressInputState === addressInputStates.ADDRESS_INVALID
-    const loading = addressInputState === addressInputStates.ADDRESS_RESOLVING
-    const validInput = addressInputState === addressInputStates.ADDRESS_VALID
-
-    const handleSubmit = () => {
-        if (validInput) {
-            if (ensName) {
-                dispatch(addAddressThunk(ensName, history))
-            } else {
-                dispatch(addAddressThunk(addressId, history))
-            }
-            setInput('')
-            setEnsName(undefined)
-        }
+    if (mobile) {
+        return (
+            <Form
+                onSubmit={handleSubmit}
+                error={error}
+                success={validInput}
+                loading={loading}
+            >
+                <AddressInput
+                    handleInput={handleInput}
+                    value={input}
+                    error={error}
+                    success={validInput}
+                    loading={loading}
+                    mobile={mobile}
+                />
+            </Form>
+        )
     }
 
     return (
@@ -91,6 +135,7 @@ const AddressInputContainer = () => {
                                 error={error}
                                 success={validInput}
                                 loading={loading}
+                                mobile={mobile}
                             />
                         </Form.Group>
                     </Form>

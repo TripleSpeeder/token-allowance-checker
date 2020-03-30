@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import 'semantic-ui-css/semantic.min.css'
-import { Segment } from 'semantic-ui-react'
+import { Divider, Segment } from 'semantic-ui-react'
 import AllowancesListContainer from './AllowancesListContainer'
 import AllowancesListFilter from '../allowancesListFilter/AllowancesListFilter'
 import { useDispatch, useSelector } from 'react-redux'
@@ -10,6 +10,7 @@ import EditAllowanceFormContainer from '../editAllowance/EditAllowanceFormContai
 
 const AllowanceLister = () => {
     const dispatch = useDispatch()
+    const { mobile } = useSelector((state: RootState) => state.respsonsive)
     const address = useSelector((state: RootState) => {
         if (state.addresses.checkAddressId) {
             return state.addresses.addressesById[state.addresses.checkAddressId]
@@ -72,27 +73,54 @@ const AllowanceLister = () => {
         return <div>No address set</div>
     }
 
-    return (
-        <React.Fragment>
-            <Segment basic>
-                <h2>Allowances of {address?.ensName ?? address?.address}:</h2>
-            </Segment>
-            <AllowancesListFilter
-                showZeroAllowances={showZeroAllowances}
-                toggleShowZeroAllowances={toggleShowZeroAllowances}
-                addressFilterValue={addressFilter}
-                handleAddressFilterChange={handleAddressFilterChange}
-                clearAddressFilter={clearAddressFilter}
-                refresh={handleRefreshClick}
-            />
-            <AllowancesListContainer
-                ownerId={address.address}
-                showZeroAllowances={showZeroAllowances}
-                addressFilter={addressFilter}
-            />
-            {showEditAllowanceModal && <EditAllowanceFormContainer />}
-        </React.Fragment>
-    )
+    if (mobile) {
+        return (
+            <>
+                <Divider />
+                <AllowancesListFilter
+                    showZeroAllowances={showZeroAllowances}
+                    toggleShowZeroAllowances={toggleShowZeroAllowances}
+                    addressFilterValue={addressFilter}
+                    handleAddressFilterChange={handleAddressFilterChange}
+                    clearAddressFilter={clearAddressFilter}
+                    refresh={handleRefreshClick}
+                    mobile={mobile}
+                />
+                <Divider />
+                <AllowancesListContainer
+                    ownerId={address.address}
+                    showZeroAllowances={showZeroAllowances}
+                    addressFilter={addressFilter}
+                />
+                {showEditAllowanceModal && <EditAllowanceFormContainer />}
+            </>
+        )
+    } else {
+        return (
+            <React.Fragment>
+                <Segment basic>
+                    <h2>
+                        Allowances of {address?.ensName ?? address?.address}:
+                    </h2>
+                </Segment>
+                <AllowancesListFilter
+                    showZeroAllowances={showZeroAllowances}
+                    toggleShowZeroAllowances={toggleShowZeroAllowances}
+                    addressFilterValue={addressFilter}
+                    handleAddressFilterChange={handleAddressFilterChange}
+                    clearAddressFilter={clearAddressFilter}
+                    refresh={handleRefreshClick}
+                    mobile={mobile}
+                />
+                <AllowancesListContainer
+                    ownerId={address.address}
+                    showZeroAllowances={showZeroAllowances}
+                    addressFilter={addressFilter}
+                />
+                {showEditAllowanceModal && <EditAllowanceFormContainer />}
+            </React.Fragment>
+        )
+    }
 }
 
 export default AllowanceLister

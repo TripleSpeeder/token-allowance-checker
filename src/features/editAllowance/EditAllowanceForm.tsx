@@ -1,12 +1,14 @@
 import React from 'react'
 import { Form, Grid, Header, Input, Message, Modal } from 'semantic-ui-react'
+import AddressDisplay from '../../components/AddressDisplay'
+import { EthAddress } from '../addressInput/AddressSlice'
 
 interface EditAllowanceFormProps {
+    mobile: boolean
     tokenName: string
     tokenSymbol: string
     tokenAddress: string
-    spenderAddress: string
-    spenderENSName: string
+    spender: EthAddress
     currentAllowance: string
     newAllowance: string
     handleChange: (e: React.FormEvent<EventTarget>) => void
@@ -15,54 +17,85 @@ interface EditAllowanceFormProps {
 }
 
 const EditAllowanceForm = ({
+    mobile,
     tokenName,
     handleChange,
-    tokenAddress,
-    spenderAddress,
+    tokenSymbol,
+    spender,
     currentAllowance,
     newAllowance,
     handleClose,
     handleSubmit,
 }: EditAllowanceFormProps) => {
-    let headline = tokenName
-    if (headline === '') {
-        headline = `Unnamed ERC20 at ${tokenAddress}`
+    const size = mobile ? 'small' : 'huge'
+    const spenderAddressDisplay = (
+        <AddressDisplay
+            ethAddress={spender}
+            mobile={mobile}
+            networkId={1}
+            inline={true}
+        />
+    )
+    let inputElem
+    if (mobile) {
+        inputElem = (
+            <>
+                <label>New Allowance</label>
+                <Input
+                    placeholder='Enter amount'
+                    type={'number'}
+                    name={'newAllowance'}
+                    onChange={handleChange}
+                    value={newAllowance}
+                    fluid={true}
+                />
+            </>
+        )
+    } else {
+        inputElem = (
+            <Input
+                label={{
+                    tag: true,
+                    content: 'Enter new allowance',
+                }}
+                labelPosition='right'
+                placeholder='Enter amount'
+                type={'number'}
+                name={'newAllowance'}
+                onChange={handleChange}
+                value={newAllowance}
+            />
+        )
     }
     return (
         <Modal open={true} size={'small'} onClose={handleClose}>
             <Header>Edit Allowance</Header>
             <Modal.Content>
-                <Message size={'huge'}>
+                <Message size={size}>
                     <Message.List>
-                        <Message.Item>Token: {headline}</Message.Item>
-                        <Message.Item>Spender: {spenderAddress}</Message.Item>
                         <Message.Item>
-                            Current allowance: {currentAllowance}
+                            Token: <strong>{tokenName}</strong>
+                        </Message.Item>
+                        <Message.Item>
+                            Spender: {spenderAddressDisplay}
+                        </Message.Item>
+                        <Message.Item>
+                            Current allowance:{' '}
+                            <strong>
+                                {currentAllowance} {tokenSymbol}
+                            </strong>
                         </Message.Item>
                     </Message.List>
                 </Message>
-                <Form size={'huge'} onSubmit={handleSubmit}>
-                    <Form.Field required>
-                        <Input
-                            label={{
-                                tag: true,
-                                content: 'Enter new allowance',
-                            }}
-                            labelPosition='right'
-                            placeholder='Enter amount'
-                            type={'number'}
-                            name={'newAllowance'}
-                            onChange={handleChange}
-                            value={newAllowance}
-                        />
-                    </Form.Field>
+                <Form size={'size'} onSubmit={handleSubmit}>
+                    <Form.Field required>{inputElem}</Form.Field>
                     <Grid columns={2}>
                         <Grid.Row>
                             <Grid.Column>
                                 <Form.Button
                                     type={'button'}
                                     fluid
-                                    size={'huge'}
+                                    size={size}
                                     negative
                                     onClick={handleClose}
                                 >
@@ -73,7 +106,7 @@ const EditAllowanceForm = ({
                                 <Form.Button
                                     type={'submit'}
                                     fluid
-                                    size={'huge'}
+                                    size={size}
                                     positive
                                 >
                                     Set allowance
