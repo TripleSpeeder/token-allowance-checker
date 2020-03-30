@@ -1,9 +1,10 @@
 import React, { useEffect } from 'react'
-import { Icon, Message, Segment } from 'semantic-ui-react'
+import { Icon } from 'semantic-ui-react'
 import { useHistory } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
 import { RootState } from '../../app/rootReducer'
 import { initialize, selectWallet } from './onboardSlice'
+import DisplayMessage from '../../components/DisplayMessage'
 
 interface OnboardGateProps {
     children?: React.ReactNode
@@ -14,6 +15,7 @@ const OnboardGate = ({ children }: OnboardGateProps) => {
     const { onboardAPI, walletSelected } = useSelector(
         (state: RootState) => state.onboard
     )
+    const mobile = useSelector((state: RootState) => state.respsonsive.mobile)
 
     useEffect(() => {
         if (!onboardAPI) {
@@ -31,15 +33,13 @@ const OnboardGate = ({ children }: OnboardGateProps) => {
         return <React.Fragment>{children}</React.Fragment>
     } else {
         return (
-            <Segment basic padded='very' textAlign={'center'}>
-                <Message info icon size={'huge'}>
-                    <Icon name='spinner' loading />
-                    <Message.Content>
-                        <Message.Header>Waiting for wallet</Message.Header>
-                        Please complete wallet selection.
-                    </Message.Content>
-                </Message>
-            </Segment>
+            <DisplayMessage
+                mobile={mobile}
+                header={'Waiting for wallet'}
+                body={'Please complete wallet selection'}
+                icon={<Icon name='spinner' loading />}
+                info={true}
+            />
         )
     }
 }
