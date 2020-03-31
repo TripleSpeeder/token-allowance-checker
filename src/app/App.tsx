@@ -99,14 +99,7 @@ const App: React.FC = () => {
                 >
                     Token Allowance Checker
                     <Header.Subheader>
-                        powered by{' '}
-                        <a
-                            href='https://www.dfuse.io/'
-                            rel='noopener noreferrer'
-                            target='_blank'
-                        >
-                            dfuse
-                        </a>
+                        Control your token approvals
                     </Header.Subheader>
                 </Header>
             </Container>
