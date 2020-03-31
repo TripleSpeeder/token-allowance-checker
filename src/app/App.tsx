@@ -49,11 +49,21 @@ const App: React.FC = () => {
         <Segment textAlign='center' vertical>
             <Menu fixed='top' inverted size='huge'>
                 <Container>
-                    <Menu.Item header as={Link} to='/' title={'Home'}>
-                        <Image src={'/logo192.png'} width={45} height={40} />
+                    <Menu.Item
+                        header
+                        as={Link}
+                        to='/'
+                        title={'Home'}
+                        style={{ padding: '0px' }}
+                    >
+                        <Image src={'/logo192.png'} width={60} height={60} />
                     </Menu.Item>
-                    <Menu.Item as={Link} to='/address/'>
-                        <Icon name='search' size='big' /> Check Allowances
+                    <Menu.Item
+                        as={Link}
+                        to='/address/'
+                        title={'Check Allowances'}
+                    >
+                        <Icon name='search' size={'large'} /> Check Allowances
                     </Menu.Item>
                     <Menu.Menu position='right'>
                         <Menu.Item>
