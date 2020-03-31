@@ -1,17 +1,20 @@
 import React from 'react'
-import { Icon, Popup } from 'semantic-ui-react'
+import { Icon, Popup, Item } from 'semantic-ui-react'
 import { EthAddress } from 'features/addressInput/AddressSlice'
-import { useSelector } from 'react-redux'
-import { RootState } from '../app/rootReducer'
 
 interface AddressDisplayProps {
     ethAddress: EthAddress
+    mobile: boolean
+    networkId: number
+    inline?: boolean
 }
 
-const AddressDisplay = ({ ethAddress }: AddressDisplayProps) => {
-    const networkId: number = useSelector(
-        (state: RootState) => state.onboard.networkId
-    )
+const AddressDisplay = ({
+    ethAddress,
+    mobile,
+    networkId,
+    inline,
+}: AddressDisplayProps) => {
     const { address, ensName, esContractName } = ethAddress
     const setClipboard = (content: string) => {
         navigator.clipboard.writeText(content).then(
@@ -26,9 +29,9 @@ const AddressDisplay = ({ ethAddress }: AddressDisplayProps) => {
 
     let contractName
     if (ensName) {
-        contractName = `Reverse ENS: ${ensName}`
+        contractName = `${ensName}`
     } else if (esContractName) {
-        contractName = `Contract: ${esContractName}`
+        contractName = `${esContractName}`
     }
 
     let etherscanUrl: string
@@ -43,81 +46,143 @@ const AddressDisplay = ({ ethAddress }: AddressDisplayProps) => {
             etherscanUrl = `https://etherscan.io/address/${address}`
     }
 
-    if (contractName) {
-        return (
-            <>
-                <div>
-                    <strong>{contractName}</strong>
-                </div>
-                <div>
-                    <small>
-                        {address}&nbsp;
-                        <Popup
-                            mouseEnterDelay={500}
-                            content={'Copy to clipboard'}
-                            trigger={
-                                <Icon
-                                    circular
-                                    name={'copy outline'}
-                                    size={'small'}
-                                    onClick={() => {
-                                        setClipboard(address)
-                                    }}
-                                />
-                            }
-                        />
-                        <Popup
-                            mouseEnterDelay={500}
-                            content={'View on Etherscan'}
-                            trigger={
-                                <Icon
-                                    circular
-                                    name={'external square'}
-                                    size={'small'}
-                                    onClick={() => {
-                                        window.open(etherscanUrl, '_blank')
-                                    }}
-                                />
-                            }
-                        />
-                    </small>
-                </div>
-            </>
-        )
-    } else {
-        return (
+    if (mobile) {
+        const shortAddress =
+            address.substr(0, 6) + '...' + address.substr(-6, 6)
+        const contractNameString = esContractName && (
             <div>
-                {address}&nbsp;
-                <Popup
-                    mouseEnterDelay={500}
-                    content={'Copy to clipboard'}
-                    trigger={
+                Contract name: <strong>{esContractName}</strong>
+            </div>
+        )
+        const ensNameString = ensName && (
+            <div>
+                ENS name: <strong>{ensName}</strong>
+            </div>
+        )
+        const popupContent = (
+            <Item>
+                <Item.Content>
+                    <Item.Header>{address}</Item.Header>
+                    <Item.Content>
+                        {contractNameString}
+                        {ensNameString}
+                    </Item.Content>
+                    <Item.Extra>
                         <Icon
+                            link
                             circular
                             name={'copy outline'}
-                            size={'small'}
                             onClick={() => {
                                 setClipboard(address)
                             }}
                         />
-                    }
-                />
-                <Popup
-                    mouseEnterDelay={500}
-                    content={'View on Etherscan'}
-                    trigger={
                         <Icon
+                            link
                             circular
                             name={'external square'}
-                            size={'small'}
                             onClick={() => {
                                 window.open(etherscanUrl, '_blank')
                             }}
                         />
-                    }
-                />
-            </div>
+                    </Item.Extra>
+                </Item.Content>
+            </Item>
         )
+        let popupTrigger
+        if (inline) {
+            popupTrigger = <strong>{contractName ?? shortAddress}</strong>
+        } else {
+            popupTrigger = (
+                <div>
+                    <strong>{contractName ?? shortAddress}</strong>
+                </div>
+            )
+        }
+        return (
+            <Popup on={'click'} content={popupContent} trigger={popupTrigger} />
+        )
+    } else {
+        const copyPopup = (
+            <Popup
+                mouseEnterDelay={500}
+                content={'Copy to clipboard'}
+                trigger={
+                    <Icon
+                        circular
+                        name={'copy outline'}
+                        size={'small'}
+                        onClick={() => {
+                            setClipboard(address)
+                        }}
+                    />
+                }
+            />
+        )
+        const etherscanPopup = (
+            <Popup
+                mouseEnterDelay={500}
+                content={'View on Etherscan'}
+                trigger={
+                    <Icon
+                        circular
+                        name={'external square'}
+                        size={'small'}
+                        onClick={() => {
+                            window.open(etherscanUrl, '_blank')
+                        }}
+                    />
+                }
+            />
+        )
+
+        if (contractName) {
+            if (inline) {
+                return (
+                    <>
+                        <strong>{contractName}</strong> (
+                        <small>
+                            {address}&nbsp;
+                            {copyPopup}
+                            {etherscanPopup}
+                        </small>
+                        )
+                    </>
+                )
+            } else {
+                return (
+                    <>
+                        <div>
+                            <strong>{contractName}</strong>
+                        </div>
+                        <div>
+                            <small>
+                                {address}&nbsp;
+                                {copyPopup}
+                                {etherscanPopup}
+                            </small>
+                        </div>
+                    </>
+                )
+            }
+        } else {
+            if (inline) {
+                return (
+                    <span>
+                        {address}&nbsp;
+                        {copyPopup}
+                        {etherscanPopup}
+                    </span>
+                )
+            } else {
+                return (
+                    <div>
+                        {address}&nbsp;
+                        {copyPopup}
+                        {etherscanPopup}
+                    </div>
+                )
+            }
+        }
     }
 }
 

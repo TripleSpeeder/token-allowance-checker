@@ -27,6 +27,7 @@ const EditAllowanceFormContainer = () => {
     const spender = useSelector(
         (state: RootState) => state.addresses.addressesById[allowance.spenderId]
     )
+    const mobile = useSelector((state: RootState) => state.respsonsive.mobile)
     const [newAllowance, setNewAllowance] = useState('0')
 
     const convertAllowanceToDisplaystring = useCallback(() => {
@@ -48,7 +49,7 @@ const EditAllowanceFormContainer = () => {
 
     const handleAllowanceInputChange = (e: React.FormEvent<EventTarget>) => {
         let { value } = e.target as HTMLInputElement
-        console.log(`handleChange: ${value}`)
+        // console.log(`handleChange: ${value}`)
         if (parseFloat(value) < 0) {
             value = '0'
         }
@@ -74,15 +75,18 @@ const EditAllowanceFormContainer = () => {
         )
     }
 
+    const tokenName =
+        tokenContract.name !== '' ? tokenContract.name : 'Unnamed ERC20'
+
     return (
         <EditAllowanceForm
+            mobile={mobile}
             newAllowance={newAllowance}
             currentAllowance={convertAllowanceToDisplaystring()}
             tokenAddress={tokenContract.addressId}
             handleClose={handleClose}
-            spenderAddress={spender.address}
-            spenderENSName={spender.ensName || ''}
-            tokenName={tokenContract.name}
+            spender={spender}
+            tokenName={tokenName}
             handleChange={handleAllowanceInputChange}
             handleSubmit={handleSubmit}
             tokenSymbol={tokenContract.symbol}

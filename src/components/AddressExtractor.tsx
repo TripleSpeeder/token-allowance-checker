@@ -7,8 +7,9 @@ import {
 } from '../features/addressInput/AddressSlice'
 import { useDispatch, useSelector } from 'react-redux'
 import { RootState } from '../app/rootReducer'
-import { Icon, Message, Segment } from 'semantic-ui-react'
+import { Icon } from 'semantic-ui-react'
 import { useHistory } from 'react-router'
+import DisplayMessage from './DisplayMessage'
 
 interface AddressExtractorProps {
     children?: React.ReactNode
@@ -26,6 +27,7 @@ const AddressExtractor: FunctionComponent = ({
     const walletAddressId = useSelector(
         (state: RootState) => state.addresses.walletAddressId
     )
+    const mobile = useSelector((state: RootState) => state.respsonsive.mobile)
     const [prevAddressFromParams, setPrevAddressFromParams] = useState('')
 
     // watch url params address change
@@ -45,7 +47,7 @@ const AddressExtractor: FunctionComponent = ({
         } else if (walletAddressId) {
             console.log(`No address in params. Trying fallback to wallet.`)
             // no address provided via url. Fall back to wallet address.
-            dispatch(redirectToAddress(walletAddressId, history))
+            dispatch(redirectToAddress(walletAddressId, history, true))
         }
     }, [
         addressFromParams,
@@ -57,29 +59,25 @@ const AddressExtractor: FunctionComponent = ({
 
     if (checkAddressState === CheckAddressStates.Invalid) {
         return (
-            <Segment basic padded='very' textAlign={'center'}>
-                <Message error icon size={'huge'}>
-                    <Icon name='exclamation triangle' />
-                    <Message.Content>
-                        <Message.Header>Invalid address</Message.Header>
-                        {`Address ${addressFromParams} is invalid`}
-                    </Message.Content>
-                </Message>
-            </Segment>
+            <DisplayMessage
+                mobile={mobile}
+                header={'Invalid address'}
+                body={`Address ${addressFromParams} is invalid`}
+                icon={<Icon name='exclamation triangle' />}
+                error={true}
+            />
         )
     }
 
     if (checkAddressState === CheckAddressStates.Resolving) {
         return (
-            <Segment basic padded='very' textAlign={'center'}>
-                <Message icon warning size={'huge'}>
-                    <Icon name='circle notched' loading />
-                    <Message.Content>
-                        <Message.Header>Checking address</Message.Header>
-                        <div>{`Checking address ${addressFromParams}`}</div>
-                    </Message.Content>
-                </Message>
-            </Segment>
+            <DisplayMessage
+                mobile={mobile}
+                header={'Checking address'}
+                body={`Checking address ${addressFromParams}`}
+                icon={<Icon name='circle notched' loading />}
+                warning={true}
+            />
         )
     }
 

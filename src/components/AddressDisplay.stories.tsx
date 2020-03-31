@@ -48,21 +48,81 @@ const AddressDisplayProps = {
 }
 
 export const resolving = () => (
-    <AddressDisplay ethAddress={AddressDisplayProps.resolvingAddress} />
+    <AddressDisplay
+        ethAddress={AddressDisplayProps.resolvingAddress}
+        mobile={false}
+        networkId={1}
+    />
 )
 
 export const noENS = () => (
-    <AddressDisplay ethAddress={AddressDisplayProps.resolvedWithoutEns} />
+    <AddressDisplay
+        ethAddress={AddressDisplayProps.resolvedWithoutEns}
+        mobile={false}
+        networkId={1}
+    />
 )
 
 export const withENS = () => (
-    <AddressDisplay ethAddress={AddressDisplayProps.resolvedAddress} />
+    <AddressDisplay
+        ethAddress={AddressDisplayProps.resolvedAddress}
+        mobile={false}
+        networkId={1}
+    />
 )
 
 export const withEs = () => (
-    <AddressDisplay ethAddress={AddressDisplayProps.resolvedWithEsName} />
+    <AddressDisplay
+        ethAddress={AddressDisplayProps.resolvedWithEsName}
+        mobile={false}
+        networkId={1}
+    />
 )
 
-export const withAll = () => (
-    <AddressDisplay ethAddress={AddressDisplayProps.resolvedWithAllNames} />
+export const withEnsAndEs = () => (
+    <AddressDisplay
+        ethAddress={AddressDisplayProps.resolvedWithAllNames}
+        mobile={false}
+        networkId={1}
+    />
+)
+
+export const mobileResolving = () => (
+    <AddressDisplay
+        ethAddress={AddressDisplayProps.resolvingAddress}
+        mobile={true}
+        networkId={1}
+    />
+)
+
+export const mobileNoENS = () => (
+    <AddressDisplay
+        ethAddress={AddressDisplayProps.resolvedWithoutEns}
+        mobile={true}
+        networkId={1}
+    />
+)
+
+export const mobileWithENS = () => (
+    <AddressDisplay
+        ethAddress={AddressDisplayProps.resolvedAddress}
+        mobile={true}
+        networkId={1}
+    />
+)
+
+export const mobileWithEs = () => (
+    <AddressDisplay
+        ethAddress={AddressDisplayProps.resolvedWithEsName}
+        mobile={true}
+        networkId={1}
+    />
+)
+
+export const mobileWithEnsAndEs = () => (
+    <AddressDisplay
+        ethAddress={AddressDisplayProps.resolvedWithAllNames}
+        mobile={true}
+        networkId={1}
+    />
 )

@@ -4,8 +4,10 @@ import _ from 'lodash'
 import { RootState } from '../../app/rootReducer'
 import TokenAllowancesItem from './TokenAllowancesItem'
 import { QueryStates } from './AllowancesListSlice'
-import { Segment, Message, Icon } from 'semantic-ui-react'
+import { Icon } from 'semantic-ui-react'
 import { AddressId } from '../addressInput/AddressSlice'
+import DisplayMessage from '../../components/DisplayMessage'
+import AddressDisplay from '../../components/AddressDisplay'
 
 interface AllowancesListContainerProps {
     ownerId: AddressId
@@ -91,6 +93,8 @@ const AllowancesListContainer = ({
     const ownerAddress = useSelector(
         (state: RootState) => state.addresses.addressesById[ownerId]
     )
+    const mobile = useSelector((state: RootState) => state.respsonsive.mobile)
+    const networkId = useSelector((state: RootState) => state.onboard.networkId)
 
     if (!queryState) {
         console.log(`No querystate available for ${ownerId}`)
@@ -115,47 +119,48 @@ const AllowancesListContainer = ({
     switch (queryState.state) {
         case QueryStates.QUERY_STATE_RUNNING:
             message = (
-                <Segment basic padded='very' textAlign={'center'}>
-                    <Message icon warning size={'huge'}>
-                        <Icon name='circle notched' loading />
-                        <Message.Content>
-                            <Message.Header>Loading events</Message.Header>
-                            <div>
-                                Querying dfuse API for ERC20 Approvals, getting
-                                page {queryState.currentPage + 1}...
-                            </div>
-                        </Message.Content>
-                    </Message>
-                </Segment>
+                <DisplayMessage
+                    mobile={mobile}
+                    header={'Loading events'}
+                    body={`Querying dfuse API for ERC20 Approvals, getting page ${queryState.currentPage +
+                        1}...`}
+                    warning={true}
+                    icon={<Icon name='circle notched' loading />}
+                />
             )
             break
         case QueryStates.QUERY_STATE_ERROR:
             message = (
-                <Segment basic padded='very' textAlign={'center'}>
-                    <Message error icon size={'huge'}>
-                        <Icon name='exclamation triangle' />
-                        <Message.Content>
-                            <Message.Header>Error</Message.Header>
-                            {queryState.error}
-                        </Message.Content>
-                    </Message>
-                </Segment>
+                <DisplayMessage
+                    mobile={mobile}
+                    error={true}
+                    header={'Error'}
+                    icon={<Icon name='exclamation triangle' />}
+                    body={queryState.error}
+                />
             )
             break
         case QueryStates.QUERY_STATE_COMPLETE:
             if (items.length === 0) {
+                const body = (
+                    <>
+                        <AddressDisplay
+                            ethAddress={ownerAddress}
+                            mobile={mobile}
+                            networkId={networkId}
+                            inline={true}
+                        />{' '}
+                        has no approvals.
+                    </>
+                )
                 message = (
-                    <Segment basic padded='very' textAlign={'center'}>
-                        <Message success icon size={'huge'}>
-                            <Icon name='info' />
-                            <Message.Content>
-                                <Message.Header>No Approvals</Message.Header>
-                                {ownerAddress.ensName ??
-                                    ownerAddress.address}{' '}
-                                has no Approvals.
-                            </Message.Content>
-                        </Message>
-                    </Segment>
+                    <DisplayMessage
+                        mobile={mobile}
+                        success={true}
+                        icon={<Icon name='info' />}
+                        header={'No Approvals'}
+                        body={body}
+                    />
                 )
             }
             break

@@ -33,6 +33,9 @@ const TokenAllowanceItem = ({ allowanceId }: TokenAllowanceItemProps) => {
     const spenderAddress = useSelector(
         (state: RootState) => state.addresses.addressesById[allowance.spenderId]
     )
+    const { mobile } = useSelector((state: RootState) => state.respsonsive)
+    const { networkId } = useSelector((state: RootState) => state.onboard)
+
     // lazy-load allowance value
     useEffect(() => {
         if (allowanceValue.state === QueryStates.QUERY_STATE_INITIAL) {
@@ -72,7 +75,11 @@ const TokenAllowanceItem = ({ allowanceId }: TokenAllowanceItemProps) => {
     return (
         <Table.Row key={`${allowanceId}`}>
             <Table.Cell>
-                <AddressDisplay ethAddress={spenderAddress} />
+                <AddressDisplay
+                    ethAddress={spenderAddress}
+                    networkId={networkId}
+                    mobile={mobile}
+                />
             </Table.Cell>
             <Table.Cell negative={criticalAllowance}>
                 {allowanceElement}

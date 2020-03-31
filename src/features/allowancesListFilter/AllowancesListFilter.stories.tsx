@@ -11,7 +11,7 @@ export default {
     ],
 }
 
-export const normal = () => (
+export const mobile = () => (
     <AllowancesListFilter
         showZeroAllowances={true}
         toggleShowZeroAllowances={action('toggleShowZero')}
@@ -19,5 +19,17 @@ export const normal = () => (
         handleAddressFilterChange={action('addressFilterChange')}
         clearAddressFilter={action('clearAddressFilter')}
         refresh={action('refresh')}
+        mobile={true}
+    />
+)
+export const desktop = () => (
+    <AllowancesListFilter
+        showZeroAllowances={true}
+        toggleShowZeroAllowances={action('toggleShowZero')}
+        addressFilterValue={''}
+        handleAddressFilterChange={action('addressFilterChange')}
+        clearAddressFilter={action('clearAddressFilter')}
+        refresh={action('refresh')}
+        mobile={false}
     />
 )
