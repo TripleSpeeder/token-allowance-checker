@@ -13,6 +13,7 @@ import {
     Popup,
     Responsive,
     Segment,
+    Image,
 } from 'semantic-ui-react'
 import AllowanceLister from '../features/allowancesList/AllowanceLister'
 import OnboardGate from '../features/onboard/OnboardGate'
@@ -36,7 +37,6 @@ const App: React.FC = () => {
         // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
         // @ts-ignore
         const isMobile = data.width <= Responsive.onlyMobile.maxWidth
-        console.log(`${isMobile} - ${data.width}`)
         if (isMobile !== prevMobile) {
             dispatch(setMobile(isMobile))
             setPrevMobile(isMobile)
@@ -47,8 +47,8 @@ const App: React.FC = () => {
         <Segment textAlign='center' vertical>
             <Menu fixed='top' inverted size='huge'>
                 <Container>
-                    <Menu.Item header as={Link} to='/'>
-                        <Icon name='home' size='big' /> Home
+                    <Menu.Item header as={Link} to='/' title={'Home'}>
+                        <Image src={'/logo192.png'} width={45} height={40} />
                     </Menu.Item>
                     <Menu.Item as={Link} to='/address/'>
                         <Icon name='search' size='big' /> Check Allowances
