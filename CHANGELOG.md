@@ -2,6 +2,41 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.3.0](https://github.com/TripleSpeeder/token-allowance-checker/compare/v2.2.2...v2.3.0) (2020-03-31)
+
+
+### Features
+
+* add 'inline' option to AddressDisplay ([5c9adae](https://github.com/TripleSpeeder/token-allowance-checker/commit/5c9adae19fd2971a780585f51ea06a2c83b9d120))
+* add mobile render path ([b599b26](https://github.com/TripleSpeeder/token-allowance-checker/commit/b599b26ba0e4a199ef6e2d22b324134a85cebfee))
+* add twitter card markup ([b0a13f6](https://github.com/TripleSpeeder/token-allowance-checker/commit/b0a13f6c5833938da3cfc7fdbe778a178e46a52a))
+* initial support for imToken wallet ([c7a1e56](https://github.com/TripleSpeeder/token-allowance-checker/commit/c7a1e5618b6a5cd56da477c409b3878ee01dbf47))
+
+
+### Bug Fixes
+
+* add bottom margin for grant message ([3399204](https://github.com/TripleSpeeder/token-allowance-checker/commit/33992043130d1def66d050f460fa16cd8190ee97))
+* add logo ([d680d72](https://github.com/TripleSpeeder/token-allowance-checker/commit/d680d72f7c01d590f0d99eaf843488cbdc144cd9))
+* check if selected wallet really is imToken wallet ([14ae7ec](https://github.com/TripleSpeeder/token-allowance-checker/commit/14ae7eca72b0442d751d210b8f2bb570ff413478))
+* dont crash when wallet connection is removed ([d347a4c](https://github.com/TripleSpeeder/token-allowance-checker/commit/d347a4c72ba6314aa6af87be2ab2e3baffbbf403))
+* double mention of dfuse.io ([1908505](https://github.com/TripleSpeeder/token-allowance-checker/commit/190850518fd1c8bc1d1017fc248aa6bfda23e9f7))
+* imToken wallet only for mobile devices ([69a63f7](https://github.com/TripleSpeeder/token-allowance-checker/commit/69a63f71184e93ed86c0036671e3825aba5b8520))
+* make homepage segment size responsive ([a774674](https://github.com/TripleSpeeder/token-allowance-checker/commit/a77467405e8c41eb0444b188111c2d758b197bb2))
+* reduce grant message size on mobile ([7a1a0d8](https://github.com/TripleSpeeder/token-allowance-checker/commit/7a1a0d8774e05fae667c2349e4bec19d93d304d3))
+* remove extra segment around AddressInput ([b0364ae](https://github.com/TripleSpeeder/token-allowance-checker/commit/b0364ae0ee25e1822c2450890b18f9b357672d0d))
+* responsive address input ([0a8c0e9](https://github.com/TripleSpeeder/token-allowance-checker/commit/0a8c0e9cf4e5306fdc3f4b7576fbed03588d9b7f))
+* responsive addressDisplay ([91ae302](https://github.com/TripleSpeeder/token-allowance-checker/commit/91ae302679735fa51ecd7887698660c90bbfd5bd))
+* responsive allowancesList ([e68382a](https://github.com/TripleSpeeder/token-allowance-checker/commit/e68382a1ba306d5a26aee8c1b4d4fdb993edc6ff))
+* responsive editAllowance form ([6d0de3b](https://github.com/TripleSpeeder/token-allowance-checker/commit/6d0de3b7255956c60a5163bf2e08da5d55e41216))
+* responsive homepage ([4f61e66](https://github.com/TripleSpeeder/token-allowance-checker/commit/4f61e66af45a5c75d45976df4d541447e6febf7f))
+* responsive tokenlistfilter ([39cf28a](https://github.com/TripleSpeeder/token-allowance-checker/commit/39cf28a02dabb3e4c63f93ba5e5c30ff42b4141a))
+* use AddressDisplay for No Approval message ([4033a7c](https://github.com/TripleSpeeder/token-allowance-checker/commit/4033a7c930d28bbfbf0c6a1b62ef1c661df4ab5e))
+* warning about missing noopener noreferrer ([87d57b0](https://github.com/TripleSpeeder/token-allowance-checker/commit/87d57b049bb0610fef7d09f2aa34e701796d7c0f))
+
+### [1.1.1](https://github.com/TripleSpeeder/token-allowance-checker/compare/v1.1.0...v1.1.1) (2020-02-22)
+
+## [1.1.0](https://github.com/TripleSpeeder/token-allowance-checker/compare/v1.0.0...v1.1.0) (2020-02-22)
+
 ### [2.2.2](https://github.com/TripleSpeeder/token-allowance-checker/compare/v2.2.1...v2.2.2) (2020-03-26)
 
 
