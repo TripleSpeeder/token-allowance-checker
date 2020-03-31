@@ -13,6 +13,7 @@ import {
     Popup,
     Responsive,
     Segment,
+    Image,
 } from 'semantic-ui-react'
 import AllowanceLister from '../features/allowancesList/AllowanceLister'
 import OnboardGate from '../features/onboard/OnboardGate'
@@ -22,11 +23,13 @@ import AddressExtractor from '../components/AddressExtractor'
 import NetworkSelector from 'components/NetworkSelector'
 import GrantMessage from '../components/GrantMessage'
 import { ResponsiveOnUpdateData } from 'semantic-ui-react/dist/commonjs/addons/Responsive/Responsive'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { setMobile } from 'features/responsiveLayout/responsiveSlice'
+import { RootState } from './rootReducer'
 
 const App: React.FC = () => {
     const [prevMobile, setPrevMobile] = useState<boolean | undefined>(undefined)
+    const { mobile } = useSelector((state: RootState) => state.respsonsive)
     const dispatch = useDispatch()
 
     const onResponsiveUpdate = (
@@ -36,7 +39,6 @@ const App: React.FC = () => {
         // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
         // @ts-ignore
         const isMobile = data.width <= Responsive.onlyMobile.maxWidth
-        console.log(`${isMobile} - ${data.width}`)
         if (isMobile !== prevMobile) {
             dispatch(setMobile(isMobile))
             setPrevMobile(isMobile)
@@ -47,11 +49,21 @@ const App: React.FC = () => {
         <Segment textAlign='center' vertical>
             <Menu fixed='top' inverted size='huge'>
                 <Container>
-                    <Menu.Item header as={Link} to='/'>
-                        <Icon name='home' size='big' /> Home
+                    <Menu.Item
+                        header
+                        as={Link}
+                        to='/'
+                        title={'Home'}
+                        style={{ padding: '0px' }}
+                    >
+                        <Image src={'/logo192.png'} width={60} height={60} />
                     </Menu.Item>
-                    <Menu.Item as={Link} to='/address/'>
-                        <Icon name='search' size='big' /> Check Allowances
+                    <Menu.Item
+                        as={Link}
+                        to='/address/'
+                        title={'Check Allowances'}
+                    >
+                        <Icon name='search' size={'large'} /> Check Allowances
                     </Menu.Item>
                     <Menu.Menu position='right'>
                         <Menu.Item>
@@ -87,14 +99,7 @@ const App: React.FC = () => {
                 >
                     Token Allowance Checker
                     <Header.Subheader>
-                        powered by{' '}
-                        <a
-                            href='https://www.dfuse.io/'
-                            rel='noopener noreferrer'
-                            target='_blank'
-                        >
-                            dfuse
-                        </a>
+                        Control your token approvals
                     </Header.Subheader>
                 </Header>
             </Container>
@@ -218,6 +223,8 @@ const App: React.FC = () => {
         </Container>
     )
 
+    const size = mobile ? 'small' : 'huge'
+
     return (
         <Responsive
             as={Router}
@@ -241,13 +248,11 @@ const App: React.FC = () => {
                 </Route>
                 <Route path='/'>
                     {startButton}
-                    <Segment basic vertical>
+                    <Segment basic vertical size={size}>
                         <Grid container stackable verticalAlign='top'>
                             <Grid.Row>
                                 <Grid.Column width={8}>
-                                    <Header as='h3'>
-                                        Control your approvals
-                                    </Header>
+                                    <Header>Control your approvals</Header>
                                     <p>
                                         <em>Token Allowance Checker</em> shows
                                         all approvals for your ERC20-compliant
@@ -256,7 +261,7 @@ const App: React.FC = () => {
                                     </p>
                                 </Grid.Column>
                                 <Grid.Column width={8}>
-                                    <Header as='h3'>
+                                    <Header>
                                         The unlimited approval problem
                                     </Header>
                                     <p>
