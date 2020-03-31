@@ -99,89 +99,90 @@ const AddressDisplay = ({
             )
         }
         return (
-            <Popup
-                on={'click'}
-                content={popupContent}
-                trigger={popupTrigger}
-            ></Popup>
-        )
-    }
-
-    if (contractName) {
-        return (
-            <>
-                <div>
-                    <strong>{contractName}</strong>
-                </div>
-                <div>
-                    <small>
-                        {address}&nbsp;
-                        <Popup
-                            mouseEnterDelay={500}
-                            content={'Copy to clipboard'}
-                            trigger={
-                                <Icon
-                                    circular
-                                    name={'copy outline'}
-                                    size={'small'}
-                                    onClick={() => {
-                                        setClipboard(address)
-                                    }}
-                                />
-                            }
-                        />
-                        <Popup
-                            mouseEnterDelay={500}
-                            content={'View on Etherscan'}
-                            trigger={
-                                <Icon
-                                    circular
-                                    name={'external square'}
-                                    size={'small'}
-                                    onClick={() => {
-                                        window.open(etherscanUrl, '_blank')
-                                    }}
-                                />
-                            }
-                        />
-                    </small>
-                </div>
-            </>
+            <Popup on={'click'} content={popupContent} trigger={popupTrigger} />
         )
     } else {
-        return (
-            <div>
-                {address}&nbsp;
-                <Popup
-                    mouseEnterDelay={500}
-                    content={'Copy to clipboard'}
-                    trigger={
-                        <Icon
-                            circular
-                            name={'copy outline'}
-                            size={'small'}
-                            onClick={() => {
-                                setClipboard(address)
-                            }}
-                        />
-                    }
-                />
-                <Popup
-                    mouseEnterDelay={500}
-                    content={'View on Etherscan'}
-                    trigger={
-                        <Icon
-                            circular
-                            name={'external square'}
-                            size={'small'}
-                            onClick={() => {
-                                window.open(etherscanUrl, '_blank')
-                            }}
-                        />
-                    }
-                />
-            </div>
+        const copyPopup = (
+            <Popup
+                mouseEnterDelay={500}
+                content={'Copy to clipboard'}
+                trigger={
+                    <Icon
+                        circular
+                        name={'copy outline'}
+                        size={'small'}
+                        onClick={() => {
+                            setClipboard(address)
+                        }}
+                    />
+                }
+            />
         )
+        const etherscanPopup = (
+            <Popup
+                mouseEnterDelay={500}
+                content={'View on Etherscan'}
+                trigger={
+                    <Icon
+                        circular
+                        name={'external square'}
+                        size={'small'}
+                        onClick={() => {
+                            window.open(etherscanUrl, '_blank')
+                        }}
+                    />
+                }
+            />
+        )
+
+        if (contractName) {
+            if (inline) {
+                return (
+                    <>
+                        <strong>{contractName}</strong> (
+                        <small>
+                            {address}&nbsp;
+                            {copyPopup}
+                            {etherscanPopup}
+                        </small>
+                        )
+                    </>
+                )
+            } else {
+                return (
+                    <>
+                        <div>
+                            <strong>{contractName}</strong>
+                        </div>
+                        <div>
+                            <small>
+                                {address}&nbsp;
+                                {copyPopup}
+                                {etherscanPopup}
+                            </small>
+                        </div>
+                    </>
+                )
+            }
+        } else {
+            if (inline) {
+                return (
+                    <span>
+                        {address}&nbsp;
+                        {copyPopup}
+                        {etherscanPopup}
+                    </span>
+                )
+            } else {
+                return (
+                    <div>
+                        {address}&nbsp;
+                        {copyPopup}
+                        {etherscanPopup}
+                    </div>
+                )
+            }
+        }
     }
 }
 

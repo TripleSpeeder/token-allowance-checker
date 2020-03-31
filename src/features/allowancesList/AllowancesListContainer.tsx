@@ -7,6 +7,7 @@ import { QueryStates } from './AllowancesListSlice'
 import { Icon } from 'semantic-ui-react'
 import { AddressId } from '../addressInput/AddressSlice'
 import DisplayMessage from '../../components/DisplayMessage'
+import AddressDisplay from '../../components/AddressDisplay'
 
 interface AllowancesListContainerProps {
     ownerId: AddressId
@@ -93,6 +94,7 @@ const AllowancesListContainer = ({
         (state: RootState) => state.addresses.addressesById[ownerId]
     )
     const mobile = useSelector((state: RootState) => state.respsonsive.mobile)
+    const networkId = useSelector((state: RootState) => state.onboard.networkId)
 
     if (!queryState) {
         console.log(`No querystate available for ${ownerId}`)
@@ -140,14 +142,24 @@ const AllowancesListContainer = ({
             break
         case QueryStates.QUERY_STATE_COMPLETE:
             if (items.length === 0) {
+                const body = (
+                    <>
+                        <AddressDisplay
+                            ethAddress={ownerAddress}
+                            mobile={mobile}
+                            networkId={networkId}
+                            inline={true}
+                        />{' '}
+                        has no approvals.
+                    </>
+                )
                 message = (
                     <DisplayMessage
                         mobile={mobile}
                         success={true}
                         icon={<Icon name='info' />}
                         header={'No Approvals'}
-                        body={`${ownerAddress.ensName ??
-                            ownerAddress.address} has no Approvals.`}
+                        body={body}
                     />
                 )
             }
