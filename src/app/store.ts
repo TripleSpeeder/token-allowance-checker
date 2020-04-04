@@ -28,7 +28,7 @@ const customizedMiddleware = getDefaultMiddleware({
         ],
     },
     immutableCheck: {
-        ignore: [
+        ignoredPaths: [
             'onboard.web3',
             'onboard.onboardAPI',
             'tokenContracts.contractsById',

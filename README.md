@@ -44,7 +44,7 @@ If you want to support further development of TAC, please consider contributing 
  - PRs should go against development branch
  - To create a new release:
    - checkout development branch
-   - issue `npm run release` - This will update the Changelog.md with all changes and create a new version tag
+   - issue `yarn run release` - This will update the Changelog.md with all changes and create a new version tag
    - Create a PR against master
    - When the PR gets merged, travisCI will automatically deploy the latest release to gh-pages.
   
