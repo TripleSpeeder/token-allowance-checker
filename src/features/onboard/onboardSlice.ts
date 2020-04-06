@@ -18,22 +18,25 @@ const wallets: Partial<WalletInitOptions>[] = [
         infuraKey: infuraApiKey,
         preferred: true,
     },
-    { walletName: 'trust', preferred: true },
-    { walletName: 'dapper', preferred: true },
+    { walletName: 'trust' },
+    { walletName: 'dapper' },
     { walletName: 'authereum', preferred: true },
-    { walletName: 'opera' },
+    { walletName: 'opera', preferred: true },
     { walletName: 'operaTouch' },
     { walletName: 'torus' },
+    { walletName: 'unilogin', preferred: true },
     { walletName: 'status' },
     {
         walletName: 'ledger',
         rpcUrl: `mainnet.infura.io/v3/${infuraApiKey}`,
+        preferred: true,
     },
     {
         walletName: 'trezor',
         appUrl: 'https://tac.dappstar.io',
         email: 'michael@m-bauer.org',
         rpcUrl: `mainnet.infura.io/v3/${infuraApiKey}`,
+        preferred: true,
     },
     imToken,
 ]
@@ -153,10 +156,10 @@ export const initialize = (history: H.History): AppThunk => async (
         dappId: onboardApiKey,
         networkId: requiredNetworkId,
         subscriptions: {
-            wallet: wallet => {
+            wallet: (wallet) => {
                 dispatch(setWeb3Instance(new Web3(wallet.provider)))
             },
-            address: addressId => {
+            address: (addressId) => {
                 if (addressId) {
                     console.log(`Wallet address changed to ${addressId}!`)
                     dispatch(setWalletAddressThunk(addressId, history))
@@ -164,7 +167,7 @@ export const initialize = (history: H.History): AppThunk => async (
                     console.log(`No access to wallet address`)
                 }
             },
-            network: networkId => {
+            network: (networkId) => {
                 const prevNetworkId = getState().onboard.networkId
                 if (prevNetworkId !== 0 && prevNetworkId !== networkId) {
                     console.log(
