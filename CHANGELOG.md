@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.4.1](https://github.com/TripleSpeeder/token-allowance-checker/compare/v2.4.0...v2.4.1) (2020-04-06)
+
+
+### Bug Fixes
+
+* checksummed walletAddresses were not recognized ([095a830](https://github.com/TripleSpeeder/token-allowance-checker/commit/095a830c567d85613a3bac05ed8d1fd598ddfed0))
+
 ## [2.4.0](https://github.com/TripleSpeeder/token-allowance-checker/compare/v2.3.1...v2.4.0) (2020-04-06)
 
 
