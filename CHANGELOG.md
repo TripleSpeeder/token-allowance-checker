@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.4.0](https://github.com/TripleSpeeder/token-allowance-checker/compare/v2.3.1...v2.4.0) (2020-04-06)
+
+
+### Features
+
+* add uniLogin wallet support ([969344d](https://github.com/TripleSpeeder/token-allowance-checker/commit/969344db37b266fda237c0e23d70f804396f2869))
+
 ### [2.3.1](https://github.com/TripleSpeeder/token-allowance-checker/compare/v2.3.0...v2.3.1) (2020-04-02)
 
 ## [2.3.0](https://github.com/TripleSpeeder/token-allowance-checker/compare/v2.2.2...v2.3.0) (2020-03-31)
