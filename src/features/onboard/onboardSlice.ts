@@ -6,16 +6,17 @@ import { AppDispatch, AppThunk } from '../../app/store'
 import { API, Wallet, WalletInitOptions } from 'bnc-onboard/dist/src/interfaces'
 import { setWalletAddressThunk } from '../addressInput/AddressSlice'
 import imToken from './wallets/imToken'
+import apiKeys from '../../api/apikeys'
 
-const onboardApiKey = 'f4b71bf0-fe50-4eeb-bc2b-b323527ed9e6'
-const infuraApiKey = '7f230a5ca832426796454c28577d93f2'
+const infuraCredentials = apiKeys.infura[1]
+const onboardCredentials = apiKeys.onboard[1]
 
 const wallets: Partial<WalletInitOptions>[] = [
     { walletName: 'metamask', preferred: true },
     { walletName: 'coinbase', preferred: true },
     {
         walletName: 'walletConnect',
-        infuraKey: infuraApiKey,
+        infuraKey: infuraCredentials.apikey,
         preferred: true,
     },
     { walletName: 'trust' },
@@ -28,14 +29,14 @@ const wallets: Partial<WalletInitOptions>[] = [
     { walletName: 'status' },
     {
         walletName: 'ledger',
-        rpcUrl: `mainnet.infura.io/v3/${infuraApiKey}`,
+        rpcUrl: `${infuraCredentials.endpoint}${infuraCredentials.apikey}`,
         preferred: true,
     },
     {
         walletName: 'trezor',
         appUrl: 'https://tac.dappstar.io',
         email: 'michael@m-bauer.org',
-        rpcUrl: `mainnet.infura.io/v3/${infuraApiKey}`,
+        rpcUrl: `${infuraCredentials.endpoint}${infuraCredentials.apikey}`,
         preferred: true,
     },
     imToken,
@@ -154,7 +155,7 @@ export const initialize = (history: H.History): AppThunk => async (
     const requiredNetworkId = getState().onboard.requiredNetworkId
     console.log(`Initializing OnBoard.js for networkId ${requiredNetworkId}...`)
     const onboard = Onboard({
-        dappId: onboardApiKey,
+        dappId: onboardCredentials.apikey,
         networkId: requiredNetworkId,
         subscriptions: {
             wallet: (wallet) => {
