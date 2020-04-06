@@ -162,7 +162,9 @@ export const initialize = (history: H.History): AppThunk => async (
             address: (addressId) => {
                 if (addressId) {
                     console.log(`Wallet address changed to ${addressId}!`)
-                    dispatch(setWalletAddressThunk(addressId, history))
+                    dispatch(
+                        setWalletAddressThunk(addressId.toLowerCase(), history)
+                    )
                 } else {
                     console.log(`No access to wallet address`)
                 }
