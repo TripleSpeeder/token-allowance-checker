@@ -15,11 +15,11 @@ type SiteCredentials = {
 const apiKeys: SiteCredentials = {
     dfuse: {
         1: {
-            endpoint: 'ropsten.eth.dfuse.io',
+            endpoint: 'mainnet.eth.dfuse.io',
             apikey: 'web_085aeaac9c520204b1a9dcaa357e5460',
         },
         3: {
-            endpoint: 'mainnet.eth.dfuse.io',
+            endpoint: 'ropsten.eth.dfuse.io',
             apikey: 'web_085aeaac9c520204b1a9dcaa357e5460',
         },
     },
