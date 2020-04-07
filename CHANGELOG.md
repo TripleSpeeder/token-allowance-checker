@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.5.0](https://github.com/TripleSpeeder/token-allowance-checker/compare/v2.4.1...v2.5.0) (2020-04-07)
+
+
+### Features
+
+* add link to gitcoin grant page in footer ([144b7ad](https://github.com/TripleSpeeder/token-allowance-checker/commit/144b7ad9906c21d4f75f9fc192fab01bca1afb26))
+
+
+### Bug Fixes
+
+* add opengraph tags ([7145be0](https://github.com/TripleSpeeder/token-allowance-checker/commit/7145be03beb16aa32bbde2916f502f14130ad395))
+
 ### [2.4.1](https://github.com/TripleSpeeder/token-allowance-checker/compare/v2.4.0...v2.4.1) (2020-04-06)
 
 
