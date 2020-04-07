@@ -26,6 +26,7 @@ import { ResponsiveOnUpdateData } from 'semantic-ui-react/dist/commonjs/addons/R
 import { useDispatch, useSelector } from 'react-redux'
 import { setMobile } from 'features/responsiveLayout/responsiveSlice'
 import { RootState } from './rootReducer'
+import GitcoinIcon from '../icons/gitcoinIcon.png'
 
 const App: React.FC = () => {
     const [prevMobile, setPrevMobile] = useState<boolean | undefined>(undefined)
@@ -145,7 +146,7 @@ const App: React.FC = () => {
         <Container textAlign='center'>
             <Divider />
             <Segment basic>
-                <List horizontal size={'small'}>
+                <List horizontal size={'small'} verticalAlign={'top'}>
                     <List.Item
                         as='a'
                         href='https://twitter.com/TripleSpeeder'
@@ -195,6 +196,19 @@ const App: React.FC = () => {
                         <Popup
                             content='u/TripleSpeeder'
                             trigger={<Icon size='big' name='reddit' />}
+                        />
+                    </List.Item>
+                    <List.Item
+                        as='a'
+                        target='_blank'
+                        rel='noopener noreferrer'
+                        href={
+                            'https://gitcoin.co/grants/480/token-allowance-checker?tab=description'
+                        }
+                    >
+                        <Popup
+                            content='Gitcoin grant page'
+                            trigger={<Image avatar src={GitcoinIcon} />}
                         />
                     </List.Item>
                     <List.Item>

@@ -15,12 +15,12 @@ const GrantMessage = () => {
 
     // when route changes to home page, show grants message again
     useEffect(() => {
-        const unlisten = history.listen(location => {
+        const unlisten = history.listen((location) => {
             if (location.pathname === '/') {
                 setShowGrantMessage(true)
             }
         })
-        return function() {
+        return function () {
             unlisten()
         }
     }, [history, setShowGrantMessage])
@@ -44,7 +44,7 @@ const GrantMessage = () => {
                     <Message.Content>
                         <Message.Header>
                             Gitcoin Grants <em>$250k Donation Matching</em> is
-                            live until 2020-04-07!
+                            live until 2020-04-10!
                         </Message.Header>
                         <div>
                             Contribute via <strong>gitcoin grant</strong> to
