@@ -21,7 +21,6 @@ import AddressInputContainer from '../features/addressInput/AddressInputContaine
 import pkg from '../../package.json'
 import AddressExtractor from '../components/AddressExtractor'
 import NetworkSelector from 'components/NetworkSelector'
-import GrantMessage from '../components/GrantMessage'
 import { ResponsiveOnUpdateData } from 'semantic-ui-react/dist/commonjs/addons/Responsive/Responsive'
 import { useDispatch, useSelector } from 'react-redux'
 import { setMobile } from 'features/responsiveLayout/responsiveSlice'
@@ -104,7 +103,6 @@ const App: React.FC = () => {
                     </Header.Subheader>
                 </Header>
             </Container>
-            <GrantMessage />
         </Segment>
     )
 
@@ -129,7 +127,6 @@ const App: React.FC = () => {
                     </Header.Subheader>
                 </Header>
             </Container>
-            <GrantMessage />
         </>
     )
 
