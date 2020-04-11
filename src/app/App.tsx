@@ -9,7 +9,6 @@ import {
     Header,
     Icon,
     List,
-    Menu,
     Popup,
     Responsive,
     Segment,
@@ -20,12 +19,12 @@ import OnboardGate from '../features/onboard/OnboardGate'
 import AddressInputContainer from '../features/addressInput/AddressInputContainer'
 import pkg from '../../package.json'
 import AddressExtractor from '../components/AddressExtractor'
-import NetworkSelector from 'components/NetworkSelector'
 import { ResponsiveOnUpdateData } from 'semantic-ui-react/dist/commonjs/addons/Responsive/Responsive'
 import { useDispatch, useSelector } from 'react-redux'
 import { setMobile } from 'features/responsiveLayout/responsiveSlice'
 import { RootState } from './rootReducer'
 import GitcoinIcon from '../icons/gitcoinIcon.png'
+import MainMenu from '../features/menu/MainMenu'
 
 const App: React.FC = () => {
     const [prevMobile, setPrevMobile] = useState<boolean | undefined>(undefined)
@@ -47,41 +46,7 @@ const App: React.FC = () => {
 
     const DesktopHeading = (
         <Segment textAlign='center' vertical>
-            <Menu fixed='top' inverted size='huge'>
-                <Container>
-                    <Menu.Item
-                        header
-                        as={Link}
-                        to='/'
-                        title={'Home'}
-                        style={{ padding: '0px' }}
-                    >
-                        <Image src={'/logo192.png'} width={60} height={60} />
-                    </Menu.Item>
-                    <Menu.Item
-                        as={Link}
-                        to='/address/'
-                        title={'Check Allowances'}
-                    >
-                        <Icon name='search' size={'large'} /> Check Allowances
-                    </Menu.Item>
-                    <Menu.Menu position='right'>
-                        <Menu.Item>
-                            <NetworkSelector />
-                        </Menu.Item>
-                        <Menu.Item>
-                            <a
-                                href='https://github.com/TripleSpeeder/token-allowance-checker'
-                                title='github.com/TripleSpeeder/token-allowance-checker'
-                                target='_blank'
-                                rel='noopener noreferrer'
-                            >
-                                <Icon name='github' size='big' />
-                            </a>
-                        </Menu.Item>
-                    </Menu.Menu>
-                </Container>
-            </Menu>
+            <MainMenu />
             <Container
                 text
                 style={{
