@@ -12,7 +12,9 @@ const MainMenu: React.FC = () => {
     const [showWalletConfig, setShowWalletConfig] = useState(false)
     const dispatch = useDispatch()
     const history = useHistory()
-    const { wallet } = useSelector((state: RootState) => state.onboard)
+    const { wallet, onboardAPI, networkId } = useSelector(
+        (state: RootState) => state.onboard
+    )
     const walletAddress = useSelector((state: RootState) => {
         if (state.addresses.walletAddressId) {
             return state.addresses.addressesById[
@@ -23,7 +25,6 @@ const MainMenu: React.FC = () => {
         }
     })
     const { mobile } = useSelector((state: RootState) => state.respsonsive)
-    const { networkId } = useSelector((state: RootState) => state.onboard)
 
     const handleWalletConfig = () => {
         setShowWalletConfig(true)
@@ -36,6 +37,11 @@ const MainMenu: React.FC = () => {
     const handleSelectWallet = () => {
         setShowWalletConfig(false)
         dispatch(selectWallet(history))
+    }
+
+    const handleSelectAddress = () => {
+        setShowWalletConfig(false)
+        onboardAPI?.accountSelect()
     }
 
     const walletSelectorItem = wallet ? (
@@ -84,7 +90,7 @@ const MainMenu: React.FC = () => {
                 <WalletConfigModal
                     handleClose={handleCloseWalletConfig}
                     handleChangeWallet={handleSelectWallet}
-                    handleChangeAddress={handleSelectWallet}
+                    handleChangeAddress={handleSelectAddress}
                     mobile={mobile}
                     networkId={networkId}
                     wallet={wallet}
