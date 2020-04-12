@@ -48,7 +48,6 @@ interface OnboardState {
     wallet?: Wallet
     networkId: number
     requiredNetworkId: number
-    walletSelected: boolean
     prevWalletAddressId: AddressId | undefined
 }
 
@@ -56,7 +55,6 @@ const initialState: OnboardState = {
     networkId: 0,
     requiredNetworkId: 1,
     onboardAPI: null,
-    walletSelected: false,
     prevWalletAddressId: undefined,
     wallet: undefined,
 }
@@ -80,9 +78,6 @@ const onboardSlice = createSlice({
         setPrevWalletAddressId(state, action: PayloadAction<string>) {
             state.prevWalletAddressId = action.payload
         },
-        setWalletSelected(state, action: PayloadAction<boolean>) {
-            state.walletSelected = action.payload
-        },
         setRequiredNetworkId(state, action: PayloadAction<number>) {
             state.requiredNetworkId = action.payload
         },
@@ -94,7 +89,6 @@ export const {
     setNetworkId,
     setWeb3Instance,
     setWallet,
-    setWalletSelected,
     setPrevWalletAddressId,
     setRequiredNetworkId,
 } = onboardSlice.actions
@@ -123,7 +117,6 @@ export const selectWallet = (history: H.History): AppThunk => async (
     const onboardAPI = getState().onboard.onboardAPI
     if (onboardAPI) {
         const result = await onboardAPI.walletSelect()
-        dispatch(setWalletSelected(result))
         if (!result) {
             // send user back to home page
             history.push('/')

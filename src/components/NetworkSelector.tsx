@@ -11,7 +11,7 @@ const NetworkSelector = () => {
     ]
 
     const dispatch = useDispatch()
-    const { requiredNetworkId, walletSelected } = useSelector(
+    const { requiredNetworkId, wallet } = useSelector(
         (state: RootState) => state.onboard
     )
 
@@ -25,13 +25,13 @@ const NetworkSelector = () => {
     }
 
     const networkEntry = options.find(
-        value => value.value === requiredNetworkId
+        (value) => value.value === requiredNetworkId
     )
     const text = networkEntry?.text ?? 'select network'
 
     return (
         <Dropdown
-            disabled={!walletSelected}
+            disabled={!wallet}
             text={text}
             options={options}
             onChange={handleChange}
