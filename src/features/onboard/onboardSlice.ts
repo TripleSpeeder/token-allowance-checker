@@ -3,7 +3,7 @@ import Onboard from 'bnc-onboard'
 import Web3 from 'web3'
 import * as H from 'history'
 import { AppDispatch, AppThunk } from '../../app/store'
-import { API, WalletInitOptions } from 'bnc-onboard/dist/src/interfaces'
+import { API, Wallet, WalletInitOptions } from 'bnc-onboard/dist/src/interfaces'
 import { AddressId, setWalletAddressThunk } from '../addressInput/AddressSlice'
 import imToken from './wallets/imToken'
 
@@ -45,6 +45,7 @@ const wallets: Partial<WalletInitOptions>[] = [
 interface OnboardState {
     onboardAPI: API | null
     web3?: Web3
+    wallet?: Wallet
     networkId: number
     requiredNetworkId: number
     walletSelected: boolean
@@ -57,6 +58,7 @@ const initialState: OnboardState = {
     onboardAPI: null,
     walletSelected: false,
     prevWalletAddressId: undefined,
+    wallet: undefined,
 }
 
 const onboardSlice = createSlice({
@@ -65,6 +67,9 @@ const onboardSlice = createSlice({
     reducers: {
         setOnboardAPI(state, action: PayloadAction<API>) {
             state.onboardAPI = action.payload
+        },
+        setWallet(state, action: PayloadAction<Wallet>) {
+            state.wallet = action.payload
         },
         setWeb3Instance(state, action: PayloadAction<Web3>) {
             state.web3 = action.payload
@@ -88,6 +93,7 @@ export const {
     setOnboardAPI,
     setNetworkId,
     setWeb3Instance,
+    setWallet,
     setWalletSelected,
     setPrevWalletAddressId,
     setRequiredNetworkId,
@@ -157,6 +163,8 @@ export const initialize = (history: H.History): AppThunk => async (
         networkId: requiredNetworkId,
         subscriptions: {
             wallet: (wallet) => {
+                // store selected wallet
+                dispatch(setWallet(wallet))
                 dispatch(setWeb3Instance(new Web3(wallet.provider)))
             },
             address: (addressId) => {
@@ -175,8 +183,6 @@ export const initialize = (history: H.History): AppThunk => async (
                     console.log(
                         `Switching network from ${prevNetworkId} to ${networkId}`
                     )
-                    // trigger checkWallet to make sure user stays on required network
-                    // dispatch(checkWallet())
                 }
                 dispatch(setRequiredNetworkIdThunk(networkId))
                 dispatch(setNetworkId(networkId))
