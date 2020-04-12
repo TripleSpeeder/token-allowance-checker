@@ -1,12 +1,17 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Container, Icon, Image, Menu } from 'semantic-ui-react'
-import { Link } from 'react-router-dom'
+import { Link, useHistory } from 'react-router-dom'
 import NetworkSelector from '../../components/NetworkSelector'
 import WalletSelector from '../onboard/walletSelector'
 import { RootState } from '../../app/rootReducer'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
+import WalletConfigModal from '../onboard/WalletConfigModal'
+import { selectWallet } from '../onboard/onboardSlice'
 
 const MainMenu: React.FC = () => {
+    const [showWalletConfig, setShowWalletConfig] = useState(false)
+    const dispatch = useDispatch()
+    const history = useHistory()
     const { wallet } = useSelector((state: RootState) => state.onboard)
     const walletAddress = useSelector((state: RootState) => {
         if (state.addresses.walletAddressId) {
@@ -17,10 +22,31 @@ const MainMenu: React.FC = () => {
             return undefined
         }
     })
+    const { mobile } = useSelector((state: RootState) => state.respsonsive)
+    const { networkId } = useSelector((state: RootState) => state.onboard)
 
-    const handleWalletClick = () => {
-        console.log('Clicked wallet button')
+    const handleWalletConfig = () => {
+        setShowWalletConfig(true)
     }
+
+    const handleCloseWalletConfig = () => {
+        setShowWalletConfig(false)
+    }
+
+    const handleSelectWallet = () => {
+        setShowWalletConfig(false)
+        dispatch(selectWallet(history))
+    }
+
+    const walletSelectorItem = wallet ? (
+        <Menu.Item>
+            <WalletSelector
+                handleClick={handleWalletConfig}
+                walletName={wallet?.name}
+                walletAccount={walletAddress}
+            />
+        </Menu.Item>
+    ) : null
 
     return (
         <Menu fixed='top' inverted size='huge'>
@@ -38,13 +64,7 @@ const MainMenu: React.FC = () => {
                     <Icon name='search' size={'large'} /> Check Allowances
                 </Menu.Item>
                 <Menu.Menu position='right'>
-                    <Menu.Item>
-                        <WalletSelector
-                            handleClick={handleWalletClick}
-                            walletName={wallet?.name}
-                            walletAccount={walletAddress}
-                        />
-                    </Menu.Item>
+                    {walletSelectorItem}
                     <Menu.Item>
                         <NetworkSelector />
                     </Menu.Item>
@@ -60,6 +80,17 @@ const MainMenu: React.FC = () => {
                     </Menu.Item>
                 </Menu.Menu>
             </Container>
+            {showWalletConfig && (
+                <WalletConfigModal
+                    handleClose={handleCloseWalletConfig}
+                    handleChangeWallet={handleSelectWallet}
+                    handleChangeAddress={handleSelectWallet}
+                    mobile={mobile}
+                    networkId={networkId}
+                    wallet={wallet}
+                    walletAddress={walletAddress}
+                />
+            )}
         </Menu>
     )
 }
