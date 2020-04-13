@@ -4,7 +4,7 @@ import Web3 from 'web3'
 import * as H from 'history'
 import { AppDispatch, AppThunk } from '../../app/store'
 import { API, Wallet, WalletInitOptions } from 'bnc-onboard/dist/src/interfaces'
-import { AddressId, setWalletAddressThunk } from '../addressInput/AddressSlice'
+import { setWalletAddressThunk } from '../addressInput/AddressSlice'
 import imToken from './wallets/imToken'
 
 const onboardApiKey = 'f4b71bf0-fe50-4eeb-bc2b-b323527ed9e6'
@@ -48,14 +48,12 @@ interface OnboardState {
     wallet?: Wallet
     networkId: number
     requiredNetworkId: number
-    prevWalletAddressId: AddressId | undefined
 }
 
 const initialState: OnboardState = {
     networkId: 0,
     requiredNetworkId: 1,
     onboardAPI: null,
-    prevWalletAddressId: undefined,
     wallet: undefined,
 }
 
@@ -75,9 +73,6 @@ const onboardSlice = createSlice({
         setNetworkId(state, action: PayloadAction<number>) {
             state.networkId = action.payload
         },
-        setPrevWalletAddressId(state, action: PayloadAction<string>) {
-            state.prevWalletAddressId = action.payload
-        },
         setRequiredNetworkId(state, action: PayloadAction<number>) {
             state.requiredNetworkId = action.payload
         },
@@ -89,7 +84,6 @@ export const {
     setNetworkId,
     setWeb3Instance,
     setWallet,
-    setPrevWalletAddressId,
     setRequiredNetworkId,
 } = onboardSlice.actions
 
