@@ -1,5 +1,5 @@
 import React, { SyntheticEvent } from 'react'
-import { Dropdown, DropdownProps } from 'semantic-ui-react'
+import { Button, Dropdown, DropdownProps } from 'semantic-ui-react'
 import { RootState } from '../app/rootReducer'
 import { useDispatch, useSelector } from 'react-redux'
 import { setRequiredNetworkIdThunk } from 'features/onboard/onboardSlice'
@@ -27,15 +27,17 @@ const NetworkSelector = () => {
     const networkEntry = options.find(
         (value) => value.value === requiredNetworkId
     )
-    const text = networkEntry?.text ?? 'select network'
+    const text = 'Network: ' + networkEntry?.text ?? 'select'
 
     return (
         <Dropdown
+            as={Button}
             disabled={!wallet}
             text={text}
             options={options}
             onChange={handleChange}
             value={requiredNetworkId}
+            fluid
         />
     )
 }

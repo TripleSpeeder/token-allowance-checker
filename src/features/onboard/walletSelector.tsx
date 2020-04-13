@@ -8,28 +8,12 @@ interface WalletSelectorProps {
     handleClick: () => void
 }
 
-const WalletSelector = ({
-    walletName,
-    walletAccount,
-    handleClick,
-}: WalletSelectorProps) => {
-    let buttonLabel
-    if (walletAccount) {
-        const shortAddress =
-            walletAccount.address.substr(0, 6) +
-            '...' +
-            walletAccount.address.substr(-6, 6)
-        buttonLabel = walletAccount.ensName ?? shortAddress
-    } else if (walletName) {
-        // Wallet connected, but no access to account
-        buttonLabel = 'no wallet account'
-    } else {
-        // No wallet connected
-        buttonLabel = 'connect wallet'
-    }
+const WalletSelector = ({ walletName, handleClick }: WalletSelectorProps) => {
+    const gotWallet = !!walletName
+    const buttonLabel = walletName ? `Wallet: ${walletName}` : 'Connect wallet'
 
     return (
-        <Button primary onClick={handleClick}>
+        <Button fluid positive={gotWallet} onClick={handleClick}>
             {buttonLabel}
         </Button>
     )
