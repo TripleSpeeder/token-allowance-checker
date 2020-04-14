@@ -30,6 +30,9 @@ const WalletConfigModal = ({
     ) : (
         <p>No wallet connected.</p>
     )
+
+    const walletMsgIcon = wallet?.name ? 'linkify' : 'unlinkify'
+
     const currentAddress = walletAddress ? (
         <AddressDisplay
             ethAddress={walletAddress}
@@ -39,12 +42,13 @@ const WalletConfigModal = ({
     ) : (
         'None'
     )
+
     const size = mobile ? 'small' : 'large'
 
     const msgs = []
     msgs.push(
         <Message icon info size={size} key={1}>
-            <Icon name='linkify' />
+            <Icon name={walletMsgIcon} />
             <Message.Content>
                 <Message.Header>Wallet</Message.Header>
                 {currentWallet}
