@@ -43,12 +43,13 @@ const TokenAllowanceItem = ({ allowanceId }: TokenAllowanceItemProps) => {
         }
     }, [allowanceValue, allowanceId, dispatch])
 
-    let allowanceElement, criticalAllowance
+    let allowanceElement, criticalAllowance, positiveAllowance
     switch (allowanceValue.state) {
         case QueryStates.QUERY_STATE_RUNNING:
             allowanceElement = <Loader active inline size={'mini'} />
             break
         case QueryStates.QUERY_STATE_COMPLETE:
+            positiveAllowance = allowanceValue.value.isZero()
             criticalAllowance =
                 allowanceValue.value.eq(unlimitedAllowance) ||
                 allowanceValue.value.gte(tokenContract.totalSupply)
@@ -90,7 +91,11 @@ const TokenAllowanceItem = ({ allowanceId }: TokenAllowanceItemProps) => {
     let lastChangeCell
     if (mobile) {
         allowanceCell = (
-            <Table.Cell negative={criticalAllowance} textAlign={'right'}>
+            <Table.Cell
+                negative={criticalAllowance}
+                positive={positiveAllowance}
+                textAlign={'right'}
+            >
                 {allowanceElement}
                 <Divider fitted />
                 <small>{lastChangeString}</small>
@@ -99,7 +104,11 @@ const TokenAllowanceItem = ({ allowanceId }: TokenAllowanceItemProps) => {
         lastChangeCell = null
     } else {
         allowanceCell = (
-            <Table.Cell negative={criticalAllowance} textAlign={'right'}>
+            <Table.Cell
+                negative={criticalAllowance}
+                positive={positiveAllowance}
+                textAlign={'right'}
+            >
                 {allowanceElement}
             </Table.Cell>
         )
