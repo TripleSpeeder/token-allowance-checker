@@ -9,40 +9,23 @@ import {
     fetchEtherscanNameThunk,
 } from '../addressInput/AddressSlice'
 import BN from 'bn.js'
-import { createDfuseClient } from '@dfuse/client'
 import {
     TransactionId,
     addTransaction,
     EditAllowanceTransaction,
 } from '../transactionTracker/TransactionTrackerSlice'
 import ERC20Data from '@openzeppelin/contracts/build/contracts/ERC20Detailed.json'
-import ERC20Detailed from '../../contracts'
 import { setNetworkId } from '../onboard/onboardSlice'
+import { getDfuseClient } from '../../api/dfuse/dfuseio'
+import createAndVerifyERC20 from '../../utils/contractVerifier'
+import {
+    checkLogTopic,
+    topicHashApprove,
+    decodeLog,
+    checkDecodedData,
+} from 'utils/logEventVerifier'
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const contract = require('@truffle/contract')
-
-const topicHashApprove =
-    '0x8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925'
-const eventABI = [
-    {
-        indexed: true,
-        internalType: 'address',
-        name: 'owner',
-        type: 'address',
-    },
-    {
-        indexed: true,
-        internalType: 'address',
-        name: 'spender',
-        type: 'address',
-    },
-    {
-        indexed: false,
-        internalType: 'uint256',
-        name: 'value',
-        type: 'uint256',
-    },
-]
 
 const searchTransactions = `query ($query: String! $limit: Int64! $cursor: String) {
       searchTransactions(
@@ -60,6 +43,9 @@ const searchTransactions = `query ($query: String! $limit: Int64! $cursor: Strin
             hash
             block {
               number
+              header {
+                timestamp
+              }
             }
             matchingLogs {
               data
@@ -79,6 +65,7 @@ export interface Allowance {
     ownerId: AddressId
     spenderId: AddressId
     editTransactionId?: TransactionId
+    lastChangedTimestamp: number
 }
 
 export interface AllowanceValue {
@@ -162,7 +149,8 @@ const allowancesSlice = createSlice({
             prepare(
                 tokenContractId: AddressId,
                 ownerId: AddressId,
-                spenderId: AddressId
+                spenderId: AddressId,
+                timestamp: number
             ) {
                 const id = buildAllowanceId(tokenContractId, ownerId, spenderId)
                 return {
@@ -173,6 +161,7 @@ const allowancesSlice = createSlice({
                             tokenContractId,
                             ownerId,
                             spenderId,
+                            lastChangedTimestamp: timestamp,
                         },
                     },
                 }
@@ -211,12 +200,12 @@ const allowancesSlice = createSlice({
             console.log(
                 `Resetting allowances due to network change to ${networkId}`
             )
-            Object.keys(state.allowanceQueryStateByOwner).forEach(ownerId => {
+            Object.keys(state.allowanceQueryStateByOwner).forEach((ownerId) => {
                 state.allowanceQueryStateByOwner[
                     ownerId
                 ] = defaultQueryStateByOwner
             })
-            Object.keys(state.allowanceIdsByOwnerId).forEach(ownerId => {
+            Object.keys(state.allowanceIdsByOwnerId).forEach((ownerId) => {
                 state.allowanceIdsByOwnerId[ownerId] = []
             })
             state.allowanceValuesById = {}
@@ -291,7 +280,6 @@ export const fetchAllowancesThunk = (ownerId: AddressId): AppThunk => async (
     const { networkId } = getState().onboard
 
     let currentPage = 0
-
     // update query state to indicate start of loading
     dispatch(
         setQueryState({
@@ -303,44 +291,15 @@ export const fetchAllowancesThunk = (ownerId: AddressId): AppThunk => async (
         })
     )
 
-    // create client
-    let network
-    switch (networkId) {
-        case 3:
-            // Ropsten
-            network = 'ropsten.eth.dfuse.io'
-            break
-        case 1:
-            // main network
-            network = 'mainnet.eth.dfuse.io'
-            break
-        default:
-            console.log(`Network ${networkId} not supported by dfuse.io`)
-            dispatch(
-                setQueryState({
-                    ownerId,
-                    queryState: {
-                        state: QueryStates.QUERY_STATE_ERROR,
-                        currentPage,
-                        error: `Network ${networkId} not supported.`,
-                    },
-                })
-            )
-            return
-    }
-    const client = createDfuseClient({
-        apiKey: 'web_085aeaac9c520204b1a9dcaa357e5460',
-        network: network,
-    })
-
     // prepare ERC20 contract
     const erc20Contract = contract(ERC20Data)
     erc20Contract.setProvider(web3.currentProvider)
 
     // query dfuse API
-    let cursor = ''
     try {
+        const client = getDfuseClient({ networkId })
         // search page by page until no more results are found
+        let cursor = ''
         let numPageResults = 0
         const badContracts: Array<string> = []
         const knownContracts: Array<string> = []
@@ -366,104 +325,58 @@ export const fetchAllowancesThunk = (ownerId: AddressId): AppThunk => async (
             const edges = response.data.searchTransactions.edges || []
             for (let edgeIndex = 0; edgeIndex < edges.length; edgeIndex++) {
                 const { node } = edges[edgeIndex]
+                const timestamp = parseInt(node.block.header.timestamp)
                 for (let index = 0; index < node.matchingLogs.length; index++) {
                     const logEntry = node.matchingLogs[index]
-                    // skip bad contracts
-                    if (badContracts.includes(logEntry.address.toLowerCase())) {
-                        continue
-                    }
-
-                    // Apparently dfuse query results based on topic sometimes return wrong topics. Double-check that the
-                    // logEntry actually is of the expected topic.
-                    if (logEntry.topics[0] !== topicHashApprove) {
-                        console.log(
-                            `Skipping log event. Topic is wrong, expected ${topicHashApprove}, got ${logEntry.topics[0]}. Transaction: ${node.hash}`
-                        )
-                        continue
-                    }
-
                     const tokenContractAddress = logEntry.address.toLowerCase()
 
-                    if (logEntry.data === '0x') {
-                        console.log(
-                            `Detected bad contract at ${logEntry.address}: LogEntry.data is missing. Transaction: ${node.hash}.`
-                        )
+                    if (badContracts.includes(tokenContractAddress)) {
+                        // skip logEvents created by already-known bad contracts
+                        continue
+                    }
+
+                    if (!checkLogTopic(logEntry)) {
+                        // issues with topic indicate a problem on dfuse side. Ignore this
+                        // logEvent, but do not blacklist contract.
+                        continue
+                    }
+
+                    const decoded = decodeLog(logEntry, web3)
+                    if (!decoded) {
+                        // If decoding fails, blacklist contract
                         badContracts.push(tokenContractAddress)
                         continue
                     }
 
-                    let decoded
-                    try {
-                        decoded = web3.eth.abi.decodeLog(
-                            eventABI,
-                            logEntry.data,
-                            logEntry.topics.slice(1)
-                        )
-                    } catch (e) {
-                        console.log(
-                            `Detected bad contract at ${logEntry.address}: Can not decode logEntry from transaction: ${node.hash}:`
-                        )
-                        console.log(logEntry)
-                        badContracts.push(tokenContractAddress)
-                        continue
-                    }
-
-                    // check if spender is an actual address. Some contracts emit logs with spender 0x0...
-                    if (!parseInt(decoded.spender)) {
-                        console.log(
-                            `Skipping log event: Invalid spender ${decoded.spender}, contract: ${logEntry.address}`
-                        )
-                        continue
-                    }
-                    // double-check owner is correct.
                     if (
-                        decoded.owner.toLowerCase() !==
-                        owner.address.toLowerCase()
-                    ) {
-                        console.log(
-                            `Skipping log event due to owner mismatch. Expected ${owner.address}, got ${decoded.owner}. Transaction: ${node.hash}`
+                        !checkDecodedData(
+                            decoded.spender,
+                            decoded.owner,
+                            owner.address
                         )
+                    ) {
+                        // ignore logEvents with inplausible data, but do not blacklist contract
                         continue
                     }
 
-                    // Add tokenContract
+                    // pre-checks passed. Now check contract
                     if (!knownContracts.includes(tokenContractAddress)) {
-                        // Check if the contract really implements the required ERC20 methods.
-                        let contractInstance: ERC20Detailed.ERC20DetailedInstance
-                        try {
-                            contractInstance = await erc20Contract.at(
-                                tokenContractAddress
-                            )
-                        } catch (error) {
-                            console.log(
-                                `Error instantiating contract at ${tokenContractAddress}: ${error}`
-                            )
+                        const contractInstance = await createAndVerifyERC20({
+                            erc20Contract,
+                            contractAddress: tokenContractAddress,
+                        })
+                        if (contractInstance) {
+                            knownContracts.push(tokenContractAddress)
+                            // console.log(`Adding tokenContract ${tokenContractAddress}`)
+                            dispatch(addContractThunk(contractInstance))
+                        } else {
+                            // contract failed verification
                             badContracts.push(tokenContractAddress)
                             continue
                         }
-                        try {
-                            // these are the required calls
-                            await contractInstance.totalSupply()
-                            await contractInstance.balanceOf(
-                                tokenContractAddress
-                            )
-                            await contractInstance.allowance(
-                                tokenContractAddress,
-                                tokenContractAddress
-                            )
-                            // TODO: Check if approve() method is available!
-                        } catch (error) {
-                            console.log(
-                                `Contract at ${tokenContractAddress} is not ERC20. Ignoring.`
-                            )
-                            badContracts.push(tokenContractAddress)
-                            continue
-                        }
-                        knownContracts.push(tokenContractAddress)
-                        // console.log(`Adding tokenContract ${tokenContractAddress}`)
-                        dispatch(addContractThunk(contractInstance))
                     }
-                    // Add spender address and create allowance entry
+
+                    // All checks passed. Now add spender address and create allowance entry
                     const spenderAddress = decoded.spender.toLowerCase()
                     if (!knownSpenders.includes(spenderAddress)) {
                         knownSpenders.push(spenderAddress)
@@ -476,7 +389,8 @@ export const fetchAllowancesThunk = (ownerId: AddressId): AppThunk => async (
                             addAllowance(
                                 tokenContractAddress,
                                 ownerId,
-                                spenderAddress
+                                spenderAddress,
+                                timestamp
                             )
                         )
                     }

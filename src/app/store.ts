@@ -37,6 +37,7 @@ const customizedMiddleware = getDefaultMiddleware({
             'onboard.onboardAPI',
             'tokenContracts.contractsById',
         ],
+        warnAfter: 100, // ms
     },
 })
 

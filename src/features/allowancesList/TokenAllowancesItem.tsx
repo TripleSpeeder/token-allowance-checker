@@ -1,5 +1,12 @@
 import React, { useEffect, useState } from 'react'
-import { Header, Segment, Table, Placeholder, Icon } from 'semantic-ui-react'
+import {
+    Header,
+    Segment,
+    Table,
+    Placeholder,
+    Icon,
+    Divider,
+} from 'semantic-ui-react'
 import AddressDisplay from '../../components/AddressDisplay'
 import BN from 'bn.js'
 import { AddressId } from '../addressInput/AddressSlice'
@@ -86,7 +93,7 @@ const TokenAllowancesItem = ({
 
     // populate rows with one entry per allowance from allowanceIds
     const rows: Array<React.ReactNode> = []
-    allowanceIds.forEach(allowanceId => {
+    allowanceIds.forEach((allowanceId) => {
         rows.push(
             <TokenAllowanceItem key={allowanceId} allowanceId={allowanceId} />
         )
@@ -96,11 +103,18 @@ const TokenAllowancesItem = ({
         let table
         if (!collapsed) {
             table = (
-                <Table basic={'very'} celled unstackable compact>
+                <Table basic={'very'} celled unstackable compact size={'small'}>
                     <Table.Header>
                         <Table.Row>
                             <Table.HeaderCell>Spender</Table.HeaderCell>
-                            <Table.HeaderCell>Allowance</Table.HeaderCell>
+                            <Table.HeaderCell
+                                textAlign={'center'}
+                                style={{ paddingBottom: 0 }}
+                            >
+                                Allowance
+                                <Divider fitted />
+                                <small>Last modified</small>
+                            </Table.HeaderCell>
                             <Table.HeaderCell>Action</Table.HeaderCell>
                         </Table.Row>
                     </Table.Header>
@@ -147,9 +161,14 @@ const TokenAllowancesItem = ({
                 </Header>
                 <Table basic={'very'} celled selectable>
                     <Table.Header>
-                        <Table.Row>
+                        <Table.Row textAlign={'center'}>
                             <Table.HeaderCell>Spender</Table.HeaderCell>
-                            <Table.HeaderCell>Allowance</Table.HeaderCell>
+                            <Table.HeaderCell textAlign={'center'}>
+                                Allowance
+                            </Table.HeaderCell>
+                            <Table.HeaderCell textAlign={'center'}>
+                                Last Change
+                            </Table.HeaderCell>
                             <Table.HeaderCell>Action</Table.HeaderCell>
                         </Table.Row>
                     </Table.Header>

@@ -6,7 +6,7 @@ import {
 } from './AllowancesListSlice'
 import { useDispatch, useSelector } from 'react-redux'
 import { RootState } from 'app/rootReducer'
-import { Loader, Table } from 'semantic-ui-react'
+import { Divider, Loader, Table } from 'semantic-ui-react'
 import AddressDisplay from 'components/AddressDisplay'
 import bnToDisplayString from '@triplespeeder/bn2string'
 import BN from 'bn.js'
@@ -72,21 +72,52 @@ const TokenAllowanceItem = ({ allowanceId }: TokenAllowanceItemProps) => {
             allowanceElement = ''
     }
 
-    return (
-        <Table.Row key={`${allowanceId}`}>
-            <Table.Cell>
-                <AddressDisplay
-                    ethAddress={spenderAddress}
-                    networkId={networkId}
-                    mobile={mobile}
-                />
+    const lastChangeString = new Date(
+        allowance.lastChangedTimestamp
+    ).toDateString()
+
+    const addressCell = (
+        <Table.Cell>
+            <AddressDisplay
+                ethAddress={spenderAddress}
+                networkId={networkId}
+                mobile={mobile}
+            />
+        </Table.Cell>
+    )
+
+    let allowanceCell
+    let lastChangeCell
+    if (mobile) {
+        allowanceCell = (
+            <Table.Cell negative={criticalAllowance} textAlign={'right'}>
+                {allowanceElement}
+                <Divider fitted />
+                <small>{lastChangeString}</small>
             </Table.Cell>
-            <Table.Cell negative={criticalAllowance}>
+        )
+        lastChangeCell = null
+    } else {
+        allowanceCell = (
+            <Table.Cell negative={criticalAllowance} textAlign={'right'}>
                 {allowanceElement}
             </Table.Cell>
-            <Table.Cell>
-                <TokenAllowanceItemActions allowanceId={allowanceId} />
-            </Table.Cell>
+        )
+        lastChangeCell = <Table.Cell collapsing>{lastChangeString}</Table.Cell>
+    }
+
+    const actionCell = (
+        <Table.Cell collapsing>
+            <TokenAllowanceItemActions allowanceId={allowanceId} />
+        </Table.Cell>
+    )
+
+    return (
+        <Table.Row key={`${allowanceId}`}>
+            {addressCell}
+            {allowanceCell}
+            {lastChangeCell}
+            {actionCell}
         </Table.Row>
     )
 }
