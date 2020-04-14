@@ -21,70 +21,83 @@ const AllowancesListContainer = ({
     addressFilter,
 }: AllowancesListContainerProps) => {
     const allowancesByTokenId = useSelector((state: RootState) => {
-        let candidates
+        let allowanceIds
         if (showZeroAllowances && addressFilter === '') {
             // no filter required, just return all IDs.
-            candidates = state.allowances.allowanceIdsByOwnerId[ownerId]
+            allowanceIds = state.allowances.allowanceIdsByOwnerId[ownerId]
         } else {
             // apply filter
-            candidates = state.allowances.allowanceIdsByOwnerId[ownerId].filter(
-                allowanceId => {
-                    const allowance =
-                        state.allowances.allowancesById[allowanceId]
-                    if (!showZeroAllowances) {
-                        const allowanceValue =
-                            state.allowances.allowanceValuesById[allowanceId]
-                        const isZeroAllowance =
-                            allowanceValue.state ===
-                                QueryStates.QUERY_STATE_COMPLETE &&
-                            allowanceValue.value.isZero()
-                        if (isZeroAllowance) {
+            allowanceIds = state.allowances.allowanceIdsByOwnerId[
+                ownerId
+            ].filter((allowanceId) => {
+                const allowance = state.allowances.allowancesById[allowanceId]
+                if (!showZeroAllowances) {
+                    const allowanceValue =
+                        state.allowances.allowanceValuesById[allowanceId]
+                    const isZeroAllowance =
+                        allowanceValue.state ===
+                            QueryStates.QUERY_STATE_COMPLETE &&
+                        allowanceValue.value.isZero()
+                    if (isZeroAllowance) {
+                        return false
+                    }
+                }
+                if (addressFilter) {
+                    const filterString = addressFilter.toLowerCase()
+                    const tokenContract =
+                        state.tokenContracts.contractsById[
+                            allowance.tokenContractId
+                        ]
+                    if (tokenContract) {
+                        const tokenContractAddress =
+                            state.addresses.addressesById[
+                                tokenContract.addressId
+                            ]
+                        const matchedFilter =
+                            tokenContract.name
+                                .toLowerCase()
+                                .includes(filterString) ||
+                            tokenContract.symbol
+                                .toLowerCase()
+                                .includes(filterString) ||
+                            tokenContractAddress.address
+                                .toLowerCase()
+                                .includes(filterString) ||
+                            tokenContractAddress.ensName
+                                ?.toLowerCase()
+                                .includes(filterString)
+                        if (!matchedFilter) {
                             return false
                         }
+                    } else {
+                        console.warn(
+                            `No tokencontract for ${allowance.tokenContractId}`
+                        )
                     }
-                    if (addressFilter) {
-                        const filterString = addressFilter.toLowerCase()
-                        const tokenContract =
-                            state.tokenContracts.contractsById[
-                                allowance.tokenContractId
-                            ]
-                        if (tokenContract) {
-                            const tokenContractAddress =
-                                state.addresses.addressesById[
-                                    tokenContract.addressId
-                                ]
-                            const matchedFilter =
-                                tokenContract.name
-                                    .toLowerCase()
-                                    .includes(filterString) ||
-                                tokenContract.symbol
-                                    .toLowerCase()
-                                    .includes(filterString) ||
-                                tokenContractAddress.address
-                                    .toLowerCase()
-                                    .includes(filterString) ||
-                                tokenContractAddress.ensName
-                                    ?.toLowerCase()
-                                    .includes(filterString)
-                            if (!matchedFilter) {
-                                return false
-                            }
-                        } else {
-                            console.warn(
-                                `No tokencontract for ${allowance.tokenContractId}`
-                            )
-                        }
-                    }
-                    return true
                 }
-            )
+                return true
+            })
         }
-        // get all allowances of owner
-        const allowances = candidates?.map(
-            allowanceId => state.allowances.allowancesById[allowanceId]
+
+        // get allowances by their Id
+        const allowances = allowanceIds?.map(
+            (allowanceId) => state.allowances.allowancesById[allowanceId]
         )
+
         // group allowances by tokenID
-        return _.groupBy(allowances, 'tokenContractId')
+        const groupedAllowances = _.groupBy(allowances, 'tokenContractId')
+
+        // sort grouped allowances by token name
+        // Result: An array of an Array of Allowances
+        return _.sortBy(groupedAllowances, [
+            function (allowanceArray) {
+                const tokenContract =
+                    state.tokenContracts.contractsById[
+                        allowanceArray[0].tokenContractId
+                    ]
+                return tokenContract?.name ?? 'Z' // return 'Z' so tokens which name is still unknown appear at end
+            },
+        ])
     })
     const queryState = useSelector(
         (state: RootState) =>
@@ -103,9 +116,9 @@ const AllowancesListContainer = ({
 
     let message
     const items: Array<React.ReactNode> = []
-    for (const entry of Object.entries(allowancesByTokenId)) {
-        const tokenId = entry[0]
-        const allowanceIds = entry[1].map(allowance => allowance.id)
+    for (const tokenAllowances of allowancesByTokenId) {
+        const tokenId = tokenAllowances[0].tokenContractId
+        const allowanceIds = tokenAllowances.map((allowance) => allowance.id)
         items.push(
             <TokenAllowancesItem
                 key={tokenId}
@@ -122,8 +135,9 @@ const AllowancesListContainer = ({
                 <DisplayMessage
                     mobile={mobile}
                     header={'Loading events'}
-                    body={`Querying dfuse API for ERC20 Approvals, getting page ${queryState.currentPage +
-                        1}...`}
+                    body={`Querying dfuse API for ERC20 Approvals, getting page ${
+                        queryState.currentPage + 1
+                    }...`}
                     warning={true}
                     icon={<Icon name='circle notched' loading />}
                 />
