@@ -8,7 +8,7 @@ interface DisplayMessageProps {
     error?: boolean
     success?: boolean
     icon?: React.ReactNode
-    header: string
+    header?: string
     body: React.ReactNode | string
 }
 

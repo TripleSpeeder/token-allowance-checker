@@ -12,7 +12,7 @@ interface OnboardGateProps {
 const OnboardGate = ({ children }: OnboardGateProps) => {
     const history = useHistory()
     const dispatch = useDispatch()
-    const { onboardAPI, walletSelected } = useSelector(
+    const { onboardAPI, wallet } = useSelector(
         (state: RootState) => state.onboard
     )
     const mobile = useSelector((state: RootState) => state.respsonsive.mobile)
@@ -21,15 +21,13 @@ const OnboardGate = ({ children }: OnboardGateProps) => {
         if (!onboardAPI) {
             console.log(`OnboardGate: Dispatching initialize()`)
             dispatch(initialize(history))
-        } else if (!walletSelected) {
+        } else if (!wallet) {
             console.log(`OnboardGate: Dispatching selectWallet`)
             dispatch(selectWallet(history))
         }
-    }, [onboardAPI, walletSelected, dispatch, history])
+    }, [onboardAPI, wallet, dispatch, history])
 
-    const onboardstate = onboardAPI?.getState()
-
-    if (walletSelected && onboardstate?.wallet) {
+    if (wallet) {
         return <React.Fragment>{children}</React.Fragment>
     } else {
         return (

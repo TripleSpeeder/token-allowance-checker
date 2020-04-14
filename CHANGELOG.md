@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.6.0](https://github.com/TripleSpeeder/token-allowance-checker/compare/v2.5.1...v2.6.0) (2020-04-14)
+
+
+### Features
+
+* mark zero allowances as "positive" ([#108](https://github.com/TripleSpeeder/token-allowance-checker/issues/108)) ([5fedb31](https://github.com/TripleSpeeder/token-allowance-checker/commit/5fedb318e5e2327d2e34808a6cd587bc51a2009a)), closes [#105](https://github.com/TripleSpeeder/token-allowance-checker/issues/105)
+* sort allowance list by token name, closes [#40](https://github.com/TripleSpeeder/token-allowance-checker/issues/40)
+* show last change date of allowance, closes [#1](https://github.com/TripleSpeeder/token-allowance-checker/issues/1)
+* enable wallet change, closes [#28](https://github.com/TripleSpeeder/token-allowance-checker/issues/28)
+* redesigned mobile main page, now with sidebar menu
+
 ### [2.5.1](https://github.com/TripleSpeeder/token-allowance-checker/compare/v2.5.0...v2.5.1) (2020-04-10)
 
 ## [2.5.0](https://github.com/TripleSpeeder/token-allowance-checker/compare/v2.4.1...v2.5.0) (2020-04-07)

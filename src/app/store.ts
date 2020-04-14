@@ -4,6 +4,7 @@ import rootReducer, { RootState } from './rootReducer'
 import {
     setOnboardAPI,
     setWeb3Instance,
+    setWallet,
 } from '../features/onboard/onboardSlice'
 import { addContract } from 'features/tokenContracts/tokenContractsSlice'
 import { setAllowanceValue } from 'features/allowancesList/AllowancesListSlice'
@@ -14,6 +15,7 @@ const customizedMiddleware = getDefaultMiddleware({
         ignoredActions: [
             setOnboardAPI.type,
             setWeb3Instance.type,
+            setWallet.type,
             addContract.type,
             setAllowanceValue.type,
             addBalance.type,
@@ -21,6 +23,7 @@ const customizedMiddleware = getDefaultMiddleware({
         ],
         ignoredPaths: [
             'onboard.web3',
+            'onboard.wallet',
             'onboard.onboardAPI',
             'tokenContracts.contractsById',
             'allowances.allowanceValuesById',
@@ -30,9 +33,11 @@ const customizedMiddleware = getDefaultMiddleware({
     immutableCheck: {
         ignoredPaths: [
             'onboard.web3',
+            'onboard.wallet',
             'onboard.onboardAPI',
             'tokenContracts.contractsById',
         ],
+        warnAfter: 100, // ms
     },
 })
 
