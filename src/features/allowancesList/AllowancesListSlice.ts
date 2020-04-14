@@ -43,6 +43,9 @@ const searchTransactions = `query ($query: String! $limit: Int64! $cursor: Strin
             hash
             block {
               number
+              header {
+                timestamp
+              }
             }
             matchingLogs {
               data
@@ -62,6 +65,7 @@ export interface Allowance {
     ownerId: AddressId
     spenderId: AddressId
     editTransactionId?: TransactionId
+    lastChangedTimestamp: number
 }
 
 export interface AllowanceValue {
@@ -145,7 +149,8 @@ const allowancesSlice = createSlice({
             prepare(
                 tokenContractId: AddressId,
                 ownerId: AddressId,
-                spenderId: AddressId
+                spenderId: AddressId,
+                timestamp: number
             ) {
                 const id = buildAllowanceId(tokenContractId, ownerId, spenderId)
                 return {
@@ -156,6 +161,7 @@ const allowancesSlice = createSlice({
                             tokenContractId,
                             ownerId,
                             spenderId,
+                            lastChangedTimestamp: timestamp,
                         },
                     },
                 }
@@ -319,6 +325,7 @@ export const fetchAllowancesThunk = (ownerId: AddressId): AppThunk => async (
             const edges = response.data.searchTransactions.edges || []
             for (let edgeIndex = 0; edgeIndex < edges.length; edgeIndex++) {
                 const { node } = edges[edgeIndex]
+                const timestamp = parseInt(node.block.header.timestamp)
                 for (let index = 0; index < node.matchingLogs.length; index++) {
                     const logEntry = node.matchingLogs[index]
                     const tokenContractAddress = logEntry.address.toLowerCase()
@@ -382,7 +389,8 @@ export const fetchAllowancesThunk = (ownerId: AddressId): AppThunk => async (
                             addAllowance(
                                 tokenContractAddress,
                                 ownerId,
-                                spenderAddress
+                                spenderAddress,
+                                timestamp
                             )
                         )
                     }
