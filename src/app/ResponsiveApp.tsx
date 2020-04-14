@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { RootState } from './rootReducer'
 import { ResponsiveOnUpdateData } from 'semantic-ui-react/dist/commonjs/addons/Responsive/Responsive'
@@ -14,10 +14,11 @@ import {
     Button,
 } from 'semantic-ui-react'
 import { setMobile } from '../features/responsiveLayout/responsiveSlice'
-import { HashRouter as Router, Link } from 'react-router-dom'
+import { HashRouter as Router, Link, useHistory } from 'react-router-dom'
 import MainMenu from '../features/menu/MainMenu'
 import WalletSelectorContainer from '../features/onboard/WalletSelectorContainer'
 import NetworkSelector from '../components/NetworkSelector'
+import { initialize } from '../features/onboard/onboardSlice'
 
 interface ResponsiveAppProps {
     children?: React.ReactNode
@@ -25,9 +26,14 @@ interface ResponsiveAppProps {
 const ResponsiveApp = ({ children }: ResponsiveAppProps) => {
     const [prevMobile, setPrevMobile] = useState<boolean | undefined>(undefined)
     const [showSidebar, setShowSidebar] = useState(false)
-
     const { mobile } = useSelector((state: RootState) => state.respsonsive)
     const dispatch = useDispatch()
+    const history = useHistory()
+
+    // initialize onboard.js
+    useEffect(() => {
+        dispatch(initialize(history))
+    }, [dispatch, history])
 
     const onResponsiveUpdate = (
         event: React.SyntheticEvent<HTMLElement>,
@@ -73,57 +79,55 @@ const ResponsiveApp = ({ children }: ResponsiveAppProps) => {
     if (mobile) {
         // No extra page header, use sidebar for menu
         content = (
-            <>
-                <Sidebar.Pushable>
-                    <Menu fixed='top' inverted size='small'>
-                        <Menu.Item onClick={() => setShowSidebar(true)}>
-                            <Icon name={'bars'} />
-                        </Menu.Item>
-                        <Menu.Item style={{ padding: '0' }}>
-                            <Link to={'/'}>
-                                <Image
-                                    src={'/logo192.png'}
-                                    width={40}
-                                    height={40}
-                                />
-                            </Link>
-                        </Menu.Item>
-                        <Menu.Item>Token Allowance Checker</Menu.Item>
-                    </Menu>
-                    <Sidebar
-                        as={Menu}
-                        animation={'overlay'}
-                        inverted
-                        onHide={() => setShowSidebar(false)}
-                        vertical
-                        visible={showSidebar}
-                    >
-                        <Menu.Item>
-                            <WalletSelectorContainer />
-                        </Menu.Item>
-                        <Menu.Item>
-                            <NetworkSelector />
-                        </Menu.Item>
-                        <Menu.Item>
-                            <Button
-                                icon
-                                fluid
-                                as={'a'}
-                                href='https://github.com/TripleSpeeder/token-allowance-checker'
-                                title='github.com/TripleSpeeder/token-allowance-checker'
-                                target='_blank'
-                                rel='noopener noreferrer'
-                            >
-                                <Icon name='github' /> TAC on Github
-                            </Button>
-                        </Menu.Item>
-                    </Sidebar>
+            <Sidebar.Pushable>
+                <Menu fixed='top' inverted size='small'>
+                    <Menu.Item onClick={() => setShowSidebar(true)}>
+                        <Icon name={'bars'} />
+                    </Menu.Item>
+                    <Menu.Item style={{ padding: '0' }}>
+                        <Link to={'/'}>
+                            <Image
+                                src={'/logo192.png'}
+                                width={40}
+                                height={40}
+                            />
+                        </Link>
+                    </Menu.Item>
+                    <Menu.Item>Token Allowance Checker</Menu.Item>
+                </Menu>
+                <Sidebar
+                    as={Menu}
+                    animation={'overlay'}
+                    inverted
+                    onHide={() => setShowSidebar(false)}
+                    vertical
+                    visible={showSidebar}
+                >
+                    <Menu.Item>
+                        <WalletSelectorContainer />
+                    </Menu.Item>
+                    <Menu.Item>
+                        <NetworkSelector />
+                    </Menu.Item>
+                    <Menu.Item>
+                        <Button
+                            icon
+                            fluid
+                            as={'a'}
+                            href='https://github.com/TripleSpeeder/token-allowance-checker'
+                            title='github.com/TripleSpeeder/token-allowance-checker'
+                            target='_blank'
+                            rel='noopener noreferrer'
+                        >
+                            <Icon name='github' /> TAC on Github
+                        </Button>
+                    </Menu.Item>
+                </Sidebar>
 
-                    <Sidebar.Pusher style={{ marginTop: '3em' }}>
-                        {children}
-                    </Sidebar.Pusher>
-                </Sidebar.Pushable>
-            </>
+                <Sidebar.Pusher style={{ marginTop: '3em' }}>
+                    {children}
+                </Sidebar.Pusher>
+            </Sidebar.Pushable>
         )
     } else {
         // use page header with classic menu
