@@ -3,8 +3,8 @@ import Onboard from 'bnc-onboard'
 import Web3 from 'web3'
 import * as H from 'history'
 import { AppDispatch, AppThunk } from '../../app/store'
-import { API, WalletInitOptions } from 'bnc-onboard/dist/src/interfaces'
-import { AddressId, setWalletAddressThunk } from '../addressInput/AddressSlice'
+import { API, Wallet, WalletInitOptions } from 'bnc-onboard/dist/src/interfaces'
+import { setWalletAddressThunk } from '../addressInput/AddressSlice'
 import imToken from './wallets/imToken'
 
 const onboardApiKey = 'f4b71bf0-fe50-4eeb-bc2b-b323527ed9e6'
@@ -45,18 +45,16 @@ const wallets: Partial<WalletInitOptions>[] = [
 interface OnboardState {
     onboardAPI: API | null
     web3?: Web3
+    wallet?: Wallet
     networkId: number
     requiredNetworkId: number
-    walletSelected: boolean
-    prevWalletAddressId: AddressId | undefined
 }
 
 const initialState: OnboardState = {
     networkId: 0,
     requiredNetworkId: 1,
     onboardAPI: null,
-    walletSelected: false,
-    prevWalletAddressId: undefined,
+    wallet: undefined,
 }
 
 const onboardSlice = createSlice({
@@ -66,17 +64,14 @@ const onboardSlice = createSlice({
         setOnboardAPI(state, action: PayloadAction<API>) {
             state.onboardAPI = action.payload
         },
+        setWallet(state, action: PayloadAction<Wallet>) {
+            state.wallet = action.payload
+        },
         setWeb3Instance(state, action: PayloadAction<Web3>) {
             state.web3 = action.payload
         },
         setNetworkId(state, action: PayloadAction<number>) {
             state.networkId = action.payload
-        },
-        setPrevWalletAddressId(state, action: PayloadAction<string>) {
-            state.prevWalletAddressId = action.payload
-        },
-        setWalletSelected(state, action: PayloadAction<boolean>) {
-            state.walletSelected = action.payload
         },
         setRequiredNetworkId(state, action: PayloadAction<number>) {
             state.requiredNetworkId = action.payload
@@ -88,8 +83,7 @@ export const {
     setOnboardAPI,
     setNetworkId,
     setWeb3Instance,
-    setWalletSelected,
-    setPrevWalletAddressId,
+    setWallet,
     setRequiredNetworkId,
 } = onboardSlice.actions
 
@@ -117,10 +111,17 @@ export const selectWallet = (history: H.History): AppThunk => async (
     const onboardAPI = getState().onboard.onboardAPI
     if (onboardAPI) {
         const result = await onboardAPI.walletSelect()
-        dispatch(setWalletSelected(result))
         if (!result) {
-            // send user back to home page
-            history.push('/')
+            // user closed modal without selecting a wallet. If there was a
+            // wallet selected previously just keep using it. Otherwise, send
+            // her back to home page.
+            // Should actually just check for getState().wallet below, but unfortunately the wallet object is
+            // existing in onboardAPI.getState(), but all members are 'null'. This is not expected
+            // according to typescript defintions.
+            if (!onboardAPI.getState().wallet?.name) {
+                console.log(`No wallet selected.`)
+                history.push('/')
+            }
         } else {
             // to get access to account
             dispatch(checkWallet())
@@ -157,6 +158,8 @@ export const initialize = (history: H.History): AppThunk => async (
         networkId: requiredNetworkId,
         subscriptions: {
             wallet: (wallet) => {
+                // store selected wallet
+                dispatch(setWallet(wallet))
                 dispatch(setWeb3Instance(new Web3(wallet.provider)))
             },
             address: (addressId) => {
@@ -175,8 +178,6 @@ export const initialize = (history: H.History): AppThunk => async (
                     console.log(
                         `Switching network from ${prevNetworkId} to ${networkId}`
                     )
-                    // trigger checkWallet to make sure user stays on required network
-                    // dispatch(checkWallet())
                 }
                 dispatch(setRequiredNetworkIdThunk(networkId))
                 dispatch(setNetworkId(networkId))
