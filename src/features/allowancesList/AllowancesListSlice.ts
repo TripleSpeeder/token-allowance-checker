@@ -376,7 +376,7 @@ export const fetchAllowancesThunk = (ownerId: AddressId): AppThunk => async (
                         }
                     }
 
-                    // All checks passed. Now add spender address and create allowance entry
+                    // All checks passed. Now add spender address
                     const spenderAddress = decoded.spender.toLowerCase()
                     if (!knownSpenders.includes(spenderAddress)) {
                         knownSpenders.push(spenderAddress)
@@ -384,16 +384,17 @@ export const fetchAllowancesThunk = (ownerId: AddressId): AppThunk => async (
                         dispatch(addAddressThunk(spenderAddress))
                         // look for spender contract name on Etherscan
                         dispatch(fetchEtherscanNameThunk(spenderAddress))
-                        // Add allowance entry
-                        dispatch(
-                            addAllowance(
-                                tokenContractAddress,
-                                ownerId,
-                                spenderAddress,
-                                timestamp
-                            )
-                        )
                     }
+
+                    // Finally add allowance entry
+                    dispatch(
+                        addAllowance(
+                            tokenContractAddress,
+                            ownerId,
+                            spenderAddress,
+                            timestamp
+                        )
+                    )
                 }
             }
             numPageResults = edges.length
