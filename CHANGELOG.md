@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.6.1](https://github.com/TripleSpeeder/token-allowance-checker/compare/v2.6.0...v2.6.1) (2020-04-15)
+
+
+### Bug Fixes
+
+* dont skip allowance entry when spender is already known ([debad40](https://github.com/TripleSpeeder/token-allowance-checker/commit/debad4074970a67258fa42b3e463298ba53180d3)), closes [#110](https://github.com/TripleSpeeder/token-allowance-checker/issues/110)
+
 ## [2.6.0](https://github.com/TripleSpeeder/token-allowance-checker/compare/v2.5.1...v2.6.0) (2020-04-14)
 
 
