@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.7.0](https://github.com/TripleSpeeder/token-allowance-checker/compare/v2.6.1...v2.7.0) (2020-04-27)
+
+
+### Features
+
+* chromium omnibox search ([20a178d](https://github.com/TripleSpeeder/token-allowance-checker/commit/20a178d20d7d06a506d9b9acc127ed44a44bcc03)), closes [#95](https://github.com/TripleSpeeder/token-allowance-checker/issues/95)
+* show tokenlogo ([2747029](https://github.com/TripleSpeeder/token-allowance-checker/commit/27470292452621b531268b620238d917c6ed539b)), closes [#101](https://github.com/TripleSpeeder/token-allowance-checker/issues/101)
+
 ### [2.6.1](https://github.com/TripleSpeeder/token-allowance-checker/compare/v2.6.0...v2.6.1) (2020-04-15)
 
 
