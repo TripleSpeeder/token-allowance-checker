@@ -6,6 +6,7 @@ import {
     Placeholder,
     Icon,
     Divider,
+    Image,
 } from 'semantic-ui-react'
 import AddressDisplay from '../../components/AddressDisplay'
 import BN from 'bn.js'
@@ -16,6 +17,7 @@ import { RootState } from 'app/rootReducer'
 import TokenAllowanceItem from './TokenAllowanceItem'
 import { addBalanceThunk, buildBalanceId } from '../balances/BalancesSlice'
 import bn2DisplayString from '@triplespeeder/bn2string'
+import buildTokenLogoUrl from '../../utils/tokenMeta'
 
 interface TokenAllowanceItemProps {
     tokenId: AddressId
@@ -42,6 +44,9 @@ const TokenAllowancesItem = ({
         return state.balances.balancesById[balanceId]
     })
     const [collapsed, setCollapsed] = useState(true)
+    const [tokenLogoUrl, setTokenLogoUrl] = useState<string | undefined>(
+        undefined
+    )
 
     // lazy-load owner balance when contract instance is available
     useEffect(() => {
@@ -49,6 +54,12 @@ const TokenAllowancesItem = ({
             dispatch(addBalanceThunk(ownerId, tokenId))
         }
     }, [ownerBalance, ownerId, tokenId, tokenContract, dispatch])
+
+    useEffect(() => {
+        if (tokenAddress) {
+            setTokenLogoUrl(buildTokenLogoUrl(tokenAddress.address))
+        }
+    }, [tokenAddress])
 
     const toggleCollapse = () => {
         setCollapsed(!collapsed)
@@ -71,25 +82,26 @@ const TokenAllowancesItem = ({
         )
     }
 
-    let tokenDisplayString = tokenContract.name
-    if (tokenDisplayString === '') {
-        tokenDisplayString = `Unnamed ERC20`
+    let tokenName = tokenContract.name
+    if (tokenName === '') {
+        tokenName = `Unnamed ERC20`
     }
+
     const roundToDecimals = new BN(2)
+    let tokenBalance
     if (
         !ownerBalance ||
         ownerBalance.queryState === QueryStates.QUERY_STATE_RUNNING
     ) {
-        tokenDisplayString += ` (loading...)`
+        tokenBalance = '(loading...)'
     } else {
         const { rounded } = bn2DisplayString({
             value: ownerBalance.value,
             decimals: tokenContract.decimals,
             roundToDecimals,
         })
-        tokenDisplayString += ` (${rounded} ${tokenContract.symbol})`
+        tokenBalance = `(${rounded} ${tokenContract.symbol})`
     }
-    const headline = <div>{tokenDisplayString}</div>
 
     // populate rows with one entry per allowance from allowanceIds
     const rows: Array<React.ReactNode> = []
@@ -98,6 +110,13 @@ const TokenAllowancesItem = ({
             <TokenAllowanceItem key={allowanceId} allowanceId={allowanceId} />
         )
     })
+
+    // Set fallback token log image url
+    const onTokenLogoError = () => {
+        setTokenLogoUrl('/icon_noText.png')
+    }
+
+    const logoImage = <Image src={tokenLogoUrl} onError={onTokenLogoError} />
 
     if (mobile) {
         let table
@@ -134,14 +153,17 @@ const TokenAllowancesItem = ({
             <Segment raised>
                 <Header size={'small'}>
                     {toggleButton}
-                    {headline}
-                    <Header.Subheader>
-                        <AddressDisplay
-                            ethAddress={tokenAddress}
-                            mobile={mobile}
-                            networkId={networkId}
-                        />
-                    </Header.Subheader>
+                    {logoImage}
+                    <Header.Content style={{ maxWidth: '75%' }}>
+                        {tokenName} {tokenBalance}
+                        <Header.Subheader>
+                            <AddressDisplay
+                                ethAddress={tokenAddress}
+                                mobile={mobile}
+                                networkId={networkId}
+                            />
+                        </Header.Subheader>
+                    </Header.Content>
                 </Header>
                 {table}
             </Segment>
@@ -150,14 +172,17 @@ const TokenAllowancesItem = ({
         return (
             <Segment raised>
                 <Header size={'medium'}>
-                    {headline}
-                    <Header.Subheader>
-                        <AddressDisplay
-                            ethAddress={tokenAddress}
-                            mobile={mobile}
-                            networkId={networkId}
-                        />
-                    </Header.Subheader>
+                    {logoImage}
+                    <Header.Content>
+                        {tokenName} {tokenBalance}
+                        <Header.Subheader>
+                            <AddressDisplay
+                                ethAddress={tokenAddress}
+                                mobile={mobile}
+                                networkId={networkId}
+                            />
+                        </Header.Subheader>
+                    </Header.Content>
                 </Header>
                 <Table basic={'very'} celled selectable>
                     <Table.Header>
