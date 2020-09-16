@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.7.1](https://github.com/TripleSpeeder/token-allowance-checker/compare/v2.7.0...v2.7.1) (2020-09-16)
+
+
+### Bug Fixes
+
+* correctly handle allowances for tokens without 0 decimals ([6af67d7](https://github.com/TripleSpeeder/token-allowance-checker/commit/6af67d7f6b05676ee29ee82be61a21e14228c283)), closes [#120](https://github.com/TripleSpeeder/token-allowance-checker/issues/120)
+
 ## [2.7.0](https://github.com/TripleSpeeder/token-allowance-checker/compare/v2.6.1...v2.7.0) (2020-04-27)
 
 
