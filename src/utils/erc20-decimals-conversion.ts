@@ -29,7 +29,7 @@ export function toBaseUnit(value: string, decimals: BN) {
         whole = '0'
     }
     if (!fraction) {
-        fraction = '0'
+        fraction = ''
     }
     const decimalsNumber = decimals.toNumber()
     if (fraction.length > decimalsNumber) {
