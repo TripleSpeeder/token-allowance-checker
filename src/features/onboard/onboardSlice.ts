@@ -21,6 +21,7 @@ const wallets: Partial<WalletInitOptions>[] = [
     },
     { walletName: 'trust' },
     { walletName: 'dapper' },
+    { walletName: 'tokenpocket' },
     { walletName: 'authereum', preferred: true },
     { walletName: 'opera', preferred: true },
     { walletName: 'operaTouch' },

@@ -3,7 +3,7 @@ import React from 'react'
 import { EthAddress } from '../addressInput/AddressSlice'
 
 interface WalletSelectorProps {
-    walletName?: string
+    walletName?: string | null
     walletAccount?: EthAddress
     handleClick: () => void
 }
