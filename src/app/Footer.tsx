@@ -11,6 +11,7 @@ import {
 import GitcoinIcon from '../icons/gitcoinIcon.png'
 import pkg from '../../package.json'
 import React from 'react'
+import { ReactComponent as DfuseLogo } from '../icons/dfuse-logo.svg'
 
 const Footer = () => {
     return (
@@ -89,16 +90,25 @@ const Footer = () => {
                         />
                     </List.Item>
                 </List>
-                <Header size={'small'}>
-                    powered by{' '}
+                <Header size={'tiny'}>
                     <a
-                        href='https://www.dfuse.io/'
+                        href='https://dfuse.io/'
                         rel='noopener noreferrer'
                         target='_blank'
                     >
-                        dfuse
-                    </a>{' '}
-                    technology
+                        <DfuseLogo height={30} />
+                    </a>
+                    <Header.Subheader>
+                        powered by{' '}
+                        <a
+                            href='https://dfuse.io/'
+                            rel='noopener noreferrer'
+                            target='_blank'
+                        >
+                            dfuse.io
+                        </a>{' '}
+                        technology
+                    </Header.Subheader>
                 </Header>
                 <Header size={'tiny'}>
                     (c) Michael Bauer
