@@ -5,42 +5,45 @@ import * as H from 'history'
 import { AppDispatch, AppThunk } from '../../app/store'
 import { API, Wallet, WalletInitOptions } from 'bnc-onboard/dist/src/interfaces'
 import { setWalletAddressThunk } from '../addressInput/AddressSlice'
-import imToken from './wallets/imToken'
 import apiKeys from '../../api/apikeys'
 
 const infuraCredentials = apiKeys.infura[1]
 const onboardCredentials = apiKeys.onboard[1]
 
 const wallets: Partial<WalletInitOptions>[] = [
-    { walletName: 'metamask', preferred: true },
-    { walletName: 'coinbase', preferred: true },
+    { walletName: 'metamask' },
+    { walletName: 'coinbase' },
     {
         walletName: 'walletConnect',
         infuraKey: infuraCredentials.apikey,
-        preferred: true,
     },
-    { walletName: 'trust' },
-    { walletName: 'dapper' },
     { walletName: 'tokenpocket' },
-    { walletName: 'authereum', preferred: true },
-    { walletName: 'opera', preferred: true },
-    { walletName: 'operaTouch' },
-    { walletName: 'torus' },
-    { walletName: 'unilogin', preferred: true },
-    { walletName: 'status' },
     {
         walletName: 'ledger',
         rpcUrl: `${infuraCredentials.endpoint}${infuraCredentials.apikey}`,
-        preferred: true,
     },
     {
         walletName: 'trezor',
         appUrl: 'https://tac.dappstar.io',
         email: 'michael@m-bauer.org',
         rpcUrl: `${infuraCredentials.endpoint}${infuraCredentials.apikey}`,
-        preferred: true,
     },
-    imToken,
+    { walletName: 'status' },
+    { walletName: 'trust' },
+    { walletName: 'dapper' },
+    { walletName: 'authereum' },
+    { walletName: 'opera' },
+    { walletName: 'operaTouch' },
+    { walletName: 'torus' },
+    { walletName: 'unilogin' },
+    {
+        walletName: 'imToken',
+        rpcUrl: `${infuraCredentials.endpoint}${infuraCredentials.apikey}`,
+    },
+    {
+        walletName: 'huobiwallet',
+        rpcUrl: `${infuraCredentials.endpoint}${infuraCredentials.apikey}`,
+    },
 ]
 
 // Define contents of onboard state
@@ -158,6 +161,7 @@ export const initialize = (history: H.History): AppThunk => async (
     const onboard = Onboard({
         dappId: onboardCredentials.apikey,
         networkId: requiredNetworkId,
+        hideBranding: false,
         subscriptions: {
             wallet: (wallet) => {
                 // store selected wallet
