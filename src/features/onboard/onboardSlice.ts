@@ -5,7 +5,6 @@ import * as H from 'history'
 import { AppDispatch, AppThunk } from '../../app/store'
 import { API, Wallet, WalletInitOptions } from 'bnc-onboard/dist/src/interfaces'
 import { setWalletAddressThunk } from '../addressInput/AddressSlice'
-import imToken from './wallets/imToken'
 import apiKeys from '../../api/apikeys'
 
 const infuraCredentials = apiKeys.infura[1]
@@ -40,7 +39,10 @@ const wallets: Partial<WalletInitOptions>[] = [
         rpcUrl: `${infuraCredentials.endpoint}${infuraCredentials.apikey}`,
         preferred: true,
     },
-    imToken,
+    {
+        walletName: 'imToken',
+        rpcUrl: `${infuraCredentials.endpoint}${infuraCredentials.apikey}`,
+    },
 ]
 
 // Define contents of onboard state
