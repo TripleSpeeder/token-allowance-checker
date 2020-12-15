@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.8.0](https://github.com/TripleSpeeder/token-allowance-checker/compare/v2.7.0...v2.8.0) (2020-12-15)
+
+
+### Features
+
+* Add blocknative logo ([a48f603](https://github.com/TripleSpeeder/token-allowance-checker/commit/a48f6034c705a4a62c3db68a466df863bd20c24c))
+* add dfuse.io logo ([1038b6d](https://github.com/TripleSpeeder/token-allowance-checker/commit/1038b6d5dbc92858b22d06a0d71159d1b7916d99))
+* add HuobiWallet, remove wallet preference ([06c16bb](https://github.com/TripleSpeeder/token-allowance-checker/commit/06c16bbc37c99f14405caef36e0037a5469f6a6d))
+* upgrade onboard & add TokenPocket wallet ([2e6892f](https://github.com/TripleSpeeder/token-allowance-checker/commit/2e6892ff18f595deaabec961e8d9f8f6a599fd7e))
+
+
+### Bug Fixes
+
+* use built-in imToken wallet module of onboard.js ([5ea6797](https://github.com/TripleSpeeder/token-allowance-checker/commit/5ea6797ab45cebf016b14d54db7fa08144ef5d62))
+
 ### [2.7.1](https://github.com/TripleSpeeder/token-allowance-checker/compare/v2.7.0...v2.7.1) (2020-09-16)
 
 
