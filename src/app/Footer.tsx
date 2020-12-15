@@ -11,11 +11,43 @@ import {
 import GitcoinIcon from '../icons/gitcoinIcon.png'
 import pkg from '../../package.json'
 import React from 'react'
+import { ReactComponent as DfuseLogo } from '../icons/dfuse-logo.svg'
+import { ReactComponent as BlocknativeLogo } from '../icons/blocknative-logo.svg'
 
 const Footer = () => {
     return (
         <Container textAlign='center'>
             <Divider />
+            <Segment basic>
+                <List horizontal size={'small'} verticalAlign={'bottom'}>
+                    <List.Item
+                        as='a'
+                        href='https://dfuse.io/'
+                        rel='noopener noreferrer'
+                        target='_blank'
+                    >
+                        <List.Content>
+                            <List.Header>
+                                <DfuseLogo height={30} />
+                            </List.Header>
+                            powered by dfuse.io
+                        </List.Content>
+                    </List.Item>
+                    <List.Item
+                        as='a'
+                        href='https://www.blocknative.com/onboard'
+                        rel='noopener noreferrer'
+                        target='_blank'
+                    >
+                        <List.Content>
+                            <List.Header>
+                                <BlocknativeLogo height={22} width={200} />
+                            </List.Header>
+                            powered by Onboard.js
+                        </List.Content>
+                    </List.Item>
+                </List>
+            </Segment>
             <Segment basic>
                 <List horizontal size={'small'} verticalAlign={'top'}>
                     <List.Item
@@ -89,17 +121,6 @@ const Footer = () => {
                         />
                     </List.Item>
                 </List>
-                <Header size={'small'}>
-                    powered by{' '}
-                    <a
-                        href='https://www.dfuse.io/'
-                        rel='noopener noreferrer'
-                        target='_blank'
-                    >
-                        dfuse
-                    </a>{' '}
-                    technology
-                </Header>
                 <Header size={'tiny'}>
                     (c) Michael Bauer
                     <Header.Subheader>v{pkg.version}</Header.Subheader>
