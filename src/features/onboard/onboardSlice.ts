@@ -30,6 +30,11 @@ const wallets: Partial<WalletInitOptions>[] = [
     },
     { walletName: 'status' },
     { walletName: 'trust' },
+    {
+        walletName: 'lattice',
+        rpcUrl: `${infuraCredentials.endpoint}${infuraCredentials.apikey}`,
+        appName: 'Token Allowance Checker',
+    },
     { walletName: 'dapper' },
     { walletName: 'authereum' },
     { walletName: 'opera' },
@@ -44,6 +49,7 @@ const wallets: Partial<WalletInitOptions>[] = [
         walletName: 'huobiwallet',
         rpcUrl: `${infuraCredentials.endpoint}${infuraCredentials.apikey}`,
     },
+    { walletName: 'frame' },
 ]
 
 // Define contents of onboard state
