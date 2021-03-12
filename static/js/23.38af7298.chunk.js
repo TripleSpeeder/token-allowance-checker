@@ -1,2 +1,0 @@
-(this["webpackJsonptoken-allowance-checker"]=this["webpackJsonptoken-allowance-checker"]||[]).push([[23],{1260:function(n,c){},1334:function(n,c){},1542:function(n,c){}}]);
-//# sourceMappingURL=23.38af7298.chunk.js.map
