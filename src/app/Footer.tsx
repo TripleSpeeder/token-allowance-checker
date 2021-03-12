@@ -9,9 +9,9 @@ import {
     Segment,
 } from 'semantic-ui-react'
 import GitcoinIcon from '../icons/gitcoinIcon.png'
+import StreamingFastIcon from '../icons/streaming_fast_logo.png'
 import pkg from '../../package.json'
 import React from 'react'
-import { ReactComponent as DfuseLogo } from '../icons/dfuse-logo.svg'
 import { ReactComponent as BlocknativeLogo } from '../icons/blocknative-logo.svg'
 
 const Footer = () => {
@@ -19,18 +19,22 @@ const Footer = () => {
         <Container textAlign='center'>
             <Divider />
             <Segment basic>
-                <List horizontal size={'small'} verticalAlign={'bottom'}>
+                <List
+                    horizontal
+                    size={'small'}
+                    relaxed={'very'}
+                    verticalAlign={'middle'}
+                >
                     <List.Item
                         as='a'
-                        href='https://dfuse.io/'
+                        href='https://streamingfast.io/'
                         rel='noopener noreferrer'
                         target='_blank'
                     >
                         <List.Content>
                             <List.Header>
-                                <DfuseLogo height={30} />
+                                <Image src={StreamingFastIcon} height={50} />
                             </List.Header>
-                            powered by dfuse.io
                         </List.Content>
                     </List.Item>
                     <List.Item
@@ -41,9 +45,8 @@ const Footer = () => {
                     >
                         <List.Content>
                             <List.Header>
-                                <BlocknativeLogo height={22} width={200} />
+                                <BlocknativeLogo height={40} width={200} />
                             </List.Header>
-                            powered by Onboard.js
                         </List.Content>
                     </List.Item>
                 </List>
