@@ -44,6 +44,17 @@ const WalletConfigModal = ({
     )
 
     const size = mobile ? 'small' : 'large'
+    let supportsMultipleAddresses = false
+    if (wallet?.type === 'hardware') {
+        if (wallet.name?.toLowerCase() === 'lattice') {
+            console.log(
+                `Lattice wallet currently does not support multiple addresses`
+            )
+            supportsMultipleAddresses = false
+        } else {
+            supportsMultipleAddresses = true
+        }
+    }
 
     const msgs = []
     msgs.push(
@@ -58,7 +69,7 @@ const WalletConfigModal = ({
             </Message.Content>
         </Message>
     )
-    if (wallet?.type === 'hardware') {
+    if (supportsMultipleAddresses) {
         msgs.push(
             <Message icon info size={size} key={2}>
                 <Icon name='id card outline' />
