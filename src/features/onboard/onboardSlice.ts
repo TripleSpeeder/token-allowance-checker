@@ -50,6 +50,7 @@ const wallets: Partial<WalletInitOptions>[] = [
         rpcUrl: `${infuraCredentials.endpoint}${infuraCredentials.apikey}`,
     },
     { walletName: 'frame' },
+    { walletName: 'gnosis' },
 ]
 
 // Define contents of onboard state

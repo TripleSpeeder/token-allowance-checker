@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.10.0](https://github.com/TripleSpeeder/token-allowance-checker/compare/v2.7.0...v2.10.0) (2021-06-10)
+
+
+### Features
+
+* make TAC gnosis safe app ([8ea84bf](https://github.com/TripleSpeeder/token-allowance-checker/commit/8ea84bf26e891e04fedf0abdd814148f64599e29))
+
+
+### Bug Fixes
+
+* shorten app description ([e229b65](https://github.com/TripleSpeeder/token-allowance-checker/commit/e229b650a02a67b4f84763a201b0b6906604b0e8))
+
 ## [2.9.0](https://github.com/TripleSpeeder/token-allowance-checker/compare/v2.7.0...v2.9.0) (2021-03-12)
 
 
