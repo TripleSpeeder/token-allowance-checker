@@ -12,6 +12,7 @@ export default {
 }
 
 const metamaskWallet: Wallet = {
+    icons: {},
     connect: undefined,
     dashboard: () => {
         /* just a dummy*/
@@ -23,6 +24,7 @@ const metamaskWallet: Wallet = {
 }
 
 const ledgerWallet: Wallet = {
+    icons: {},
     connect: undefined,
     dashboard: () => {
         /* just a dummy*/
