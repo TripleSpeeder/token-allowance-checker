@@ -20,7 +20,7 @@
     "start": "react-scripts start",
     "start:https": "HTTPS=true react-scripts start",
     "typechain": "typechain --target truffle --outDir src/contracts ./node_modules/@openzeppelin/contracts/build/contracts/ERC20Detailed.json",
-    "build": "PUBLIC_URL='.' react-scripts build",
+    "build": "GENERATE_SOURCEMAP=false PUBLIC_URL='.' react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "storybook": "start-storybook -p 9009 -s public",
