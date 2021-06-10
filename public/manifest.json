@@ -1,7 +1,7 @@
 {
   "short_name": "TAC",
   "name": "Token Allowance Checker",
-  "description": "Token Allowance Checker shows all approvals for your ERC20-compliant tokens, and the option to change the approved amount - or completely zero it.",
+  "description": "Manage your token approvals",
   "iconPath": "logo.svg",
   "providedBy": {
     "name": "Michael Bauer",
