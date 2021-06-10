@@ -1,6 +1,12 @@
 {
   "short_name": "TAC",
   "name": "Token Allowance Checker",
+  "description": "Manage your token approvals",
+  "iconPath": "logo.svg",
+  "providedBy": {
+    "name": "Michael Bauer",
+    "url": "https://github.com/TripleSpeeder"
+  },
   "icons": [
     {
       "src": "logo192.png",
