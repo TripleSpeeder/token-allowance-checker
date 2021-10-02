@@ -1,0 +1,38 @@
+Trình kiểm tra cho phép mã thông báo ("TAC")
+Giới thiệu
+Trình kiểm tra cho phép mã thông báo đang chạy tại https://tac.dappstar.io .
+
+Ngoài ra còn có một screencast lỗi thời (không có âm thanh): https://drive.google.com/file/d/1hS05o5LhC5lc9JU9nEdihURikU3AimVi/view
+
+Các chính không giới hạn vấn đề
+Nhiều DApp có thói quen yêu cầu bạn phê duyệt số lượng mã thông báo không giới hạn một cách hiệu quả. Điều này giúp cải thiện trải nghiệm người dùng, vì bạn chỉ phải ký phê duyệt một lần và nó sẽ đủ cho tất cả các giao dịch trong tương lai.
+
+Tuy nhiên, điều này cũng có nghĩa là DApp (hoặc cá nhân / tổ chức kiểm soát nó) có thể chuyển tất cả các mã thông báo của bạn vào bất kỳ lúc nào mà không cần thêm bất kỳ sự chấp thuận nào.
+
+Ngoài ra, không có khái niệm phê duyệt hết hạn. Sau khi được chấp thuận, sự chấp thuận sẽ vẫn tồn tại mãi mãi. Nếu bạn không tin tưởng DApp hoặc các nhà khai thác của DApp nữa, thường không có cách nào dễ dàng để xóa bỏ phê duyệt.
+
+Trao quyền cho người dùng
+Trình kiểm tra cho phép mã thông báo quét toàn bộ lịch sử giao dịch Ethereum để biết ERC20-Phê duyệt được thực hiện bởi địa chỉ được cung cấp. Nó thu thập tất cả các hợp đồng mã thông báo ERC20 và bất kỳ spenderđịa chỉ nào đã được người dùng chấp thuận trong quá khứ.
+
+Thông tin này được hiển thị cho người dùng, cùng với số tiền trợ cấp cập nhật.
+
+Đối với tất cả các mục, người dùng có thể chỉnh sửa hoặc xóa khoản phụ cấp.
+
+Môn lịch sử
+Ban đầu dự án này bắt đầu như một mục nhập vào cuộc thi hackathon Gitcoin "Sustain web3" , để kiếm tiền thưởng https://gitcoin.co/issue/dfuse-io/hackathons/2/3953 . Kể từ đó, nó đã phát triển hơn nữa, chuyển từ một ứng dụng phản ứng javascript thuần túy sang react-redux và stylescript.
+
+Hỗ trợ tài trợ và phát triển
+Nếu bạn muốn hỗ trợ sự phát triển hơn nữa của TAC, vui lòng xem xét đóng góp vào khoản tài trợ gitcoin tại https://gitcoin.co/grants/480/token-allowance-checker .
+
+Công nghệ được sử dụng
+hãy tìm kiếm các khoản phụ cấp đã được phê duyệt trong quá khứ.
+Onboard.js để thiết lập nhà cung cấp web3 và truy cập ví / tài khoản của người dùng
+Redux-Toolkit để phát triển Redux hiệu quả
+typechain để tạo kiểu đánh máy cho ABI hợp đồng ERC20
+Giải phóng quy trình làm việc
+PR nên đi ngược lại với nhánh phát triển
+Để tạo một bản phát hành mới:
+chi nhánh phát triển thanh toán
+sự cố npm run release- Điều này sẽ cập nhật Changelog.md với tất cả các thay đổi và tạo thẻ phiên bản mới
+Tạo chiêu bài PR chống lại chủ nhân
+Khi PR được hợp nhất, travisCI sẽ tự động triển khai bản phát hành mới nhất cho các trang gh.
