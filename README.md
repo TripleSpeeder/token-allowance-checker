@@ -1,7 +1,3 @@
-#https://github.com/actions/toolkit/issues/921#issue-1020395058
-
-##https://github.com/actions/toolkit/issues/921#issue-1020395058
-
 
 # Token Allowance Checker ("TAC")
 
