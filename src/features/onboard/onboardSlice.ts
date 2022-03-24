@@ -101,111 +101,110 @@ export const {
 
 export default onboardSlice.reducer
 
-export const checkWallet = (): AppThunk => async (
-    dispatch: AppDispatch,
-    getState
-) => {
-    console.log(`checking wallet...`)
-    const onboardAPI = getState().onboard.onboardAPI
-    if (onboardAPI) {
-        const result = await onboardAPI.walletCheck()
-        console.log(`walletCheck result: ${result}`)
-    } else {
-        console.log(`dispatched checkWallet() without initialization...`)
+export const checkWallet =
+    (): AppThunk => async (dispatch: AppDispatch, getState) => {
+        console.log(`checking wallet...`)
+        const onboardAPI = getState().onboard.onboardAPI
+        if (onboardAPI) {
+            const result = await onboardAPI.walletCheck()
+            console.log(`walletCheck result: ${result}`)
+        } else {
+            console.log(`dispatched checkWallet() without initialization...`)
+        }
     }
-}
 
-export const selectWallet = (history: H.History): AppThunk => async (
-    dispatch: AppDispatch,
-    getState
-) => {
-    console.log(`Selecting wallet...`)
-    const onboardAPI = getState().onboard.onboardAPI
-    if (onboardAPI) {
-        const result = await onboardAPI.walletSelect()
-        if (!result) {
-            // user closed modal without selecting a wallet. If there was a
-            // wallet selected previously just keep using it. Otherwise, send
-            // her back to home page.
-            // Should actually just check for getState().wallet below, but unfortunately the wallet object is
-            // existing in onboardAPI.getState(), but all members are 'null'. This is not expected
-            // according to typescript defintions.
-            if (!onboardAPI.getState().wallet?.name) {
-                console.log(`No wallet selected.`)
-                history.push('/')
+export const selectWallet =
+    (history: H.History): AppThunk =>
+    async (dispatch: AppDispatch, getState) => {
+        console.log(`Selecting wallet...`)
+        const onboardAPI = getState().onboard.onboardAPI
+        if (onboardAPI) {
+            const result = await onboardAPI.walletSelect()
+            if (!result) {
+                // user closed modal without selecting a wallet. If there was a
+                // wallet selected previously just keep using it. Otherwise, send
+                // her back to home page.
+                // Should actually just check for getState().wallet below, but unfortunately the wallet object is
+                // existing in onboardAPI.getState(), but all members are 'null'. This is not expected
+                // according to typescript defintions.
+                if (!onboardAPI.getState().wallet?.name) {
+                    console.log(`No wallet selected.`)
+                    history.push('/')
+                }
+            } else {
+                // to get access to account
+                dispatch(checkWallet())
             }
         } else {
-            // to get access to account
-            dispatch(checkWallet())
+            console.log(`dispatched selectWallet() without initialization...`)
         }
-    } else {
-        console.log(`dispatched selectWallet() without initialization...`)
     }
-}
 
-export const setRequiredNetworkIdThunk = (networkId: number): AppThunk => (
-    dispatch: AppDispatch,
-    getState
-) => {
-    dispatch(setRequiredNetworkId(networkId))
-    const onboardAPI = getState().onboard.onboardAPI
-    if (onboardAPI) {
-        // update existing onboardAPI object
-        onboardAPI.config({ networkId: networkId })
-        // issue checkWallet to make sure user has selected expected network in e.g. Metamask
-        dispatch(checkWallet())
-    } else {
-        // onboardAPI not yet initialized
+export const setRequiredNetworkIdThunk =
+    (networkId: number): AppThunk =>
+    (dispatch: AppDispatch, getState) => {
+        dispatch(setRequiredNetworkId(networkId))
+        const onboardAPI = getState().onboard.onboardAPI
+        if (onboardAPI) {
+            // update existing onboardAPI object
+            onboardAPI.config({ networkId: networkId })
+            // issue checkWallet to make sure user has selected expected network in e.g. Metamask
+            dispatch(checkWallet())
+        } else {
+            // onboardAPI not yet initialized
+        }
     }
-}
 
-export const initialize = (history: H.History): AppThunk => async (
-    dispatch: AppDispatch,
-    getState
-) => {
-    const requiredNetworkId = getState().onboard.requiredNetworkId
-    console.log(`Initializing OnBoard.js for networkId ${requiredNetworkId}...`)
-    const onboard = Onboard({
-        dappId: onboardCredentials.apikey,
-        networkId: requiredNetworkId,
-        hideBranding: false,
-        subscriptions: {
-            wallet: (wallet) => {
-                // store selected wallet
-                dispatch(setWallet(wallet))
-                dispatch(setWeb3Instance(new Web3(wallet.provider)))
+export const initialize =
+    (history: H.History): AppThunk =>
+    async (dispatch: AppDispatch, getState) => {
+        const requiredNetworkId = getState().onboard.requiredNetworkId
+        console.log(
+            `Initializing OnBoard.js for networkId ${requiredNetworkId}...`
+        )
+        const onboard = Onboard({
+            dappId: onboardCredentials.apikey,
+            networkId: requiredNetworkId,
+            hideBranding: false,
+            subscriptions: {
+                wallet: (wallet) => {
+                    // store selected wallet
+                    dispatch(setWallet(wallet))
+                    dispatch(setWeb3Instance(new Web3(wallet.provider)))
+                },
+                address: (addressId) => {
+                    if (addressId) {
+                        console.log(`Wallet address changed to ${addressId}!`)
+                        dispatch(
+                            setWalletAddressThunk(
+                                addressId.toLowerCase(),
+                                history
+                            )
+                        )
+                    } else {
+                        console.log(`No access to wallet address`)
+                    }
+                },
+                network: (networkId) => {
+                    const prevNetworkId = getState().onboard.networkId
+                    if (prevNetworkId !== 0 && prevNetworkId !== networkId) {
+                        console.log(
+                            `Switching network from ${prevNetworkId} to ${networkId}`
+                        )
+                    }
+                    dispatch(setRequiredNetworkIdThunk(networkId))
+                    dispatch(setNetworkId(networkId))
+                },
+                balance: () => {
+                    /* do nothing*/
+                },
             },
-            address: (addressId) => {
-                if (addressId) {
-                    console.log(`Wallet address changed to ${addressId}!`)
-                    dispatch(
-                        setWalletAddressThunk(addressId.toLowerCase(), history)
-                    )
-                } else {
-                    console.log(`No access to wallet address`)
-                }
+            walletSelect: {
+                heading: '',
+                description: '',
+                // @ts-ignore
+                wallets: wallets,
             },
-            network: (networkId) => {
-                const prevNetworkId = getState().onboard.networkId
-                if (prevNetworkId !== 0 && prevNetworkId !== networkId) {
-                    console.log(
-                        `Switching network from ${prevNetworkId} to ${networkId}`
-                    )
-                }
-                dispatch(setRequiredNetworkIdThunk(networkId))
-                dispatch(setNetworkId(networkId))
-            },
-            balance: () => {
-                /* do nothing*/
-            },
-        },
-        walletSelect: {
-            heading: '',
-            description: '',
-            // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
-            // @ts-ignore
-            wallets: wallets,
-        },
-    })
-    dispatch(setOnboardAPI(onboard))
-}
+        })
+        dispatch(setOnboardAPI(onboard))
+    }
