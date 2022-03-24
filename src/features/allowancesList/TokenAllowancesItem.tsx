@@ -18,6 +18,7 @@ import TokenAllowanceItem from './TokenAllowanceItem'
 import { addBalanceThunk, buildBalanceId } from '../balances/BalancesSlice'
 import bn2DisplayString from '@triplespeeder/bn2string'
 import buildTokenLogoUrl from '../../utils/tokenMeta'
+import { useAppSelector } from '../../app/hooks'
 
 interface TokenAllowanceItemProps {
     tokenId: AddressId
@@ -31,15 +32,15 @@ const TokenAllowancesItem = ({
     allowanceIds,
 }: TokenAllowanceItemProps) => {
     const dispatch = useDispatch()
-    const { mobile } = useSelector((state: RootState) => state.respsonsive)
-    const { networkId } = useSelector((state: RootState) => state.onboard)
-    const tokenContract = useSelector(
+    const { mobile } = useAppSelector((state: RootState) => state.respsonsive)
+    const { networkId } = useAppSelector((state: RootState) => state.onboard)
+    const tokenContract = useAppSelector(
         (state: RootState) => state.tokenContracts.contractsById[tokenId]
     )
-    const tokenAddress = useSelector(
+    const tokenAddress = useAppSelector(
         (state: RootState) => state.addresses.addressesById[tokenId]
     )
-    const ownerBalance = useSelector((state: RootState) => {
+    const ownerBalance = useAppSelector((state: RootState) => {
         const balanceId = buildBalanceId(ownerId, tokenId)
         return state.balances.balancesById[balanceId]
     })

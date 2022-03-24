@@ -3,6 +3,7 @@ import { Button, Dropdown, DropdownProps } from 'semantic-ui-react'
 import { RootState } from '../app/rootReducer'
 import { useDispatch, useSelector } from 'react-redux'
 import { setRequiredNetworkIdThunk } from 'features/onboard/onboardSlice'
+import { useAppSelector } from '../app/hooks'
 
 const NetworkSelector = () => {
     const options = [
@@ -11,7 +12,7 @@ const NetworkSelector = () => {
     ]
 
     const dispatch = useDispatch()
-    const { requiredNetworkId, wallet } = useSelector(
+    const { requiredNetworkId, wallet } = useAppSelector(
         (state: RootState) => state.onboard
     )
 

@@ -18,10 +18,10 @@ const AddressDisplay = ({
     const { address, ensName, esContractName } = ethAddress
     const setClipboard = (content: string) => {
         navigator.clipboard.writeText(content).then(
-            function() {
+            function () {
                 /* clipboard successfully set */
             },
-            function() {
+            function () {
                 console.log(`failed to set clipboard`)
             }
         )

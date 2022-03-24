@@ -25,8 +25,6 @@ const editAllowanceSlice = createSlice({
         },
     },
 })
-export const {
-    openEditAllowanceModal,
-    closeEditAllowanceModal,
-} = editAllowanceSlice.actions
+export const { openEditAllowanceModal, closeEditAllowanceModal } =
+    editAllowanceSlice.actions
 export default editAllowanceSlice.reducer

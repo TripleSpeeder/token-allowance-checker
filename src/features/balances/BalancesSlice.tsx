@@ -83,55 +83,50 @@ export const buildBalanceId = (
     return `${addressId}-${tokenContractId}`
 }
 
-export const {
-    addBalance,
-    setBalanceValue,
-    setBalanceQuerystate,
-} = balancesSlice.actions
+export const { addBalance, setBalanceValue, setBalanceQuerystate } =
+    balancesSlice.actions
 
 /*
  Create a new balance entry and fetch balance
  */
-export const addBalanceThunk = (
-    addressId: AddressId,
-    tokenContractId: AddressId
-): AppThunk => async (dispatch: AppDispatch, getState) => {
-    const balanceId = buildBalanceId(addressId, tokenContractId)
-    dispatch(addBalance(balanceId, addressId, tokenContractId))
-    dispatch(
-        setBalanceQuerystate({
-            id: balanceId,
-            queryState: QueryStates.QUERY_STATE_RUNNING,
-        })
-    )
-    const tokenContract = getState().tokenContracts.contractsById[
-        tokenContractId
-    ]
-    const address = getState().addresses.addressesById[addressId]
-    try {
-        const balance = await tokenContract.contractInstance.balanceOf(
-            address.address
-        )
-        dispatch(
-            setBalanceValue({
-                id: balanceId,
-                value: balance,
-            })
-        )
+export const addBalanceThunk =
+    (addressId: AddressId, tokenContractId: AddressId): AppThunk =>
+    async (dispatch, getState) => {
+        const balanceId = buildBalanceId(addressId, tokenContractId)
+        dispatch(addBalance(balanceId, addressId, tokenContractId))
         dispatch(
             setBalanceQuerystate({
                 id: balanceId,
-                queryState: QueryStates.QUERY_STATE_COMPLETE,
+                queryState: QueryStates.QUERY_STATE_RUNNING,
             })
         )
-    } catch (error) {
-        console.log(`Error getting balance: ${error}`)
-        dispatch(
-            setBalanceQuerystate({
-                id: balanceId,
-                queryState: QueryStates.QUERY_STATE_ERROR,
-            })
-        )
+        const tokenContract =
+            getState().tokenContracts.contractsById[tokenContractId]
+        const address = getState().addresses.addressesById[addressId]
+        try {
+            const balance = await tokenContract.contractInstance.balanceOf(
+                address.address
+            )
+            dispatch(
+                setBalanceValue({
+                    id: balanceId,
+                    value: balance,
+                })
+            )
+            dispatch(
+                setBalanceQuerystate({
+                    id: balanceId,
+                    queryState: QueryStates.QUERY_STATE_COMPLETE,
+                })
+            )
+        } catch (error) {
+            console.log(`Error getting balance: ${error}`)
+            dispatch(
+                setBalanceQuerystate({
+                    id: balanceId,
+                    queryState: QueryStates.QUERY_STATE_ERROR,
+                })
+            )
+        }
     }
-}
 export default balancesSlice.reducer

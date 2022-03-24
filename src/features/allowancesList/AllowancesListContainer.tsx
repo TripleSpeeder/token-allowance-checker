@@ -8,6 +8,7 @@ import { Icon } from 'semantic-ui-react'
 import { AddressId } from '../addressInput/AddressSlice'
 import DisplayMessage from '../../components/DisplayMessage'
 import AddressDisplay from '../../components/AddressDisplay'
+import { useAppSelector } from '../../app/hooks'
 
 interface AllowancesListContainerProps {
     ownerId: AddressId
@@ -20,7 +21,7 @@ const AllowancesListContainer = ({
     showZeroAllowances,
     addressFilter,
 }: AllowancesListContainerProps) => {
-    const allowancesByTokenId = useSelector((state: RootState) => {
+    const allowancesByTokenId = useAppSelector((state: RootState) => {
         let allowanceIds
         if (showZeroAllowances && addressFilter === '') {
             // no filter required, just return all IDs.
@@ -99,15 +100,19 @@ const AllowancesListContainer = ({
             },
         ])
     })
-    const queryState = useSelector(
+    const queryState = useAppSelector(
         (state: RootState) =>
             state.allowances.allowanceQueryStateByOwner[ownerId]
     )
-    const ownerAddress = useSelector(
+    const ownerAddress = useAppSelector(
         (state: RootState) => state.addresses.addressesById[ownerId]
     )
-    const mobile = useSelector((state: RootState) => state.respsonsive.mobile)
-    const networkId = useSelector((state: RootState) => state.onboard.networkId)
+    const mobile = useAppSelector(
+        (state: RootState) => state.respsonsive.mobile
+    )
+    const networkId = useAppSelector(
+        (state: RootState) => state.onboard.networkId
+    )
 
     if (!queryState) {
         console.log(`No querystate available for ${ownerId}`)

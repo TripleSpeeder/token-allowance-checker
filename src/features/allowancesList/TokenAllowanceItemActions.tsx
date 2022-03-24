@@ -5,6 +5,7 @@ import { openEditAllowanceModal } from '../editAllowance/EditAllowanceSlice'
 import { TransactionStates } from '../transactionTracker/TransactionTrackerSlice'
 import { useDispatch, useSelector } from 'react-redux'
 import { RootState } from '../../app/rootReducer'
+import { useAppSelector } from '../../app/hooks'
 
 interface TokenAllowanceItemActionsProps {
     allowanceId: AllowanceId
@@ -13,15 +14,15 @@ const TokenAllowanceItemActions = ({
     allowanceId,
 }: TokenAllowanceItemActionsProps) => {
     const dispatch = useDispatch()
-    const allowance = useSelector(
+    const allowance = useAppSelector(
         (state: RootState) => state.allowances.allowancesById[allowanceId]
     )
-    const transaction = useSelector((state: RootState) =>
+    const transaction = useAppSelector((state: RootState) =>
         allowance.editTransactionId
             ? state.transactions.transactionsById[allowance.editTransactionId]
             : undefined
     )
-    const walletAddressId = useSelector(
+    const walletAddressId = useAppSelector(
         (state: RootState) => state.addresses.walletAddressId
     )
 

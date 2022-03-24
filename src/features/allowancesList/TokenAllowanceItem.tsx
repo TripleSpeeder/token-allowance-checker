@@ -11,6 +11,7 @@ import AddressDisplay from 'components/AddressDisplay'
 import bnToDisplayString from '@triplespeeder/bn2string'
 import BN from 'bn.js'
 import TokenAllowanceItemActions from './TokenAllowanceItemActions'
+import { useAppSelector } from '../../app/hooks'
 
 interface TokenAllowanceItemProps {
     allowanceId: AllowanceId
@@ -20,21 +21,21 @@ const unlimitedAllowance = new BN(2).pow(new BN(256)).subn(1)
 
 const TokenAllowanceItem = ({ allowanceId }: TokenAllowanceItemProps) => {
     const dispatch = useDispatch()
-    const allowance = useSelector(
+    const allowance = useAppSelector(
         (state: RootState) => state.allowances.allowancesById[allowanceId]
     )
-    const allowanceValue = useSelector(
+    const allowanceValue = useAppSelector(
         (state: RootState) => state.allowances.allowanceValuesById[allowanceId]
     )
-    const tokenContract = useSelector(
+    const tokenContract = useAppSelector(
         (state: RootState) =>
             state.tokenContracts.contractsById[allowance.tokenContractId]
     )
-    const spenderAddress = useSelector(
+    const spenderAddress = useAppSelector(
         (state: RootState) => state.addresses.addressesById[allowance.spenderId]
     )
-    const { mobile } = useSelector((state: RootState) => state.respsonsive)
-    const { networkId } = useSelector((state: RootState) => state.onboard)
+    const { mobile } = useAppSelector((state: RootState) => state.respsonsive)
+    const { networkId } = useAppSelector((state: RootState) => state.onboard)
 
     // lazy-load allowance value
     useEffect(() => {

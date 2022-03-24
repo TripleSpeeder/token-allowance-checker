@@ -38,35 +38,26 @@ const TransactionTrackerSlice = createSlice({
     reducers: {
         addTransaction(state, action: PayloadAction<EditAllowanceTransaction>) {
             const editAllowanceTransaction = action.payload
-            state.transactionsById[
-                editAllowanceTransaction.transactionId
-            ] = editAllowanceTransaction
+            state.transactionsById[editAllowanceTransaction.transactionId] =
+                editAllowanceTransaction
         },
         updateTransaction(
             state,
             action: PayloadAction<UpdateTransactionPayload>
         ) {
-            const {
-                transactionId,
-                transactionState,
-                error,
-                transactionHash,
-            } = action.payload
+            const { transactionId, transactionState, error, transactionHash } =
+                action.payload
             transactionState &&
-                (state.transactionsById[
-                    transactionId
-                ].transactionState = transactionState)
+                (state.transactionsById[transactionId].transactionState =
+                    transactionState)
             error && (state.transactionsById[transactionId].error = error)
             transactionHash &&
-                (state.transactionsById[
-                    transactionId
-                ].transactionHash = transactionHash)
+                (state.transactionsById[transactionId].transactionHash =
+                    transactionHash)
         },
     },
 })
 
-export const {
-    addTransaction,
-    updateTransaction,
-} = TransactionTrackerSlice.actions
+export const { addTransaction, updateTransaction } =
+    TransactionTrackerSlice.actions
 export default TransactionTrackerSlice.reducer

@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react'
 import AddressInput from './AddressInput'
-import { useHistory } from 'react-router-dom'
 import { Form, Grid } from 'semantic-ui-react'
 import { useDispatch, useSelector } from 'react-redux'
 import { RootState } from '../../app/rootReducer'
 import { addAddressThunk } from './AddressSlice'
+import { useNavigate } from 'react-router'
+import { useAppSelector } from '../../app/hooks'
 
 export const addressInputStates = {
     ADDRESS_INITIAL: 'address_initial', // no user interaction
@@ -15,10 +16,10 @@ export const addressInputStates = {
 
 const AddressInputContainer = () => {
     const dispatch = useDispatch()
-    const history = useHistory()
-    const { web3 } = useSelector((state: RootState) => state.onboard)
-    const { mobile } = useSelector((state: RootState) => state.respsonsive)
-    const checkAddress = useSelector((state: RootState) => {
+    const navigate = useNavigate()
+    const { web3 } = useAppSelector((state: RootState) => state.onboard)
+    const { mobile } = useAppSelector((state: RootState) => state.respsonsive)
+    const checkAddress = useAppSelector((state: RootState) => {
         if (state.addresses.checkAddressId)
             return state.addresses.addressesById[state.addresses.checkAddressId]
         else return undefined
@@ -49,9 +50,9 @@ const AddressInputContainer = () => {
     const handleSubmit = () => {
         if (validInput) {
             if (ensName) {
-                dispatch(addAddressThunk(ensName, history))
+                dispatch(addAddressThunk(ensName, navigate))
             } else {
-                dispatch(addAddressThunk(addressId, history))
+                dispatch(addAddressThunk(addressId, navigate))
             }
             setInput('')
             setEnsName(undefined)
@@ -77,7 +78,7 @@ const AddressInputContainer = () => {
                     setAddressId(resolvedAddress)
                     setEnsName(input)
                     if (mobile) {
-                        dispatch(addAddressThunk(input, history))
+                        dispatch(addAddressThunk(input, navigate))
                     }
                 } catch (e) {
                     console.log('Could not resolve ' + input)
@@ -89,7 +90,7 @@ const AddressInputContainer = () => {
                 setAddressId(addressId)
                 setAddressInputState(addressInputStates.ADDRESS_VALID)
                 if (mobile) {
-                    dispatch(addAddressThunk(addressId, history))
+                    dispatch(addAddressThunk(addressId, navigate))
                 }
             } else {
                 setAddressInputState(addressInputStates.ADDRESS_INVALID)

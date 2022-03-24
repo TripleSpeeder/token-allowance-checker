@@ -1,31 +1,31 @@
 import React, { useEffect } from 'react'
 import { Icon } from 'semantic-ui-react'
-import { useHistory } from 'react-router-dom'
-import { useSelector, useDispatch } from 'react-redux'
 import { RootState } from '../../app/rootReducer'
 import { initialize, selectWallet } from './onboardSlice'
 import DisplayMessage from '../../components/DisplayMessage'
+import { useNavigate } from 'react-router'
+import { useAppDispatch, useAppSelector } from '../../app/hooks'
 
 interface OnboardGateProps {
     children?: React.ReactNode
 }
 const OnboardGate = ({ children }: OnboardGateProps) => {
-    const history = useHistory()
-    const dispatch = useDispatch()
-    const { onboardAPI, wallet } = useSelector(
-        (state: RootState) => state.onboard
+    const navigate = useNavigate()
+    const dispatch = useAppDispatch()
+    const { onboardAPI, wallet } = useAppSelector((state) => state.onboard)
+    const mobile = useAppSelector(
+        (state: RootState) => state.respsonsive.mobile
     )
-    const mobile = useSelector((state: RootState) => state.respsonsive.mobile)
 
     useEffect(() => {
         if (!onboardAPI) {
             console.log(`OnboardGate: Dispatching initialize()`)
-            dispatch(initialize(history))
+            dispatch(initialize(navigate))
         } else if (!wallet) {
             console.log(`OnboardGate: Dispatching selectWallet`)
-            dispatch(selectWallet(history))
+            dispatch(selectWallet(navigate))
         }
-    }, [onboardAPI, wallet, dispatch, history])
+    }, [onboardAPI, wallet, dispatch, navigate])
 
     if (wallet) {
         return <React.Fragment>{children}</React.Fragment>

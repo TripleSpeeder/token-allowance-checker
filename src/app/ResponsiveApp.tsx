@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import { useDispatch } from 'react-redux'
 import { RootState } from './rootReducer'
 import { ResponsiveOnUpdateData } from 'semantic-ui-react/dist/commonjs/addons/Responsive/Responsive'
 import {
@@ -8,17 +8,18 @@ import {
     Icon,
     Image,
     Menu,
-    Responsive,
     Segment,
     Sidebar,
     Button,
 } from 'semantic-ui-react'
 import { setMobile } from '../features/responsiveLayout/responsiveSlice'
-import { HashRouter as Router, Link, useHistory } from 'react-router-dom'
+import { HashRouter as Router, Link } from 'react-router-dom'
 import MainMenu from '../features/menu/MainMenu'
 import WalletSelectorContainer from '../features/onboard/WalletSelectorContainer'
 import NetworkSelector from '../components/NetworkSelector'
 import { initialize } from '../features/onboard/onboardSlice'
+import { useNavigate } from 'react-router'
+import { useAppSelector } from './hooks'
 
 interface ResponsiveAppProps {
     children?: React.ReactNode
@@ -26,14 +27,14 @@ interface ResponsiveAppProps {
 const ResponsiveApp = ({ children }: ResponsiveAppProps) => {
     const [prevMobile, setPrevMobile] = useState<boolean | undefined>(undefined)
     const [showSidebar, setShowSidebar] = useState(false)
-    const { mobile } = useSelector((state: RootState) => state.respsonsive)
+    const { mobile } = useAppSelector((state: RootState) => state.respsonsive)
     const dispatch = useDispatch()
-    const history = useHistory()
+    const navigate = useNavigate()
 
     // initialize onboard.js
     useEffect(() => {
-        dispatch(initialize(history))
-    }, [dispatch, history])
+        dispatch(initialize(navigate))
+    }, [dispatch, navigate])
 
     const onResponsiveUpdate = (
         event: React.SyntheticEvent<HTMLElement>,
@@ -138,6 +139,8 @@ const ResponsiveApp = ({ children }: ResponsiveAppProps) => {
         )
     }
 
+    return <Router>{content}</Router>
+    /*
     return (
         <Responsive
             as={Router}
@@ -147,6 +150,8 @@ const ResponsiveApp = ({ children }: ResponsiveAppProps) => {
             {content}
         </Responsive>
     )
+
+ */
 }
 
 export default ResponsiveApp

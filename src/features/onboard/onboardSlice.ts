@@ -6,6 +6,7 @@ import { AppDispatch, AppThunk } from '../../app/store'
 import { API, Wallet, WalletInitOptions } from 'bnc-onboard/dist/src/interfaces'
 import { setWalletAddressThunk } from '../addressInput/AddressSlice'
 import apiKeys from '../../api/apikeys'
+import { NavigateFunction } from 'react-router-dom'
 
 const infuraCredentials = apiKeys.infura[1]
 const onboardCredentials = apiKeys.onboard[1]
@@ -101,21 +102,20 @@ export const {
 
 export default onboardSlice.reducer
 
-export const checkWallet =
-    (): AppThunk => async (dispatch: AppDispatch, getState) => {
-        console.log(`checking wallet...`)
-        const onboardAPI = getState().onboard.onboardAPI
-        if (onboardAPI) {
-            const result = await onboardAPI.walletCheck()
-            console.log(`walletCheck result: ${result}`)
-        } else {
-            console.log(`dispatched checkWallet() without initialization...`)
-        }
+export const checkWallet = (): AppThunk => async (dispatch, getState) => {
+    console.log(`checking wallet...`)
+    const onboardAPI = getState().onboard.onboardAPI
+    if (onboardAPI) {
+        const result = await onboardAPI.walletCheck()
+        console.log(`walletCheck result: ${result}`)
+    } else {
+        console.log(`dispatched checkWallet() without initialization...`)
     }
+}
 
 export const selectWallet =
-    (history: H.History): AppThunk =>
-    async (dispatch: AppDispatch, getState) => {
+    (navigate: NavigateFunction): AppThunk =>
+    async (dispatch, getState) => {
         console.log(`Selecting wallet...`)
         const onboardAPI = getState().onboard.onboardAPI
         if (onboardAPI) {
@@ -129,7 +129,7 @@ export const selectWallet =
                 // according to typescript defintions.
                 if (!onboardAPI.getState().wallet?.name) {
                     console.log(`No wallet selected.`)
-                    history.push('/')
+                    navigate('/')
                 }
             } else {
                 // to get access to account
@@ -142,7 +142,7 @@ export const selectWallet =
 
 export const setRequiredNetworkIdThunk =
     (networkId: number): AppThunk =>
-    (dispatch: AppDispatch, getState) => {
+    (dispatch, getState) => {
         dispatch(setRequiredNetworkId(networkId))
         const onboardAPI = getState().onboard.onboardAPI
         if (onboardAPI) {
@@ -156,8 +156,8 @@ export const setRequiredNetworkIdThunk =
     }
 
 export const initialize =
-    (history: H.History): AppThunk =>
-    async (dispatch: AppDispatch, getState) => {
+    (navigate: NavigateFunction): AppThunk =>
+    async (dispatch, getState) => {
         const requiredNetworkId = getState().onboard.requiredNetworkId
         console.log(
             `Initializing OnBoard.js for networkId ${requiredNetworkId}...`
@@ -178,7 +178,7 @@ export const initialize =
                         dispatch(
                             setWalletAddressThunk(
                                 addressId.toLowerCase(),
-                                history
+                                navigate
                             )
                         )
                     } else {

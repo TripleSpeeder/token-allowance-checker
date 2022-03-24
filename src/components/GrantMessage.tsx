@@ -1,17 +1,22 @@
 import { Container, Icon, Message } from 'semantic-ui-react'
 import React, { useEffect, useState } from 'react'
-import { useHistory } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import { RootState } from '../app/rootReducer'
+import { useNavigate } from 'react-router'
+import { useAppSelector } from '../app/hooks'
 
 /*
  * Display message about gitcoin grant. Message can be dismissed, but will
  * re-appear when user goes back to home page
  */
 const GrantMessage = () => {
-    const mobile = useSelector((state: RootState) => state.respsonsive.mobile)
+    const mobile = useAppSelector(
+        (state: RootState) => state.respsonsive.mobile
+    )
     const [showGrantMessage, setShowGrantMessage] = useState(true)
-    const history = useHistory()
+    const navigate = useNavigate()
+    /*
+    TODO Refactor this for latest react router
 
     // when route changes to home page, show grants message again
     useEffect(() => {
@@ -24,6 +29,8 @@ const GrantMessage = () => {
             unlisten()
         }
     }, [history, setShowGrantMessage])
+
+ */
 
     const onDismiss = () => {
         setShowGrantMessage(false)

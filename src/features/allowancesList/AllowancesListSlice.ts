@@ -14,7 +14,7 @@ import {
     addTransaction,
     EditAllowanceTransaction,
 } from '../transactionTracker/TransactionTrackerSlice'
-import ERC20Data from '@openzeppelin/contracts/build/contracts/ERC20Detailed.json'
+import ERC20Data from '@openzeppelin/contracts/build/contracts/ERC20.json'
 import { setNetworkId } from '../onboard/onboardSlice'
 import { getDfuseClient } from '../../api/dfuse/dfuseio'
 import createAndVerifyERC20 from '../../utils/contractVerifier'
@@ -173,9 +173,8 @@ const allowancesSlice = createSlice({
         },
         setAllowanceValue(state, action: PayloadAction<AllowanceValue>) {
             const allowanceValue = action.payload
-            state.allowanceValuesById[
-                allowanceValue.allowanceId
-            ] = allowanceValue
+            state.allowanceValuesById[allowanceValue.allowanceId] =
+                allowanceValue
         },
     },
     extraReducers: {
@@ -201,9 +200,8 @@ const allowancesSlice = createSlice({
                 `Resetting allowances due to network change to ${networkId}`
             )
             Object.keys(state.allowanceQueryStateByOwner).forEach((ownerId) => {
-                state.allowanceQueryStateByOwner[
-                    ownerId
-                ] = defaultQueryStateByOwner
+                state.allowanceQueryStateByOwner[ownerId] =
+                    defaultQueryStateByOwner
             })
             Object.keys(state.allowanceIdsByOwnerId).forEach((ownerId) => {
                 state.allowanceIdsByOwnerId[ownerId] = []
@@ -214,224 +212,226 @@ const allowancesSlice = createSlice({
     },
 })
 
-export const {
-    addAllowance,
-    setQueryState,
-    setAllowanceValue,
-} = allowancesSlice.actions
+export const { addAllowance, setQueryState, setAllowanceValue } =
+    allowancesSlice.actions
 
 export default allowancesSlice.reducer
 
-export const fetchAllowanceValueThunk = (
-    allowanceId: AllowanceId
-): AppThunk => async (dispatch: AppDispatch, getState) => {
-    // indicate start of loading
-    dispatch(
-        setAllowanceValue({
-            allowanceId,
-            value: new BN('-1'),
-            state: QueryStates.QUERY_STATE_RUNNING,
-        })
-    )
-
-    const allowance = getState().allowances.allowancesById[allowanceId]
-    const owner = getState().addresses.addressesById[allowance.ownerId]
-    const spender = getState().addresses.addressesById[allowance.spenderId]
-    const tokenContract = getState().tokenContracts.contractsById[
-        allowance.tokenContractId
-    ]
-
-    try {
-        const value = await tokenContract.contractInstance.allowance(
-            owner.address,
-            spender.address
-        )
-        dispatch(
-            setAllowanceValue({
-                allowanceId,
-                value,
-                state: QueryStates.QUERY_STATE_COMPLETE,
-            })
-        )
-    } catch (error) {
-        console.log(
-            `Failed to get allowance from token ${tokenContract.addressId}`
-        )
+export const fetchAllowanceValueThunk =
+    (allowanceId: AllowanceId): AppThunk =>
+    async (dispatch, getState) => {
+        // indicate start of loading
         dispatch(
             setAllowanceValue({
                 allowanceId,
                 value: new BN('-1'),
-                state: QueryStates.QUERY_STATE_ERROR,
+                state: QueryStates.QUERY_STATE_RUNNING,
             })
         )
-    }
-}
 
-export const fetchAllowancesThunk = (ownerId: AddressId): AppThunk => async (
-    dispatch,
-    getState
-) => {
-    const web3 = getState().onboard.web3
-    if (!web3) {
-        console.log(`Missing web3!`)
-        return
-    }
-    const owner = getState().addresses.addressesById[ownerId]
-    const { networkId } = getState().onboard
+        const allowance = getState().allowances.allowancesById[allowanceId]
+        const owner = getState().addresses.addressesById[allowance.ownerId]
+        const spender = getState().addresses.addressesById[allowance.spenderId]
+        const tokenContract =
+            getState().tokenContracts.contractsById[allowance.tokenContractId]
 
-    let currentPage = 0
-    // update query state to indicate start of loading
-    dispatch(
-        setQueryState({
-            ownerId,
-            queryState: {
-                state: QueryStates.QUERY_STATE_RUNNING,
-                currentPage,
-            },
-        })
-    )
-
-    // prepare ERC20 contract
-    const erc20Contract = contract(ERC20Data)
-    erc20Contract.setProvider(web3.currentProvider)
-
-    // query dfuse API
-    try {
-        const client = getDfuseClient({ networkId })
-        // search page by page until no more results are found
-        let cursor = ''
-        let numPageResults = 0
-        const badContracts: Array<string> = []
-        const knownContracts: Array<string> = []
-        const knownSpenders: Array<string> = []
-
-        do {
-            console.log(
-                `Getting page ${currentPage}. Last page result: ${numPageResults}.`
+        try {
+            const value = await tokenContract.contractInstance.allowance(
+                owner.address,
+                spender.address
             )
-            const response = await client.graphql(searchTransactions, {
-                variables: {
-                    limit: '50',
-                    query: `topic.0:${topicHashApprove} topic.1:${owner.address}`,
-                    cursor: cursor,
+            dispatch(
+                setAllowanceValue({
+                    allowanceId,
+                    value,
+                    state: QueryStates.QUERY_STATE_COMPLETE,
+                })
+            )
+        } catch (error) {
+            console.log(
+                `Failed to get allowance from token ${tokenContract.addressId}`
+            )
+            dispatch(
+                setAllowanceValue({
+                    allowanceId,
+                    value: new BN('-1'),
+                    state: QueryStates.QUERY_STATE_ERROR,
+                })
+            )
+        }
+    }
+
+export const fetchAllowancesThunk =
+    (ownerId: AddressId): AppThunk =>
+    async (dispatch, getState) => {
+        const web3 = getState().onboard.web3
+        if (!web3) {
+            console.log(`Missing web3!`)
+            return
+        }
+        const owner = getState().addresses.addressesById[ownerId]
+        const { networkId } = getState().onboard
+
+        let currentPage = 0
+        // update query state to indicate start of loading
+        dispatch(
+            setQueryState({
+                ownerId,
+                queryState: {
+                    state: QueryStates.QUERY_STATE_RUNNING,
+                    currentPage,
                 },
             })
-            // abort if any errors reported
-            if (response.errors) {
-                throw response.errors
-            }
+        )
 
-            // get actual results
-            const edges = response.data.searchTransactions.edges || []
-            for (let edgeIndex = 0; edgeIndex < edges.length; edgeIndex++) {
-                const { node } = edges[edgeIndex]
-                const timestamp = parseInt(node.block.header.timestamp)
-                for (let index = 0; index < node.matchingLogs.length; index++) {
-                    const logEntry = node.matchingLogs[index]
-                    const tokenContractAddress = logEntry.address.toLowerCase()
+        // prepare ERC20 contract
+        const erc20Contract = contract(ERC20Data)
+        erc20Contract.setProvider(web3.currentProvider)
 
-                    if (badContracts.includes(tokenContractAddress)) {
-                        // skip logEvents created by already-known bad contracts
-                        continue
-                    }
+        // query dfuse API
+        try {
+            const client = getDfuseClient({ networkId })
+            // search page by page until no more results are found
+            let cursor = ''
+            let numPageResults = 0
+            const badContracts: Array<string> = []
+            const knownContracts: Array<string> = []
+            const knownSpenders: Array<string> = []
 
-                    if (!checkLogTopic(logEntry)) {
-                        // issues with topic indicate a problem on dfuse side. Ignore this
-                        // logEvent, but do not blacklist contract.
-                        continue
-                    }
+            do {
+                console.log(
+                    `Getting page ${currentPage}. Last page result: ${numPageResults}.`
+                )
+                const response = await client.graphql(searchTransactions, {
+                    variables: {
+                        limit: '50',
+                        query: `topic.0:${topicHashApprove} topic.1:${owner.address}`,
+                        cursor: cursor,
+                    },
+                })
+                // abort if any errors reported
+                if (response.errors) {
+                    throw response.errors
+                }
 
-                    const decoded = decodeLog(logEntry, web3)
-                    if (!decoded) {
-                        // If decoding fails, blacklist contract
-                        badContracts.push(tokenContractAddress)
-                        continue
-                    }
-
-                    if (
-                        !checkDecodedData(
-                            decoded.spender,
-                            decoded.owner,
-                            owner.address
-                        )
+                // get actual results
+                const edges = response.data.searchTransactions.edges || []
+                for (let edgeIndex = 0; edgeIndex < edges.length; edgeIndex++) {
+                    const { node } = edges[edgeIndex]
+                    const timestamp = parseInt(node.block.header.timestamp)
+                    for (
+                        let index = 0;
+                        index < node.matchingLogs.length;
+                        index++
                     ) {
-                        // ignore logEvents with inplausible data, but do not blacklist contract
-                        continue
-                    }
+                        const logEntry = node.matchingLogs[index]
+                        const tokenContractAddress =
+                            logEntry.address.toLowerCase()
 
-                    // pre-checks passed. Now check contract
-                    if (!knownContracts.includes(tokenContractAddress)) {
-                        const contractInstance = await createAndVerifyERC20({
-                            erc20Contract,
-                            contractAddress: tokenContractAddress,
-                        })
-                        if (contractInstance) {
-                            knownContracts.push(tokenContractAddress)
-                            // console.log(`Adding tokenContract ${tokenContractAddress}`)
-                            dispatch(addContractThunk(contractInstance))
-                        } else {
-                            // contract failed verification
+                        if (badContracts.includes(tokenContractAddress)) {
+                            // skip logEvents created by already-known bad contracts
+                            continue
+                        }
+
+                        if (!checkLogTopic(logEntry)) {
+                            // issues with topic indicate a problem on dfuse side. Ignore this
+                            // logEvent, but do not blacklist contract.
+                            continue
+                        }
+
+                        const decoded = decodeLog(logEntry, web3)
+                        if (!decoded) {
+                            // If decoding fails, blacklist contract
                             badContracts.push(tokenContractAddress)
                             continue
                         }
-                    }
 
-                    // All checks passed. Now add spender address
-                    const spenderAddress = decoded.spender.toLowerCase()
-                    if (!knownSpenders.includes(spenderAddress)) {
-                        knownSpenders.push(spenderAddress)
-                        // console.log(`Adding Spender ${spenderAddress} for ${tokenContractAddress}`)
-                        dispatch(addAddressThunk(spenderAddress))
-                        // look for spender contract name on Etherscan
-                        dispatch(fetchEtherscanNameThunk(spenderAddress))
-                    }
+                        if (
+                            !checkDecodedData(
+                                decoded.spender,
+                                decoded.owner,
+                                owner.address
+                            )
+                        ) {
+                            // ignore logEvents with inplausible data, but do not blacklist contract
+                            continue
+                        }
 
-                    // Finally add allowance entry
-                    dispatch(
-                        addAllowance(
-                            tokenContractAddress,
-                            ownerId,
-                            spenderAddress,
-                            timestamp
+                        // pre-checks passed. Now check contract
+                        if (!knownContracts.includes(tokenContractAddress)) {
+                            const contractInstance = await createAndVerifyERC20(
+                                {
+                                    erc20Contract,
+                                    contractAddress: tokenContractAddress,
+                                }
+                            )
+                            if (contractInstance) {
+                                knownContracts.push(tokenContractAddress)
+                                // console.log(`Adding tokenContract ${tokenContractAddress}`)
+                                dispatch(addContractThunk(contractInstance))
+                            } else {
+                                // contract failed verification
+                                badContracts.push(tokenContractAddress)
+                                continue
+                            }
+                        }
+
+                        // All checks passed. Now add spender address
+                        const spenderAddress = decoded.spender.toLowerCase()
+                        if (!knownSpenders.includes(spenderAddress)) {
+                            knownSpenders.push(spenderAddress)
+                            // console.log(`Adding Spender ${spenderAddress} for ${tokenContractAddress}`)
+                            dispatch(addAddressThunk(spenderAddress))
+                            // look for spender contract name on Etherscan
+                            dispatch(fetchEtherscanNameThunk(spenderAddress))
+                        }
+
+                        // Finally add allowance entry
+                        dispatch(
+                            addAllowance(
+                                tokenContractAddress,
+                                ownerId,
+                                spenderAddress,
+                                timestamp
+                            )
                         )
-                    )
+                    }
                 }
-            }
-            numPageResults = edges.length
-            currentPage++
-            // get start cursor for next page
-            cursor = response.data.searchTransactions.pageInfo.endCursor
+                numPageResults = edges.length
+                currentPage++
+                // get start cursor for next page
+                cursor = response.data.searchTransactions.pageInfo.endCursor
+                dispatch(
+                    setQueryState({
+                        ownerId,
+                        queryState: {
+                            state: QueryStates.QUERY_STATE_RUNNING,
+                            currentPage,
+                        },
+                    })
+                )
+            } while (numPageResults > 0)
+
             dispatch(
                 setQueryState({
                     ownerId,
                     queryState: {
-                        state: QueryStates.QUERY_STATE_RUNNING,
+                        state: QueryStates.QUERY_STATE_COMPLETE,
                         currentPage,
                     },
                 })
             )
-        } while (numPageResults > 0)
-
-        dispatch(
-            setQueryState({
-                ownerId,
-                queryState: {
-                    state: QueryStates.QUERY_STATE_COMPLETE,
-                    currentPage,
-                },
-            })
-        )
-    } catch (errors) {
-        console.log(errors)
-        dispatch(
-            setQueryState({
-                ownerId,
-                queryState: {
-                    state: QueryStates.QUERY_STATE_ERROR,
-                    currentPage,
-                    error: JSON.stringify(errors),
-                },
-            })
-        )
+        } catch (errors) {
+            console.log(errors)
+            dispatch(
+                setQueryState({
+                    ownerId,
+                    queryState: {
+                        state: QueryStates.QUERY_STATE_ERROR,
+                        currentPage,
+                        error: JSON.stringify(errors),
+                    },
+                })
+            )
+        }
     }
-}

@@ -3,17 +3,18 @@ import WalletConfigModal from './WalletConfigModal'
 import { useDispatch, useSelector } from 'react-redux'
 import { RootState } from '../../app/rootReducer'
 import { selectWallet } from './onboardSlice'
-import { useHistory } from 'react-router-dom'
 import WalletSelector from './walletSelector'
+import { useNavigate } from 'react-router'
+import { useAppSelector } from '../../app/hooks'
 
 const WalletSelectorContainer = () => {
     const [showWalletConfig, setShowWalletConfig] = useState(false)
     const dispatch = useDispatch()
-    const history = useHistory()
-    const { wallet, onboardAPI, networkId } = useSelector(
+    const navigate = useNavigate()
+    const { wallet, onboardAPI, networkId } = useAppSelector(
         (state: RootState) => state.onboard
     )
-    const walletAddress = useSelector((state: RootState) => {
+    const walletAddress = useAppSelector((state: RootState) => {
         if (state.addresses.walletAddressId) {
             return state.addresses.addressesById[
                 state.addresses.walletAddressId
@@ -22,7 +23,7 @@ const WalletSelectorContainer = () => {
             return undefined
         }
     })
-    const { mobile } = useSelector((state: RootState) => state.respsonsive)
+    const { mobile } = useAppSelector((state: RootState) => state.respsonsive)
     const handleWalletConfig = () => {
         setShowWalletConfig(true)
     }
@@ -33,7 +34,7 @@ const WalletSelectorContainer = () => {
 
     const handleSelectWallet = () => {
         setShowWalletConfig(false)
-        dispatch(selectWallet(history))
+        dispatch(selectWallet(navigate))
     }
 
     const handleSelectAddress = () => {

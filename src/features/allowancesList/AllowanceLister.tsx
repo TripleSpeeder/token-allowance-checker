@@ -7,23 +7,24 @@ import { useDispatch, useSelector } from 'react-redux'
 import { RootState } from '../../app/rootReducer'
 import { fetchAllowancesThunk, QueryStates } from './AllowancesListSlice'
 import EditAllowanceFormContainer from '../editAllowance/EditAllowanceFormContainer'
+import { useAppSelector } from '../../app/hooks'
 
 const AllowanceLister = () => {
     const dispatch = useDispatch()
-    const { mobile } = useSelector((state: RootState) => state.respsonsive)
-    const address = useSelector((state: RootState) => {
+    const { mobile } = useAppSelector((state: RootState) => state.respsonsive)
+    const address = useAppSelector((state: RootState) => {
         if (state.addresses.checkAddressId) {
             return state.addresses.addressesById[state.addresses.checkAddressId]
         } else {
             return undefined
         }
     })
-    const queryState = useSelector((state: RootState) => {
+    const queryState = useAppSelector((state: RootState) => {
         if (address)
             return state.allowances.allowanceQueryStateByOwner[address.address]
         else return undefined
     })
-    const showEditAllowanceModal = useSelector(
+    const showEditAllowanceModal = useAppSelector(
         (state: RootState) => state.editAllowance.showModal
     )
 

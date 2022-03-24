@@ -1,7 +1,7 @@
-import { ERC20DetailedContract, ERC20DetailedInstance } from '../contracts'
+import { ERC20Contract, ERC20Instance } from '../contracts'
 
 interface VerifierParams {
-    erc20Contract: ERC20DetailedContract
+    erc20Contract: ERC20Contract
     contractAddress: string
 }
 
@@ -9,7 +9,7 @@ const createAndVerifyERC20 = async ({
     erc20Contract,
     contractAddress,
 }: VerifierParams) => {
-    let contractInstance: ERC20DetailedInstance
+    let contractInstance: ERC20Instance
 
     // instantiate contract
     try {

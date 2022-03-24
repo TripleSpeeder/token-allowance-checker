@@ -5,11 +5,12 @@ import {
     redirectToAddress,
     setAddressFromParamsThunk,
 } from '../features/addressInput/AddressSlice'
-import { useDispatch, useSelector } from 'react-redux'
+import { useDispatch } from 'react-redux'
 import { RootState } from '../app/rootReducer'
 import { Icon } from 'semantic-ui-react'
-import { useHistory } from 'react-router'
+import { useNavigate } from 'react-router'
 import DisplayMessage from './DisplayMessage'
+import { useAppSelector } from '../app/hooks'
 
 interface AddressExtractorProps {
     children?: React.ReactNode
@@ -19,15 +20,17 @@ const AddressExtractor: FunctionComponent = ({
     children,
 }: AddressExtractorProps) => {
     const dispatch = useDispatch()
-    const history = useHistory()
+    const navigate = useNavigate()
     const { address: addressFromParams } = useParams()
-    const { checkAddressState } = useSelector(
+    const { checkAddressState } = useAppSelector(
         (state: RootState) => state.addresses
     )
-    const walletAddressId = useSelector(
+    const walletAddressId = useAppSelector(
         (state: RootState) => state.addresses.walletAddressId
     )
-    const mobile = useSelector((state: RootState) => state.respsonsive.mobile)
+    const mobile = useAppSelector(
+        (state: RootState) => state.respsonsive.mobile
+    )
     const [prevAddressFromParams, setPrevAddressFromParams] = useState('')
 
     // watch url params address change
@@ -47,7 +50,7 @@ const AddressExtractor: FunctionComponent = ({
         } else if (walletAddressId) {
             console.log(`No address in params. Trying fallback to wallet.`)
             // no address provided via url. Fall back to wallet address.
-            dispatch(redirectToAddress(walletAddressId, history, true))
+            dispatch(redirectToAddress(walletAddressId, navigate, true))
         }
     }, [
         addressFromParams,

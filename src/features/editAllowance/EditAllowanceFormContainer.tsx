@@ -7,27 +7,30 @@ import { RootState } from 'app/rootReducer'
 import BN from 'bn.js'
 import { closeEditAllowanceModal } from './EditAllowanceSlice'
 import { setAllowanceThunk } from '../tokenContracts/tokenContractsSlice'
+import { useAppSelector } from '../../app/hooks'
 
 const EditAllowanceFormContainer = () => {
     const dispatch = useDispatch()
-    const allowance = useSelector(
+    const allowance = useAppSelector(
         (state: RootState) =>
             state.allowances.allowancesById[state.editAllowance.editAllowanceId]
     )
-    const allowanceValue = useSelector(
+    const allowanceValue = useAppSelector(
         (state: RootState) =>
             state.allowances.allowanceValuesById[
                 state.editAllowance.editAllowanceId
             ]
     )
-    const tokenContract = useSelector(
+    const tokenContract = useAppSelector(
         (state: RootState) =>
             state.tokenContracts.contractsById[allowance.tokenContractId]
     )
-    const spender = useSelector(
+    const spender = useAppSelector(
         (state: RootState) => state.addresses.addressesById[allowance.spenderId]
     )
-    const mobile = useSelector((state: RootState) => state.respsonsive.mobile)
+    const mobile = useAppSelector(
+        (state: RootState) => state.respsonsive.mobile
+    )
     const [newAllowance, setNewAllowance] = useState('0')
 
     const convertAllowanceToDisplaystring = useCallback(() => {

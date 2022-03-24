@@ -1,6 +1,6 @@
 import React from 'react'
 import './App.css'
-import { HashRouter as Router, Link, Route, Switch } from 'react-router-dom'
+import { HashRouter as Router, Link, Route, Routes } from 'react-router-dom'
 import {
     Button,
     Container,
@@ -17,9 +17,10 @@ import { useSelector } from 'react-redux'
 import { RootState } from './rootReducer'
 import ResponsiveApp from './ResponsiveApp'
 import Footer from './Footer'
+import { useAppSelector } from './hooks'
 
 const App: React.FC = () => {
-    const { mobile } = useSelector((state: RootState) => state.respsonsive)
+    const { mobile } = useAppSelector((state: RootState) => state.respsonsive)
 
     const size = mobile ? 'small' : 'huge'
 
@@ -35,8 +36,8 @@ const App: React.FC = () => {
     return (
         <Router>
             <ResponsiveApp>
-                <Switch>
-                    <Route path={['/address/:address', '/address']}>
+                <Routes>
+                    <Route path='/address/:address'>
                         <Container>
                             <OnboardGate>
                                 <AddressExtractor>
@@ -95,7 +96,7 @@ const App: React.FC = () => {
                             </Grid>
                         </Segment>
                     </Route>
-                </Switch>
+                </Routes>
                 <Footer />
             </ResponsiveApp>
         </Router>
