@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react'
-import 'semantic-ui-css/semantic.min.css'
 import { Divider, Segment } from 'semantic-ui-react'
 import AllowancesListContainer from './AllowancesListContainer'
 import AllowancesListFilter from '../allowancesListFilter/AllowancesListFilter'

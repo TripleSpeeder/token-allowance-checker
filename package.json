@@ -11,11 +11,11 @@
     ]
   },
   "scripts": {
-    "start": "react-scripts start",
+    "start": "react-app-rewired start",
     "start:https": "HTTPS=true react-scripts start",
     "typechain": "typechain --target truffle-v5 --out-dir src/contracts ./node_modules/@openzeppelin/contracts/build/contracts/ERC20.json",
-    "build": "GENERATE_SOURCEMAP=false PUBLIC_URL='.' react-scripts build",
-    "test": "react-scripts test",
+    "build": "GENERATE_SOURCEMAP=false PUBLIC_URL='.' react-app-rewired build",
+    "test": "react-app-rewired test",
     "eject": "react-scripts eject",
     "storybook": "start-storybook -p 9009 -s public",
     "build-storybook": "build-storybook -s public",
@@ -62,15 +62,26 @@
     "@types/uuid": "^8.3.4",
     "@typescript-eslint/eslint-plugin": "^5.16.0",
     "@typescript-eslint/parser": "^5.16.0",
+    "assert": "^2.0.0",
+    "buffer": "^6.0.3",
+    "crypto-browserify": "^3.12.0",
     "eslint": "^8.11.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-react": "^7.19.0",
     "eslint-plugin-react-hooks": "^4.3.0",
+    "https-browserify": "^1.0.0",
     "husky": "^7.0.0",
     "lint-staged": "^12.3.7",
+    "os-browserify": "^0.3.0",
+    "path-browserify": "^1.0.1",
     "prettier": "^2.6.0",
+    "process": "^0.11.10",
+    "react-app-rewired": "^2.2.1",
     "semantic-release": "^19.0.2",
-    "standard-version": "^9.3.2"
+    "standard-version": "^9.3.2",
+    "stream-browserify": "^3.0.0",
+    "stream-http": "^3.2.0",
+    "url": "^0.11.0"
   },
   "browserslist": {
     "production": [
