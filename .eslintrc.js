@@ -3,16 +3,17 @@ module.exports = {
   parser: '@typescript-eslint/parser',
   extends: [
     'plugin:react/recommended',
-    "plugin:@typescript-eslint/eslint-recommended",
-    'prettier',
+    'plugin:@typescript-eslint/eslint-recommended',
+    'prettier'
   ],
-  plugins: [
-    'react',
-    '@typescript-eslint',
-  ],
+  plugins: ['react', 'react-hooks', '@typescript-eslint'],
   settings: {
-    "react": {
-      "version": "detect"
+    react: {
+      version: 'detect'
     }
   },
-};
+  rules: {
+    'react-hooks/rules-of-hooks': 'error', // Checks rules of Hooks
+    'react-hooks/exhaustive-deps': 'warn' // Checks effect dependencies
+  }
+}
