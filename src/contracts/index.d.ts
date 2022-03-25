@@ -5,11 +5,11 @@
 import { ERC20Contract } from './ERC20'
 
 declare global {
-    namespace Truffle {
-        interface Artifacts {
-            require(name: 'ERC20'): ERC20Contract
-        }
+  namespace Truffle {
+    interface Artifacts {
+      require(name: 'ERC20'): ERC20Contract
     }
+  }
 }
 
 export { ERC20Contract, ERC20Instance } from './ERC20'

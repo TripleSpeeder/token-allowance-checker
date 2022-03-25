@@ -1,10 +1,10 @@
 import React, { useEffect } from 'react'
 import {
-    AllowanceId,
-    fetchAllowanceValueThunk,
-    QueryStates,
+  AllowanceId,
+  fetchAllowanceValueThunk,
+  QueryStates
 } from './AllowancesListSlice'
-import { useDispatch, useSelector } from 'react-redux'
+import { useDispatch } from 'react-redux'
 import { RootState } from 'app/rootReducer'
 import { Divider, Loader, Table } from 'semantic-ui-react'
 import AddressDisplay from 'components/AddressDisplay'
@@ -14,122 +14,122 @@ import TokenAllowanceItemActions from './TokenAllowanceItemActions'
 import { useAppSelector } from '../../app/hooks'
 
 interface TokenAllowanceItemProps {
-    allowanceId: AllowanceId
+  allowanceId: AllowanceId
 }
 
 const unlimitedAllowance = new BN(2).pow(new BN(256)).subn(1)
 
 const TokenAllowanceItem = ({ allowanceId }: TokenAllowanceItemProps) => {
-    const dispatch = useDispatch()
-    const allowance = useAppSelector(
-        (state: RootState) => state.allowances.allowancesById[allowanceId]
-    )
-    const allowanceValue = useAppSelector(
-        (state: RootState) => state.allowances.allowanceValuesById[allowanceId]
-    )
-    const tokenContract = useAppSelector(
-        (state: RootState) =>
-            state.tokenContracts.contractsById[allowance.tokenContractId]
-    )
-    const spenderAddress = useAppSelector(
-        (state: RootState) => state.addresses.addressesById[allowance.spenderId]
-    )
-    const { mobile } = useAppSelector((state: RootState) => state.respsonsive)
-    const { networkId } = useAppSelector((state: RootState) => state.onboard)
+  const dispatch = useDispatch()
+  const allowance = useAppSelector(
+    (state: RootState) => state.allowances.allowancesById[allowanceId]
+  )
+  const allowanceValue = useAppSelector(
+    (state: RootState) => state.allowances.allowanceValuesById[allowanceId]
+  )
+  const tokenContract = useAppSelector(
+    (state: RootState) =>
+      state.tokenContracts.contractsById[allowance.tokenContractId]
+  )
+  const spenderAddress = useAppSelector(
+    (state: RootState) => state.addresses.addressesById[allowance.spenderId]
+  )
+  const { mobile } = useAppSelector((state: RootState) => state.respsonsive)
+  const { networkId } = useAppSelector((state: RootState) => state.onboard)
 
-    // lazy-load allowance value
-    useEffect(() => {
-        if (allowanceValue.state === QueryStates.QUERY_STATE_INITIAL) {
-            dispatch(fetchAllowanceValueThunk(allowanceId))
-        }
-    }, [allowanceValue, allowanceId, dispatch])
-
-    let allowanceElement, criticalAllowance, positiveAllowance
-    switch (allowanceValue.state) {
-        case QueryStates.QUERY_STATE_RUNNING:
-            allowanceElement = <Loader active inline size={'mini'} />
-            break
-        case QueryStates.QUERY_STATE_COMPLETE:
-            positiveAllowance = allowanceValue.value.isZero()
-            criticalAllowance =
-                allowanceValue.value.eq(unlimitedAllowance) ||
-                allowanceValue.value.gte(tokenContract.totalSupply)
-            if (criticalAllowance) {
-                allowanceElement = <em>unlimited</em>
-            } else {
-                const roundToDecimals = new BN('2')
-                const { /*precise,*/ rounded } = bnToDisplayString({
-                    value: allowanceValue.value,
-                    decimals: tokenContract.decimals,
-                    roundToDecimals,
-                })
-                allowanceElement = <span>{rounded}</span>
-            }
-            break
-        case QueryStates.QUERY_STATE_ERROR:
-            allowanceElement = <span>error</span>
-            break
-        case QueryStates.QUERY_STATE_INITIAL:
-        default:
-            allowanceElement = ''
+  // lazy-load allowance value
+  useEffect(() => {
+    if (allowanceValue.state === QueryStates.QUERY_STATE_INITIAL) {
+      dispatch(fetchAllowanceValueThunk(allowanceId))
     }
+  }, [allowanceValue, allowanceId, dispatch])
 
-    const lastChangeString = new Date(
-        allowance.lastChangedTimestamp
-    ).toDateString()
+  let allowanceElement, criticalAllowance, positiveAllowance
+  switch (allowanceValue.state) {
+    case QueryStates.QUERY_STATE_RUNNING:
+      allowanceElement = <Loader active inline size={'mini'} />
+      break
+    case QueryStates.QUERY_STATE_COMPLETE:
+      positiveAllowance = allowanceValue.value.isZero()
+      criticalAllowance =
+        allowanceValue.value.eq(unlimitedAllowance) ||
+        allowanceValue.value.gte(tokenContract.totalSupply)
+      if (criticalAllowance) {
+        allowanceElement = <em>unlimited</em>
+      } else {
+        const roundToDecimals = new BN('2')
+        const { /*precise,*/ rounded } = bnToDisplayString({
+          value: allowanceValue.value,
+          decimals: tokenContract.decimals,
+          roundToDecimals
+        })
+        allowanceElement = <span>{rounded}</span>
+      }
+      break
+    case QueryStates.QUERY_STATE_ERROR:
+      allowanceElement = <span>error</span>
+      break
+    case QueryStates.QUERY_STATE_INITIAL:
+    default:
+      allowanceElement = ''
+  }
 
-    const addressCell = (
-        <Table.Cell>
-            <AddressDisplay
-                ethAddress={spenderAddress}
-                networkId={networkId}
-                mobile={mobile}
-            />
-        </Table.Cell>
+  const lastChangeString = new Date(
+    allowance.lastChangedTimestamp
+  ).toDateString()
+
+  const addressCell = (
+    <Table.Cell>
+      <AddressDisplay
+        ethAddress={spenderAddress}
+        networkId={networkId}
+        mobile={mobile}
+      />
+    </Table.Cell>
+  )
+
+  let allowanceCell
+  let lastChangeCell
+  if (mobile) {
+    allowanceCell = (
+      <Table.Cell
+        negative={criticalAllowance}
+        positive={positiveAllowance}
+        textAlign={'right'}
+      >
+        {allowanceElement}
+        <Divider fitted />
+        <small>{lastChangeString}</small>
+      </Table.Cell>
     )
-
-    let allowanceCell
-    let lastChangeCell
-    if (mobile) {
-        allowanceCell = (
-            <Table.Cell
-                negative={criticalAllowance}
-                positive={positiveAllowance}
-                textAlign={'right'}
-            >
-                {allowanceElement}
-                <Divider fitted />
-                <small>{lastChangeString}</small>
-            </Table.Cell>
-        )
-        lastChangeCell = null
-    } else {
-        allowanceCell = (
-            <Table.Cell
-                negative={criticalAllowance}
-                positive={positiveAllowance}
-                textAlign={'right'}
-            >
-                {allowanceElement}
-            </Table.Cell>
-        )
-        lastChangeCell = <Table.Cell collapsing>{lastChangeString}</Table.Cell>
-    }
-
-    const actionCell = (
-        <Table.Cell collapsing>
-            <TokenAllowanceItemActions allowanceId={allowanceId} />
-        </Table.Cell>
+    lastChangeCell = null
+  } else {
+    allowanceCell = (
+      <Table.Cell
+        negative={criticalAllowance}
+        positive={positiveAllowance}
+        textAlign={'right'}
+      >
+        {allowanceElement}
+      </Table.Cell>
     )
+    lastChangeCell = <Table.Cell collapsing>{lastChangeString}</Table.Cell>
+  }
 
-    return (
-        <Table.Row key={`${allowanceId}`}>
-            {addressCell}
-            {allowanceCell}
-            {lastChangeCell}
-            {actionCell}
-        </Table.Row>
-    )
+  const actionCell = (
+    <Table.Cell collapsing>
+      <TokenAllowanceItemActions allowanceId={allowanceId} />
+    </Table.Cell>
+  )
+
+  return (
+    <Table.Row key={`${allowanceId}`}>
+      {addressCell}
+      {allowanceCell}
+      {lastChangeCell}
+      {actionCell}
+    </Table.Row>
+  )
 }
 
 export default TokenAllowanceItem
