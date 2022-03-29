@@ -5,19 +5,39 @@ import apiKeys from '../../api/apikeys'
 import { NavigateFunction } from 'react-router-dom'
 import Onboard, { OnboardAPI, WalletState } from '@web3-onboard/core'
 import injectedModule from '@web3-onboard/injected-wallets'
+import gnosisModule from '@web3-onboard/gnosis'
+import keepkeyModule from '@web3-onboard/keepkey'
+import keystoneModule from '@web3-onboard/keystone'
+import ledgerModule from '@web3-onboard/ledger'
+import portisModule from '@web3-onboard/portis'
+import torusModule from '@web3-onboard/torus'
+import trezorModule from '@web3-onboard/trezor'
+import walletConnectModule from '@web3-onboard/walletconnect'
+import walletLinkModule from '@web3-onboard/walletlink'
+import mewModule from '@web3-onboard/mew'
 import TACLogo from '../../icons/Light/Small/icon.svg'
 import {
   addAddress,
   setENSName,
   setWalletAddressThunk
 } from '../addressInput/AddressSlice'
-import setChain from '@web3-onboard/core/dist/chain'
 
-const infuraCredentials = apiKeys.infura['0x1']
-const onboardCredentials = apiKeys.onboard['0x1']
-
-const MAINNET_RPC_URL = `https://mainnet.infura.io/v3/${infuraCredentials.apikey}`
-const injected = injectedModule()
+const wallets = [
+  injectedModule(),
+  gnosisModule(),
+  mewModule(),
+  portisModule({ apiKey: 'TODO' }),
+  torusModule(),
+  walletConnectModule(),
+  walletLinkModule(),
+  keepkeyModule(),
+  ledgerModule(),
+  trezorModule({
+    appUrl: 'https://tac.dappstar.io',
+    email: 'michael@m-bauer.org'
+  }),
+  keystoneModule()
+]
 
 /*
 const wallets: Partial<WalletInitOptions>[] = [
@@ -110,19 +130,6 @@ export const {
 } = onboardSlice.actions
 
 export default onboardSlice.reducer
-/*
-export const checkWallet = (): AppThunk => async (dispatch, getState) => {
-  console.log(`checking wallet...`)
-  const onboardAPI = getState().onboard.onboardAPI
-  if (onboardAPI) {
-    const result = await onboardAPI.walletCheck()
-    console.log(`walletCheck result: ${result}`)
-  } else {
-    console.log(`dispatched checkWallet() without initialization...`)
-  }
-}
-
- */
 
 export const selectWallet =
   (navigate: NavigateFunction): AppThunk =>
@@ -168,19 +175,19 @@ export const initialize =
     console.log(`Initializing OnBoard.js...`)
     try {
       const onboard = Onboard({
-        wallets: [injected],
+        wallets,
         chains: [
           {
             id: '0x1', // chain ID must be in hexadecimel
             token: 'ETH', // main chain token
             label: 'Ethereum Mainnet',
-            rpcUrl: `https://mainnet.infura.io/v3/${infuraCredentials.apikey}` // rpcURL required for wallet balances
+            rpcUrl: `https://mainnet.infura.io/v3/${apiKeys.infura['0x1'].apikey}` // rpcURL required for wallet balances
           },
           {
             id: '0x3',
             token: 'tROP',
             label: 'Ethereum Ropsten Testnet',
-            rpcUrl: `https://ropsten.infura.io/v3/${infuraCredentials.apikey}`
+            rpcUrl: `https://ropsten.infura.io/v3/${apiKeys.infura['0x3'].apikey}`
           }
         ],
         appMetadata: {
