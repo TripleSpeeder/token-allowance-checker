@@ -32,7 +32,7 @@ const EditAllowanceForm = ({
     <AddressDisplay
       ethAddress={spender}
       mobile={mobile}
-      networkId={1}
+      chainId={'0x1'}
       inline={true}
     />
   )

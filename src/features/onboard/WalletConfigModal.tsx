@@ -1,17 +1,17 @@
 import React from 'react'
 import { Button, Icon, Message, Modal } from 'semantic-ui-react'
 import AddressDisplay from '../../components/AddressDisplay'
-import { Wallet } from 'bnc-onboard/dist/src/interfaces'
 import { EthAddress } from '../addressInput/AddressSlice'
+import { WalletState } from '@web3-onboard/core'
 
 interface WalletConfigModalProps {
   handleChangeWallet: () => void
   handleChangeAddress: () => void
   handleClose: () => void
-  wallet?: Wallet
+  wallet?: WalletState
   walletAddress?: EthAddress
   mobile: boolean
-  networkId: number
+  chainId: string
 }
 
 const WalletConfigModal = ({
@@ -19,32 +19,33 @@ const WalletConfigModal = ({
   handleChangeAddress,
   handleClose,
   mobile,
-  networkId,
+  chainId,
   wallet,
   walletAddress
 }: WalletConfigModalProps) => {
-  const currentWallet = wallet?.name ? (
+  const currentWallet = wallet?.label ? (
     <p>
-      Connected to <strong>{wallet.name}</strong>.
+      Connected to <strong>{wallet.label}</strong>.
     </p>
   ) : (
     <p>No wallet connected.</p>
   )
 
-  const walletMsgIcon = wallet?.name ? 'linkify' : 'unlinkify'
+  const walletMsgIcon = wallet?.label ? 'linkify' : 'unlinkify'
 
   const currentAddress = walletAddress ? (
     <AddressDisplay
       ethAddress={walletAddress}
       mobile={mobile}
-      networkId={networkId}
+      chainId={chainId}
     />
   ) : (
     'None'
   )
 
   const size = mobile ? 'small' : 'large'
-  let supportsMultipleAddresses = false
+  const supportsMultipleAddresses = false
+  /*
   if (wallet?.type === 'hardware') {
     if (wallet.name?.toLowerCase() === 'lattice') {
       console.log(
@@ -55,6 +56,8 @@ const WalletConfigModal = ({
       supportsMultipleAddresses = true
     }
   }
+
+   */
 
   const msgs = []
   msgs.push(
@@ -75,7 +78,7 @@ const WalletConfigModal = ({
         <Icon name='id card outline' />
         <Message.Content>
           <Message.Header>Wallet address</Message.Header>
-          <p>{wallet?.name} wallet supports multiple addresses.</p>
+          <p>{wallet?.label} wallet supports multiple addresses.</p>
           <p>Current address: {currentAddress}</p>
           <Button primary size={'small'} onClick={handleChangeAddress}>
             Change Address

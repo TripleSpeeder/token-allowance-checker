@@ -33,7 +33,7 @@ const TokenAllowancesItem = ({
 }: TokenAllowanceItemProps) => {
   const dispatch = useDispatch()
   const { mobile } = useAppSelector((state: RootState) => state.respsonsive)
-  const { networkId } = useAppSelector((state: RootState) => state.onboard)
+  const { chainId } = useAppSelector((state: RootState) => state.onboard)
   const tokenContract = useAppSelector(
     (state: RootState) => state.tokenContracts.contractsById[tokenId]
   )
@@ -161,7 +161,7 @@ const TokenAllowancesItem = ({
               <AddressDisplay
                 ethAddress={tokenAddress}
                 mobile={mobile}
-                networkId={networkId}
+                chainId={chainId}
               />
             </Header.Subheader>
           </Header.Content>
@@ -180,7 +180,7 @@ const TokenAllowancesItem = ({
               <AddressDisplay
                 ethAddress={tokenAddress}
                 mobile={mobile}
-                networkId={networkId}
+                chainId={chainId}
               />
             </Header.Subheader>
           </Header.Content>

@@ -16,8 +16,6 @@ import { Link } from 'react-router-dom'
 import MainMenu from '../features/menu/MainMenu'
 import WalletSelectorContainer from '../features/onboard/WalletSelectorContainer'
 import NetworkSelector from '../components/NetworkSelector'
-import { initialize } from '../features/onboard/onboardSlice'
-import { useNavigate } from 'react-router'
 import { useAppSelector } from './hooks'
 
 const testIsMobile = () => {
@@ -35,12 +33,6 @@ const ResponsiveApp = ({ children }: ResponsiveAppProps) => {
   const [showSidebar, setShowSidebar] = useState(false)
   const { mobile } = useAppSelector((state: RootState) => state.respsonsive)
   const dispatch = useDispatch()
-  const navigate = useNavigate()
-
-  // initialize onboard.js
-  useEffect(() => {
-    dispatch(initialize(navigate))
-  }, [dispatch, navigate])
 
   useEffect(() => {
     if (typeof window === 'undefined') {

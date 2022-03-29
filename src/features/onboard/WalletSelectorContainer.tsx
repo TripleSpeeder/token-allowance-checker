@@ -11,7 +11,7 @@ const WalletSelectorContainer = () => {
   const [showWalletConfig, setShowWalletConfig] = useState(false)
   const dispatch = useDispatch()
   const navigate = useNavigate()
-  const { wallet, onboardAPI, networkId } = useAppSelector(
+  const { wallet, onboardAPI, chainId } = useAppSelector(
     (state: RootState) => state.onboard
   )
   const walletAddress = useAppSelector((state: RootState) => {
@@ -37,14 +37,13 @@ const WalletSelectorContainer = () => {
 
   const handleSelectAddress = () => {
     setShowWalletConfig(false)
-    onboardAPI?.accountSelect()
   }
 
   return (
     <>
       <WalletSelector
         handleClick={handleWalletConfig}
-        walletName={wallet?.name}
+        walletName={wallet?.label}
         walletAccount={walletAddress}
       />
       {showWalletConfig && (
@@ -53,7 +52,7 @@ const WalletSelectorContainer = () => {
           handleChangeWallet={handleSelectWallet}
           handleChangeAddress={handleSelectAddress}
           mobile={mobile}
-          networkId={networkId}
+          chainId={chainId}
           wallet={wallet}
           walletAddress={walletAddress}
         />

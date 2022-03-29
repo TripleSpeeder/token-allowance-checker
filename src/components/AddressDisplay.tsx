@@ -5,14 +5,14 @@ import { EthAddress } from 'features/addressInput/AddressSlice'
 interface AddressDisplayProps {
   ethAddress: EthAddress
   mobile: boolean
-  networkId: number
+  chainId: string
   inline?: boolean
 }
 
 const AddressDisplay = ({
   ethAddress,
   mobile,
-  networkId,
+  chainId,
   inline
 }: AddressDisplayProps) => {
   const { address, ensName, esContractName } = ethAddress
@@ -35,11 +35,11 @@ const AddressDisplay = ({
   }
 
   let etherscanUrl: string
-  switch (networkId) {
-    case 3: // Ropsten
+  switch (chainId) {
+    case '0x3': // Ropsten
       etherscanUrl = `https://ropsten.etherscan.io/address/${address}`
       break
-    case 1:
+    case '0x1':
       etherscanUrl = `https://etherscan.io/address/${address}`
       break
     default:

@@ -7,12 +7,12 @@ interface ContractInfo {
 }
 
 export interface WellKnownContracts {
-  [key: number]: ContractInfo
+  [key: string]: ContractInfo
 }
 
 export const wellKnownContracts: WellKnownContracts = {
   // main network
-  1: {
+  '0x1': {
     '0x89d24a6b4ccb1b6faa2625fe562bdd9a23260359': {
       name: 'Sai Stablecoin',
       symbol: 'SAI'
@@ -39,7 +39,7 @@ export const wellKnownContracts: WellKnownContracts = {
     }
   },
   // Ropsten
-  3: {}
+  '0x3': {}
 }
 
 export default wellKnownContracts

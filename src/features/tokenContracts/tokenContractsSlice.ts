@@ -88,15 +88,15 @@ export default tokenContractSlice.reducer
 export const addContractThunk =
   (contractInstance: ERC20Instance): AppThunk =>
   async (dispatch, getState) => {
-    const { networkId } = getState().onboard
+    const { chainId } = getState().onboard
     const contractAddress = contractInstance.address.toLowerCase()
     let tokenName = ''
     let tokenSymbol = ''
     // Some contracts like MKR and SAI do not implement the correct ERC20 name and symbol.
-    // Get their data from hardocded fallback
-    if (Object.keys(wellKnownContracts[networkId]).includes(contractAddress)) {
-      tokenName = wellKnownContracts[networkId][contractAddress].name
-      tokenSymbol = wellKnownContracts[networkId][contractAddress].symbol
+    // Get their data from hardcoded fallback
+    if (Object.keys(wellKnownContracts[chainId]).includes(contractAddress)) {
+      tokenName = wellKnownContracts[chainId][contractAddress].name
+      tokenSymbol = wellKnownContracts[chainId][contractAddress].symbol
     } else {
       try {
         tokenName = await contractInstance.name()

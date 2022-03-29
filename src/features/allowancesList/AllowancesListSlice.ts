@@ -264,7 +264,7 @@ export const fetchAllowancesThunk =
       return
     }
     const owner = getState().addresses.addressesById[ownerId]
-    const { networkId } = getState().onboard
+    const { chainId } = getState().onboard
 
     let currentPage = 0
     // update query state to indicate start of loading
@@ -284,7 +284,7 @@ export const fetchAllowancesThunk =
 
     // query dfuse API
     try {
-      const client = getDfuseClient({ networkId })
+      const client = getDfuseClient({ chainId })
       // search page by page until no more results are found
       let cursor = ''
       let numPageResults = 0

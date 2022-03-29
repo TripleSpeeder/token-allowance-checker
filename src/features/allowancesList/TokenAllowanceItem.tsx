@@ -35,7 +35,7 @@ const TokenAllowanceItem = ({ allowanceId }: TokenAllowanceItemProps) => {
     (state: RootState) => state.addresses.addressesById[allowance.spenderId]
   )
   const { mobile } = useAppSelector((state: RootState) => state.respsonsive)
-  const { networkId } = useAppSelector((state: RootState) => state.onboard)
+  const { chainId } = useAppSelector((state: RootState) => state.onboard)
 
   // lazy-load allowance value
   useEffect(() => {
@@ -82,7 +82,7 @@ const TokenAllowanceItem = ({ allowanceId }: TokenAllowanceItemProps) => {
     <Table.Cell>
       <AddressDisplay
         ethAddress={spenderAddress}
-        networkId={networkId}
+        chainId={chainId}
         mobile={mobile}
       />
     </Table.Cell>

@@ -93,9 +93,7 @@ const AllowancesListContainer = ({
     (state: RootState) => state.addresses.addressesById[ownerId]
   )
   const mobile = useAppSelector((state: RootState) => state.respsonsive.mobile)
-  const networkId = useAppSelector(
-    (state: RootState) => state.onboard.networkId
-  )
+  const chainId = useAppSelector((state: RootState) => state.onboard.chainId)
 
   if (!queryState) {
     console.log(`No querystate available for ${ownerId}`)
@@ -149,7 +147,7 @@ const AllowancesListContainer = ({
             <AddressDisplay
               ethAddress={ownerAddress}
               mobile={mobile}
-              networkId={networkId}
+              chainId={chainId}
               inline={true}
             />{' '}
             has no approvals.

@@ -7,12 +7,12 @@ import { useAppSelector } from '../app/hooks'
 
 const NetworkSelector = () => {
   const options = [
-    { key: 1, text: 'Mainnet', value: 1 },
-    { key: 2, text: 'Ropsten', value: 3 }
+    { key: 1, text: 'Mainnet', value: '0x1' },
+    { key: 2, text: 'Ropsten', value: '0x3' }
   ]
 
   const dispatch = useDispatch()
-  const { requiredNetworkId, wallet } = useAppSelector(
+  const { requiredChainId, onboardAPI } = useAppSelector(
     (state: RootState) => state.onboard
   )
 
@@ -22,22 +22,20 @@ const NetworkSelector = () => {
   ) => {
     const { value } = data
     console.log(`Selected value: ${value}`)
-    dispatch(setRequiredNetworkIdThunk(parseInt(`${value}`)))
+    dispatch(setRequiredNetworkIdThunk(value as string))
   }
 
-  const networkEntry = options.find(
-    (value) => value.value === requiredNetworkId
-  )
+  const networkEntry = options.find((value) => value.value === requiredChainId)
   const text = 'Network: ' + networkEntry?.text ?? 'select'
 
   return (
     <Dropdown
       as={Button}
-      disabled={!wallet}
+      disabled={!onboardAPI}
       text={text}
       options={options}
       onChange={handleChange}
-      value={requiredNetworkId}
+      value={requiredChainId}
       fluid
     />
   )

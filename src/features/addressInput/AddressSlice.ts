@@ -134,20 +134,20 @@ export default addressSlice.reducer
 export const fetchEtherscanNameThunk =
   (addressId: AddressId): AppThunk =>
   async (dispatch, getState) => {
-    const { networkId } = getState().onboard
+    const { chainId } = getState().onboard
     const apiKey = 'THS8KWYM6KZ8WBP3DXKUDR7UKCRB8YIRGH'
     let apiHost
-    switch (networkId) {
-      case 1:
+    switch (chainId) {
+      case '0x1':
         // mainnet
         apiHost = 'api.etherscan.io'
         break
-      case 3:
+      case '0x3':
         // Ropsten
         apiHost = 'api-ropsten.etherscan.io'
         break
       default:
-        throw Error(`Network ${networkId} not supported`)
+        throw Error(`Chain ${chainId} not supported`)
     }
     const requestUrl = `https://${apiHost}/api?module=contract&action=getsourcecode&address=${addressId}&apikey=${apiKey}`
     const response = await fetch(requestUrl)
@@ -204,6 +204,7 @@ const resolveAndAddAddress = (
     // first add plain address
     dispatch(addAddress(address))
 
+    /*
     // look for reverse ENS name
     dispatch(
       setResolvingState({
@@ -212,8 +213,11 @@ const resolveAndAddAddress = (
       })
     )
     try {
-      const reverseENSLookupName = address.substr(2) + '.addr.reverse'
-      const ResolverContract = await web3.eth.ens.resolver(reverseENSLookupName)
+      const reverseENSLookupName = address.slice(2) + '.addr.reverse'
+      console.log(`Getting resolver for ${reverseENSLookupName}`)
+      const ResolverContract = await web3.eth.ens.getResolver(
+        reverseENSLookupName
+      )
       const reverseENS = await ResolverContract.methods
         .name(namehash.hash(reverseENSLookupName))
         .call()
@@ -226,8 +230,11 @@ const resolveAndAddAddress = (
         })
       )
     } catch (error) {
-      // console.log(`Error getting reverse ENS: ${error}`)
+      console.log(`Error getting reverse ENS: ${error}`)
+      console.log(error)
     }
+
+     */
     dispatch(
       setResolvingState({
         id: address,

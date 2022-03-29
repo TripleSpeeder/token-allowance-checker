@@ -2,13 +2,13 @@ import { createDfuseClient } from '@dfuse/client'
 import apiKeys from '../apikeys'
 
 interface CreateClientParams {
-  networkId: number
+  chainId: string
 }
 
-const getDfuseClient = ({ networkId }: CreateClientParams) => {
-  const credentials = apiKeys.dfuse[networkId]
+const getDfuseClient = ({ chainId }: CreateClientParams) => {
+  const credentials = apiKeys.dfuse[chainId]
   if (!credentials) {
-    throw Error(`Network ${networkId} not supported by dfuse.io`)
+    throw Error(`Network ${chainId} not supported by dfuse.io`)
   }
 
   return createDfuseClient({
