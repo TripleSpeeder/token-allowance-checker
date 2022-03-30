@@ -1,5 +1,4 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
-import namehash from 'eth-ens-namehash'
 import { AppThunk } from '../../app/store'
 import { NavigateFunction } from 'react-router-dom'
 import Web3 from 'web3'
@@ -324,6 +323,7 @@ export const setAddressFromParamsThunk =
         if (addressId === zeroAddress) {
           throw Error(`${checkAddress} resolved to ${zeroAddress}`)
         } else {
+          dispatch(addAddress(addressId.toLowerCase(), checkAddress))
           dispatch(setCheckAddressId(addressId))
           dispatch(setCheckAddressState(CheckAddressStates.Valid))
         }

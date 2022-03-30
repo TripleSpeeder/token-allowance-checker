@@ -16,17 +16,13 @@ import walletConnectModule from '@web3-onboard/walletconnect'
 import walletLinkModule from '@web3-onboard/walletlink'
 import mewModule from '@web3-onboard/mew'
 import TACLogo from '../../icons/Light/Small/icon.svg'
-import {
-  addAddress,
-  setENSName,
-  setWalletAddressThunk
-} from '../addressInput/AddressSlice'
+import { setWalletAddressThunk } from '../addressInput/AddressSlice'
 
 const wallets = [
   injectedModule(),
   gnosisModule(),
   mewModule(),
-  portisModule({ apiKey: 'TODO' }),
+  portisModule({ apiKey: '148909ab-b865-466a-86f6-80b8f3631efe' }),
   torusModule(),
   walletConnectModule(),
   walletLinkModule(),
@@ -38,50 +34,6 @@ const wallets = [
   }),
   keystoneModule()
 ]
-
-/*
-const wallets: Partial<WalletInitOptions>[] = [
-  { walletName: 'metamask' },
-  { walletName: 'coinbase' },
-  {
-    walletName: 'walletConnect',
-    infuraKey: infuraCredentials.apikey
-  },
-  { walletName: 'tokenpocket' },
-  {
-    walletName: 'ledger',
-    rpcUrl: `${infuraCredentials.endpoint}${infuraCredentials.apikey}`
-  },
-  {
-    walletName: 'trezor',
-    appUrl: 'https://tac.dappstar.io',
-    email: 'michael@m-bauer.org',
-    rpcUrl: `${infuraCredentials.endpoint}${infuraCredentials.apikey}`
-  },
-  { walletName: 'status' },
-  { walletName: 'trust' },
-  {
-    walletName: 'lattice',
-    rpcUrl: `${infuraCredentials.endpoint}${infuraCredentials.apikey}`,
-    appName: 'Token Allowance Checker'
-  },
-  { walletName: 'authereum' },
-  { walletName: 'opera' },
-  { walletName: 'operaTouch' },
-  { walletName: 'torus' },
-  {
-    walletName: 'imToken',
-    rpcUrl: `${infuraCredentials.endpoint}${infuraCredentials.apikey}`
-  },
-  {
-    walletName: 'huobiwallet',
-    rpcUrl: `${infuraCredentials.endpoint}${infuraCredentials.apikey}`
-  },
-  { walletName: 'frame' },
-  { walletName: 'gnosis' }
-]
-
- */
 
 // Define contents of onboard state
 interface OnboardState {
@@ -147,6 +99,12 @@ export const selectWallet =
         dispatch(setNetworkId(wallet.chains[0].id))
         // @ts-ignore
         dispatch(setWeb3Instance(new Web3(wallet.provider)))
+        dispatch(
+          setWalletAddressThunk(
+            wallets[0].accounts[0].address.toLowerCase(),
+            navigate
+          )
+        )
       }
     } else {
       console.log(`dispatched selectWallet() without initialization...`)
@@ -169,100 +127,34 @@ export const setRequiredNetworkIdThunk =
     }
   }
 
-export const initialize =
-  (navigate: NavigateFunction): AppThunk =>
-  async (dispatch, getState) => {
-    console.log(`Initializing OnBoard.js...`)
-    try {
-      const onboard = Onboard({
-        wallets,
-        chains: [
-          {
-            id: '0x1', // chain ID must be in hexadecimel
-            token: 'ETH', // main chain token
-            label: 'Ethereum Mainnet',
-            rpcUrl: `https://mainnet.infura.io/v3/${apiKeys.infura['0x1'].apikey}` // rpcURL required for wallet balances
-          },
-          {
-            id: '0x3',
-            token: 'tROP',
-            label: 'Ethereum Ropsten Testnet',
-            rpcUrl: `https://ropsten.infura.io/v3/${apiKeys.infura['0x3'].apikey}`
-          }
-        ],
-        appMetadata: {
-          name: 'Token Allowance Checker',
-          description: 'Control ERC20 token approvals',
-          icon: TACLogo
-        }
-      })
-      const state = onboard.state.select()
-
-      const { unsubscribe } = state.subscribe((update) => {
-        console.log('state update: ', update)
-        if (update.wallets.length) {
-          const address = update.wallets[0].accounts[0].address
-          const ens = update.wallets[0].accounts[0].ens
-          const chainId = update.wallets[0].chains[0].id
-          console.log(
-            `Wallet: ChainID ${chainId} - ${address} - ensName ${ens?.name}`
-          )
-          dispatch(setNetworkId(chainId))
-          dispatch(addAddress(address.toLowerCase()))
-          if (ens) {
-            dispatch(
-              setENSName({
-                id: address.toLowerCase(),
-                ensName: ens.name
-              })
-            )
-          }
-          dispatch(
-            setWalletAddressThunk(
-              update.wallets[0].accounts[0].address.toLowerCase(),
-              navigate
-            )
-          )
-        }
-      })
-      /*
-        networkId: requiredNetworkId,
-        hideBranding: false,
-        subscriptions: {
-          wallet: (wallet) => {
-            // store selected wallet
-            dispatch(setWallet(wallet))
-            dispatch(setWeb3Instance(new Web3(wallet.provider)))
-          },
-          address: (addressId) => {
-            if (addressId) {
-              console.log(`Wallet address changed to ${addressId}!`)
-              dispatch(setWalletAddressThunk(addressId.toLowerCase(), navigate))
-            } else {
-              console.log(`No access to wallet address`)
-            }
-          },
-          network: (networkId) => {
-            const prevNetworkId = getState().onboard.networkId
-            if (prevNetworkId !== 0 && prevNetworkId !== networkId) {
-              console.log(
-                `Switching network from ${prevNetworkId} to ${networkId}`
-              )
-            }
-            dispatch(setRequiredNetworkIdThunk(networkId))
-            dispatch(setNetworkId(networkId))
-          },
+export const initialize = (): AppThunk => async (dispatch, getState) => {
+  console.log(`Initializing OnBoard.js...`)
+  try {
+    const onboard = Onboard({
+      wallets,
+      chains: [
+        {
+          id: '0x1', // hexadecimal
+          token: 'ETH', // main chain token
+          label: 'Ethereum Mainnet',
+          rpcUrl: `https://mainnet.infura.io/v3/${apiKeys.infura['0x1'].apikey}`
         },
-        walletSelect: {
-          heading: '',
-          description: '',
-          // @ts-ignore
-          wallets: wallets
-        }*/
-
-      dispatch(setOnboardAPI(onboard))
-    } catch (e) {
-      console.log(`Onboard.js initialization failed.`)
-      console.log(e)
-    }
+        {
+          id: '0x3',
+          token: 'tROP',
+          label: 'Ethereum Ropsten Testnet',
+          rpcUrl: `https://ropsten.infura.io/v3/${apiKeys.infura['0x3'].apikey}`
+        }
+      ],
+      appMetadata: {
+        name: 'Token Allowance Checker',
+        description: 'Control ERC20 token approvals',
+        icon: TACLogo
+      }
+    })
+    dispatch(setOnboardAPI(onboard))
+  } catch (e) {
+    console.log(`Onboard.js initialization failed.`)
+    console.log(e)
   }
+}

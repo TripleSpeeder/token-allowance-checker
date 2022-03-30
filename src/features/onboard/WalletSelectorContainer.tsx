@@ -11,7 +11,7 @@ const WalletSelectorContainer = () => {
   const [showWalletConfig, setShowWalletConfig] = useState(false)
   const dispatch = useDispatch()
   const navigate = useNavigate()
-  const { wallet, onboardAPI, chainId } = useAppSelector(
+  const { wallet, chainId } = useAppSelector(
     (state: RootState) => state.onboard
   )
   const walletAddress = useAppSelector((state: RootState) => {

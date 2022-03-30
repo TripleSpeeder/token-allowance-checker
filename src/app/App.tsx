@@ -16,10 +16,10 @@ import { RootState } from './rootReducer'
 import ResponsiveApp from './ResponsiveApp'
 import Footer from './Footer'
 import { useAppSelector } from './hooks'
+import WalletGate from '../features/onboard/WalletGate'
 
 const App = () => {
   const { mobile } = useAppSelector((state: RootState) => state.respsonsive)
-
   const size = mobile ? 'small' : 'huge'
 
   const startButton = (
@@ -33,12 +33,12 @@ const App = () => {
 
   const addrElem = (
     <Container>
-      <OnboardGate>
+      <WalletGate>
         <AddressExtractor>
           <AddressInputContainer />
           <AllowanceLister />
         </AddressExtractor>
-      </OnboardGate>
+      </WalletGate>
     </Container>
   )
 
@@ -86,11 +86,13 @@ const App = () => {
   return (
     <Router>
       <ResponsiveApp>
-        <Routes>
-          <Route path='/address/:address' element={addrElem} />
-          <Route path='/address' element={addrElem} />
-          <Route path='/' element={rootElem} />
-        </Routes>
+        <OnboardGate>
+          <Routes>
+            <Route path='/address/:address' element={addrElem} />
+            <Route path='/address' element={addrElem} />
+            <Route path='/' element={rootElem} />
+          </Routes>
+        </OnboardGate>
         <Footer />
       </ResponsiveApp>
     </Router>

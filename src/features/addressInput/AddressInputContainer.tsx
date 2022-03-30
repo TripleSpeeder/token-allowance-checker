@@ -41,7 +41,7 @@ const AddressInputContainer = () => {
     } else {
       console.log(`CheckAddress undefined`)
     }
-  }, [checkAddress, setInput])
+  }, [checkAddress])
 
   const error = addressInputState === addressInputStates.ADDRESS_INVALID
   const loading = addressInputState === addressInputStates.ADDRESS_RESOLVING
