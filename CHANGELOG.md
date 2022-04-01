@@ -2,6 +2,8 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.11.1](https://github.com/TripleSpeeder/token-allowance-checker/compare/v2.11.0...v2.11.1) (2022-04-01)
+
 ## [2.11.0](https://github.com/TripleSpeeder/token-allowance-checker/compare/v2.7.0...v2.11.0) (2022-04-01)
 
 
