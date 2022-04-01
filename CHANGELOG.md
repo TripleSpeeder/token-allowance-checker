@@ -2,6 +2,31 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.11.0](https://github.com/TripleSpeeder/token-allowance-checker/compare/v2.7.0...v2.11.0) (2022-04-01)
+
+
+### Features
+
+* add additional wallets ([3ee5bc2](https://github.com/TripleSpeeder/token-allowance-checker/commit/3ee5bc2232be5f9ba14818d494303c4265b34ffe))
+* Add blocknative logo ([a48f603](https://github.com/TripleSpeeder/token-allowance-checker/commit/a48f6034c705a4a62c3db68a466df863bd20c24c))
+* add dfuse.io logo ([1038b6d](https://github.com/TripleSpeeder/token-allowance-checker/commit/1038b6d5dbc92858b22d06a0d71159d1b7916d99))
+* add HuobiWallet, remove wallet preference ([06c16bb](https://github.com/TripleSpeeder/token-allowance-checker/commit/06c16bbc37c99f14405caef36e0037a5469f6a6d))
+* change dfuse.io to streamingfast.io ([d54a754](https://github.com/TripleSpeeder/token-allowance-checker/commit/d54a7540ebbe73c710b0b7370ccb9cac3b43f347)), closes [#137](https://github.com/TripleSpeeder/token-allowance-checker/issues/137)
+* make TAC gnosis safe app ([8ea84bf](https://github.com/TripleSpeeder/token-allowance-checker/commit/8ea84bf26e891e04fedf0abdd814148f64599e29))
+* Support Grid+ Lattice hardware wallet ([b717d01](https://github.com/TripleSpeeder/token-allowance-checker/commit/b717d01a21389d025d9f8050bc1a1564f2d3b751)), closes [#138](https://github.com/TripleSpeeder/token-allowance-checker/issues/138)
+* upgrade onboard & add TokenPocket wallet ([2e6892f](https://github.com/TripleSpeeder/token-allowance-checker/commit/2e6892ff18f595deaabec961e8d9f8f6a599fd7e))
+
+
+### Bug Fixes
+
+* build with latest deps ([02ebf87](https://github.com/TripleSpeeder/token-allowance-checker/commit/02ebf87c0262cad507451793af2e0b9a0809ff94))
+* compilation of WalletConfigModal.stories.tsx ([dfb991b](https://github.com/TripleSpeeder/token-allowance-checker/commit/dfb991b6b74225b3b9779773e7a48b35d60a0877))
+* correctly handle allowances for tokens without 0 decimals ([6af67d7](https://github.com/TripleSpeeder/token-allowance-checker/commit/6af67d7f6b05676ee29ee82be61a21e14228c283)), closes [#120](https://github.com/TripleSpeeder/token-allowance-checker/issues/120)
+* doublequote shell script ([e590a65](https://github.com/TripleSpeeder/token-allowance-checker/commit/e590a65ed05cf9005f1ca2eb368affd598181db8))
+* remove deprecated wallets ([8d9dde9](https://github.com/TripleSpeeder/token-allowance-checker/commit/8d9dde9e92e10227dfff809aff6f13a7ec0282e9))
+* shorten app description ([e229b65](https://github.com/TripleSpeeder/token-allowance-checker/commit/e229b650a02a67b4f84763a201b0b6906604b0e8))
+* use built-in imToken wallet module of onboard.js ([5ea6797](https://github.com/TripleSpeeder/token-allowance-checker/commit/5ea6797ab45cebf016b14d54db7fa08144ef5d62))
+
 ## [2.10.0](https://github.com/TripleSpeeder/token-allowance-checker/compare/v2.7.0...v2.10.0) (2021-06-10)
 
 
