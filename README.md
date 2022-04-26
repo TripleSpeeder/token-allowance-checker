@@ -46,5 +46,5 @@ If you want to support further development of TAC, please consider contributing 
    - checkout development branch
    - issue `npm run release` - This will update the Changelog.md with all changes and create a new version tag
    - Create a PR against master
-   - When the PR gets merged, travisCI will automatically deploy the latest release to gh-pages.
+   - When the PR gets merged, Github Action will automatically deploy the latest release to gh-pages.
   

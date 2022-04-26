@@ -9,14 +9,14 @@ import transactionTrackerReducer from 'features/transactionTracker/TransactionTr
 import responsiveLayoutReducer from 'features/responsiveLayout/responsiveSlice'
 
 const rootReducer = combineReducers({
-    onboard: onboardReducer,
-    addresses: addressesReducer,
-    tokenContracts: tokenContractReducer,
-    allowances: allowancesReducer,
-    balances: balancesReducer,
-    editAllowance: editAllowanceReducer,
-    transactions: transactionTrackerReducer,
-    respsonsive: responsiveLayoutReducer,
+  onboard: onboardReducer,
+  addresses: addressesReducer,
+  tokenContracts: tokenContractReducer,
+  allowances: allowancesReducer,
+  balances: balancesReducer,
+  editAllowance: editAllowanceReducer,
+  transactions: transactionTrackerReducer,
+  respsonsive: responsiveLayoutReducer
 })
 
 export type RootState = ReturnType<typeof rootReducer>

@@ -1,45 +1,19 @@
 module.exports = {
-  env: {
-    browser: true,
-    es6: true,
-  },
+  root: true,
+  parser: '@typescript-eslint/parser',
   extends: [
     'plugin:react/recommended',
-    "plugin:@typescript-eslint/eslint-recommended",
-    "plugin:@typescript-eslint/recommended",
-    'prettier/@typescript-eslint',
+    'plugin:@typescript-eslint/eslint-recommended',
+    'prettier'
   ],
+  plugins: ['react', 'react-hooks', '@typescript-eslint'],
   settings: {
-    'react': {
-      'version': 'detect'
-    },
-    "linkComponents": [
-      // Components used as alternatives to <a> for linking, eg. <Link to={ url } />
-      "Hyperlink",
-      {"name": "Link", "linkAttribute": "to"}
-    ]
+    react: {
+      version: 'detect'
+    }
   },
-  globals: {
-    Atomics: 'readonly',
-    SharedArrayBuffer: 'readonly',
-  },
-  parser: '@typescript-eslint/parser',
-  parserOptions: {
-    ecmaFeatures: {
-      jsx: true,
-    },
-    ecmaVersion: 2018,
-    sourceType: 'module',
-    project: './tsconfig.json',
-  },
-  plugins: [
-    'react',
-    '@typescript-eslint',
-  ],
   rules: {
-    'jsx-quotes': ['error', 'prefer-single'],
-    'react/jsx-indent': [2, 4],
-    'react/jsx-indent-props': [2, 4],
-    "@typescript-eslint/explicit-function-return-type": "off",
-  },
-};
+    'react-hooks/rules-of-hooks': 'error', // Checks rules of Hooks
+    'react-hooks/exhaustive-deps': 'warn' // Checks effect dependencies
+  }
+}
