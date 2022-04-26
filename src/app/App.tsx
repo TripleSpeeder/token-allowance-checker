@@ -17,6 +17,7 @@ import ResponsiveApp from './ResponsiveApp'
 import Footer from './Footer'
 import { useAppSelector } from './hooks'
 import WalletGate from '../features/onboard/WalletGate'
+import OfflineModal from '../components/offlineModal'
 
 const App = () => {
   const { mobile } = useAppSelector((state: RootState) => state.respsonsive)
@@ -24,7 +25,7 @@ const App = () => {
 
   const startButton = (
     <Segment basic textAlign='center'>
-      <Button primary as={Link} to='/address/' size='massive'>
+      <Button disabled={true} primary as={Link} to='/address/' size='massive'>
         Check Allowances
         <Icon name='arrow right' />
       </Button>
@@ -44,6 +45,7 @@ const App = () => {
 
   const rootElem = (
     <>
+      <OfflineModal />
       {startButton}
       <Segment basic vertical size={size}>
         <Grid container stackable verticalAlign='top'>
@@ -88,8 +90,8 @@ const App = () => {
       <ResponsiveApp>
         <OnboardGate>
           <Routes>
-            <Route path='/address/:address' element={addrElem} />
-            <Route path='/address' element={addrElem} />
+            <Route path='/address/:address' element={rootElem} />
+            <Route path='/address' element={rootElem} />
             <Route path='/' element={rootElem} />
           </Routes>
         </OnboardGate>

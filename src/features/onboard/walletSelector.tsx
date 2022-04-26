@@ -13,7 +13,7 @@ const WalletSelector = ({ walletName, handleClick }: WalletSelectorProps) => {
   const buttonLabel = walletName ? `Wallet: ${walletName}` : 'Connect wallet'
 
   return (
-    <Button fluid positive={gotWallet} onClick={handleClick}>
+    <Button disabled={true} fluid positive={gotWallet} onClick={handleClick}>
       {buttonLabel}
     </Button>
   )

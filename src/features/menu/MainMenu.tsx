@@ -17,7 +17,7 @@ const MainMenu: React.FC = () => {
         >
           <Image src={'/logo192.png'} width={60} height={60} />
         </Menu.Item>
-        <Menu.Item as={Link} to='/address/' title={'Check Allowances'}>
+        <Menu.Item as={Link} to='/' title={'Check Allowances'}>
           <Icon name='search' size={'large'} /> Check Allowances
         </Menu.Item>
         <Menu.Menu position='right'>

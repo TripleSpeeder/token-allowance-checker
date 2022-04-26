@@ -31,7 +31,7 @@ const NetworkSelector = () => {
   return (
     <Dropdown
       as={Button}
-      disabled={!onboardAPI}
+      disabled={true /*!onboardAPI*/}
       text={text}
       options={options}
       onChange={handleChange}
