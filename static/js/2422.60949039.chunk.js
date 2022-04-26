@@ -1,0 +1,1 @@
+(self.webpackChunktoken_allowance_checker=self.webpackChunktoken_allowance_checker||[]).push([[2422],{58422:function(){},677020:function(){},740194:function(){},271692:function(){}}]);
